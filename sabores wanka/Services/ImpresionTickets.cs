@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
 using System.Linq;
@@ -178,7 +178,8 @@ namespace sabores_wanka.Services
             catch { return new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace, tamano, estilo); }
         }
 
-        // Logo a gris termico: max 240 de ancho (~60mm), alto proporcional.
+        // Logo a blanco y negro puro (igual que el QR): la termica apaga
+        // los grises, asi que se umbraliza. Max 240 de ancho (~60mm).
         private static System.Drawing.Image? CargarLogoGris(out float ancho, out float alto)
         {
             ancho = 0; alto = 0;
@@ -191,23 +192,23 @@ namespace sabores_wanka.Services
                 ancho = original.Width * escala;
                 alto = original.Height * escala;
                 if (alto > 110) { escala = 110f / alto; ancho *= escala; alto = 110; }
-                var gris = new System.Drawing.Bitmap((int)ancho, (int)alto);
-                using (var g = System.Drawing.Graphics.FromImage(gris))
+                var mono = new System.Drawing.Bitmap((int)ancho, (int)alto);
+                using (var g = System.Drawing.Graphics.FromImage(mono))
                 {
-                    var matriz = new System.Drawing.Imaging.ColorMatrix(new float[][]
-                    {
-                        new float[] { 0.3f, 0.3f, 0.3f, 0, 0 },
-                        new float[] { 0.59f, 0.59f, 0.59f, 0, 0 },
-                        new float[] { 0.11f, 0.11f, 0.11f, 0, 0 },
-                        new float[] { 0, 0, 0, 1, 0 },
-                        new float[] { 0, 0, 0, 0, 1 },
-                    });
-                    using var atributos = new System.Drawing.Imaging.ImageAttributes();
-                    atributos.SetColorMatrix(matriz);
-                    g.DrawImage(original, new System.Drawing.Rectangle(0, 0, gris.Width, gris.Height),
-                        0, 0, original.Width, original.Height, System.Drawing.GraphicsUnit.Pixel, atributos);
+                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                    g.DrawImage(original, 0, 0, mono.Width, mono.Height);
                 }
-                return gris;
+                // Umbral: cada pixel pasa a negro o blanco puro (sin grises).
+                for (int y = 0; y < mono.Height; y++)
+                {
+                    for (int x = 0; x < mono.Width; x++)
+                    {
+                        var p = mono.GetPixel(x, y);
+                        int luz = (int)(p.R * 0.299 + p.G * 0.587 + p.B * 0.114);
+                        mono.SetPixel(x, y, luz < 140 ? System.Drawing.Color.Black : System.Drawing.Color.White);
+                    }
+                }
+                return mono;
             }
             catch { return null; }
         }
