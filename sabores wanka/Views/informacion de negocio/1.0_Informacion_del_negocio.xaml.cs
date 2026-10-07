@@ -123,6 +123,7 @@ namespace sabores_wanka.Views.InformacionNegocio
         {
             if (NegocioPanel != null) NegocioPanel.Visibility = esNegocio ? Visibility.Visible : Visibility.Collapsed;
             if (ImpresorasPanel != null) ImpresorasPanel.Visibility = esNegocio ? Visibility.Collapsed : Visibility.Visible;
+            if (!esNegocio) CargarImpresoras();
             PintarTab(NegocioTabButton, esNegocio);
             PintarTab(ImpresorasTabButton, !esNegocio);
         }
@@ -187,15 +188,53 @@ namespace sabores_wanka.Views.InformacionNegocio
 
         private void VolverPosButton_Click(object sender, RoutedEventArgs e) => VolverPosSolicitado?.Invoke(this, EventArgs.Empty);
 
-        // Placeholders del mock: avisan que la accion llegara con el backend.
+        // Ticket de prueba REAL al driver (patron Nachis PrinterService):
+        // imprime a la guardada o a la predeterminada; el error dice el por que.
         private async void ProbarImpresionButton_Click(object sender, RoutedEventArgs e)
         {
-            await MostrarDialogoAsync("Ticket de prueba", "Se enviará un ticket de prueba a la impresora seleccionada.", "Entendido");
+            var (ok, error) = await Services.ImpresionTickets.ImprimirTextoAsync(Services.ImpresionTickets.TextoPrueba());
+            if (ok)
+                await MostrarDialogoAsync("Ticket de prueba", "Ticket enviado a la impresora.", "Entendido");
+            else
+                await MostrarDialogoAsync("No se pudo imprimir", error, "Entendido");
+        }
+
+        // Lista las impresoras de Windows y marca la guardada o la predeterminada.
+        private void CargarImpresoras()
+        {
+            if (ImpresoraComboBox == null) return;
+            var (predeterminada, todas) = Services.ImpresionTickets.ListarImpresorasSistema();
+            ImpresoraComboBox.Items.Clear();
+            foreach (string nombre in todas)
+                ImpresoraComboBox.Items.Add(nombre);
+            string guardada = Services.ImpresionTickets.LeerImpresora();
+            string actual = todas.Contains(guardada) ? guardada : predeterminada;
+            if (actual.Length > 0) ImpresoraComboBox.SelectedItem = actual;
+            if (ImpresoraEstadoText != null)
+                ImpresoraEstadoText.Text = todas.Count == 0
+                    ? "Sin impresoras instaladas en Windows."
+                    : $"Usando: {(actual.Length > 0 ? actual : "—")} ({todas.Count} instalada(s))";
+        }
+
+        // Guarda la elegida para tickets, comandas y pruebas.
+        private async void GuardarImpresoraButton_Click(object sender, RoutedEventArgs e)
+        {
+            string elegida = (ImpresoraComboBox?.SelectedItem as string) ?? "";
+            if (elegida.Length == 0)
+            {
+                await MostrarDialogoAsync("Sin impresora", "No hay impresoras instaladas en Windows.", "Entendido");
+                return;
+            }
+            Services.ImpresionTickets.GuardarImpresora(elegida);
+            if (ImpresoraEstadoText != null) ImpresoraEstadoText.Text = $"Usando: {elegida}";
+            await MostrarDialogoAsync("Impresora guardada", $"Los tickets saldrán por '{elegida}'.", "Entendido");
         }
 
         private async void AgregarImpresoraButton_Click(object sender, RoutedEventArgs e)
         {
-            await MostrarDialogoAsync("Agregar impresora", "La detección USB / LAN / Bluetooth estará disponible al conectar el backend.", "Entendido");
+            // Accion real: abre Dispositivos e impresoras de Windows para instalarla.
+            try { await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:printers")); }
+            catch { await MostrarDialogoAsync("Agregar impresora", "Abre Configuración de Windows > Bluetooth y dispositivos > Impresoras.", "Entendido"); }
         }
 
         // Dialogo modal anclado a este UserControl (patron de Productos).

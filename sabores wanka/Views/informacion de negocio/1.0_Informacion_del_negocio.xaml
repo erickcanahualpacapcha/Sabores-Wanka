@@ -315,6 +315,23 @@
                                 </StackPanel>
                             </Button>
                         </Grid>
+                        <!-- Impresora real de Windows para tickets y pruebas -->
+                        <Border Background="#071411" BorderBrush="#1B4337" BorderThickness="1" CornerRadius="12" Padding="16,12">
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Spacing="6" VerticalAlignment="Center">
+                                    <TextBlock Text="IMPRESORA PARA TICKETS" Foreground="#34D399" FontSize="10" FontWeight="Bold"/>
+                                    <ComboBox x:Name="ImpresoraComboBox" MinWidth="320" Background="#0B1814" BorderBrush="#1B4337" BorderThickness="1" Foreground="White" FontSize="12"/>
+                                    <TextBlock x:Name="ImpresoraEstadoText" Text="—" Foreground="#9CA3AF" FontSize="11"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Click="GuardarImpresoraButton_Click" Background="#10B981" BorderThickness="0" CornerRadius="8" Padding="16,9" MinWidth="0" MinHeight="0" VerticalAlignment="Center">
+                                    <TextBlock Text="Guardar" Foreground="Black" FontSize="12" FontWeight="Bold"/>
+                                </Button>
+                            </Grid>
+                        </Border>
                         <Border Background="#142F26" Height="1" HorizontalAlignment="Stretch" Opacity="0.6"/>
                         <Grid ColumnSpacing="16">
                             <Grid.ColumnDefinitions>

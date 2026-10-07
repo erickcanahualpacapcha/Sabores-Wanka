@@ -778,8 +778,22 @@ namespace sabores_wanka.Views.HistorialDeVentas
             }
         }
 
-        private async void AccionImprimir_Click(object sender, RoutedEventArgs e) =>
-            await MostrarDialogoAsync($"Imprimir {TicketDe(sender)}", "Comprobante enviado a la impresora predeterminada.", "Entendido");
+        // Imprimir venta REAL al driver (mismo servicio que el ticket de prueba).
+        private async void AccionImprimir_Click(object sender, RoutedEventArgs e)
+        {
+            string ticket = TicketDe(sender);
+            var venta = await VentasStore.ObtenerPorTicketAsync(ticket);
+            if (venta == null)
+            {
+                await MostrarDialogoAsync($"Imprimir {ticket}", "Ese comprobante ya no está en el registro.", "Entendido");
+                return;
+            }
+            var (ok, error) = await ImpresionTickets.ImprimirTextoAsync(ImpresionTickets.TextoVenta(venta));
+            await MostrarDialogoAsync(
+                ok ? $"Imprimir {ticket}" : "No se pudo imprimir",
+                ok ? "Comprobante enviado a la impresora." : error,
+                "Entendido");
+        }
 
         // Editar venta (patron Nachis adaptado): solo boletas de los ultimos 30
         // dias; se cargan en el formulario flotante y se actualizan por ticket.

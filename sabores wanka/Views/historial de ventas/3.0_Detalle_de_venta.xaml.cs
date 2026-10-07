@@ -110,11 +110,15 @@ namespace sabores_wanka.Views.HistorialDeVentas
             return fila;
         }
 
-        // Reimprimir: dialogo informativo (igual que AccionImprimir del historial).
+        // Reimprimir REAL al driver (mismo servicio que el ticket de prueba).
         private async void ReimprimirButton_Click(object sender, RoutedEventArgs e)
         {
             if (_venta == null) return;
-            await MostrarDialogoAsync($"Imprimir {_venta.Ticket}", "Comprobante enviado a la impresora predeterminada.", "Entendido");
+            var (ok, error) = await ImpresionTickets.ImprimirTextoAsync(ImpresionTickets.TextoVenta(_venta));
+            await MostrarDialogoAsync(
+                ok ? $"Imprimir {_venta.Ticket}" : "No se pudo imprimir",
+                ok ? "Comprobante enviado a la impresora." : error,
+                "Entendido");
         }
 
         // Copiar: misma factura estilo Nachis del boton Copiar del historial.
