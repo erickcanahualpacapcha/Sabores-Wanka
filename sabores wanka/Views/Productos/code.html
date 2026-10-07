@@ -1,0 +1,708 @@
+<!DOCTYPE html><html class="h-full" lang="es" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Restaurante POS &amp; Cocina - Catálogo de Productos</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            win: {
+              bg: '#14161b',
+              surface: '#1c1f26',
+              surfaceAlt: '#232731',
+              subtle: '#2a2f3a',
+              hover: '#323846',
+              border: '#2e3442',
+              borderLight: '#3f4759',
+              accent: '#0078d4',
+              accentHover: '#1a86d9',
+              accentLight: '#2b88d8',
+              text: '#f3f4f6',
+              textSecondary: '#9ca3af',
+              textMuted: '#6b7280',
+            }
+          },
+          fontFamily: {
+            winui: ['"Segoe UI Variable Display"', '"Segoe UI"', 'Inter', 'sans-serif'],
+          },
+          boxShadow: {
+            'fluent-card': '0 4px 20px -2px rgba(0, 0, 0, 0.45), 0 0 1px 1px rgba(255, 255, 255, 0.05) inset',
+            'fluent-depth': '0 8px 30px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06)',
+            'fluent-button': '0 1px 2px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Styles for WinUI 3 & Fluent Aesthetics -->
+<style data-purpose="fluent-scrollbars">
+    /* Custom delicate scrollbar matching Windows 11 Fluent style */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.14);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.28);
+    }
+  </style>
+<style data-purpose="fluent-mica-surface">
+    /* Subtle Acrylic / Mica layering simulation */
+    .mica-backdrop {
+      background: radial-gradient(circle at 10% 5%, rgba(0, 120, 212, 0.07) 0%, transparent 40%),
+                  radial-gradient(circle at 90% 90%, rgba(99, 102, 241, 0.04) 0%, transparent 35%),
+                  #131519;
+    }
+    .fluent-border-reveal {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+    .fluent-border-reveal::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+  </style>
+<!-- END: Custom Styles for WinUI 3 & Fluent Aesthetics -->
+</head>
+<body class="bg-slate-950 font-winui text-win-text select-none min-h-screen flex items-center justify-center p-2 sm:p-4 lg:p-6 overflow-x-hidden antialiased">
+<!-- BEGIN: Windows 11 Native Window Container -->
+<div class="w-full max-w-[1720px] h-[920px] max-h-[96vh] rounded-xl flex flex-col mica-backdrop fluent-border-reveal shadow-fluent-depth overflow-hidden" data-purpose="app-window">
+<!-- BEGIN: TitleBar -->
+<header class="h-10 bg-win-bg/80 backdrop-blur-md border-b border-win-border flex items-center justify-between px-3 shrink-0" data-purpose="window-titlebar">
+<!-- App Icon & Window Title -->
+<div class="flex items-center space-x-2.5">
+<div class="w-5 h-5 rounded-md bg-gradient-to-br from-amber-500 via-orange-600 to-rose-600 flex items-center justify-center shadow-sm">
+<svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24">
+<path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+<path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+<line x1="6" x2="6" y1="1" y2="4"></line>
+<line x1="10" x2="10" y1="1" y2="4"></line>
+<line x1="14" x2="14" y1="1" y2="4"></line>
+</svg>
+</div>
+<span class="text-xs font-medium text-win-textSecondary tracking-wide">
+          Restaurante POS &amp; Cocina - Catálogo de Productos y Recetas
+        </span>
+
+</div>
+<!-- Native Windows 11 Window Controls -->
+<div class="flex items-center space-x-1 -mr-1">
+<!-- Minimize Button -->
+<button aria-label="Minimizar" class="w-10 h-7 flex items-center justify-center rounded-sm hover:bg-white/10 transition-colors text-win-textSecondary" type="button">
+<svg class="w-3 h-3" fill="currentColor" viewBox="0 0 12 12">
+<rect height="1" width="12" y="5.5"></rect>
+</svg>
+</button>
+<!-- Maximize / Restore Button -->
+<button aria-label="Maximizar" class="w-10 h-7 flex items-center justify-center rounded-sm hover:bg-white/10 transition-colors text-win-textSecondary" type="button">
+<svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 12 12">
+<rect height="9" rx="0.5" width="9" x="1.5" y="1.5"></rect>
+</svg>
+</button>
+<!-- Close Button -->
+<button aria-label="Cerrar" class="w-11 h-7 flex items-center justify-center rounded-sm hover:bg-rose-600 text-win-textSecondary hover:text-white transition-colors" type="button">
+<svg class="w-3 h-3" fill="currentColor" viewBox="0 0 12 12">
+<polygon points="10.8,2.2 9.8,1.2 6,5 2.2,1.2 1.2,2.2 5,6 1.2,9.8 2.2,10.8 6,7 9.8,10.8 10.8,9.8 7,6"></polygon>
+</svg>
+</button>
+</div>
+</header>
+<!-- END: TitleBar -->
+<!-- BEGIN: MainContentArea -->
+<main class="flex-1 flex flex-col p-4 lg:p-6 overflow-hidden space-y-4">
+<!-- BEGIN: HeaderAndLocationBar -->
+<section class="flex flex-col lg:flex-row lg:items-center justify-between pb-1 gap-3" data-purpose="header-navigation"><!-- Left: Compact Icon & Title Info -->
+<div class="flex items-center space-x-3 min-w-0">
+  <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500/20 via-teal-600/30 to-blue-600/20 border border-emerald-500/30 flex items-center justify-center shadow-sm shrink-0">
+    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+      <rect height="14" rx="2" width="20" x="2" y="3"></rect>
+      <line x1="8" x2="16" y1="21" y2="21"></line>
+      <line x1="12" x2="12" y1="17" y2="21"></line>
+      <path d="M7 8h2"></path>
+      <path d="M7 12h5"></path>
+    </svg>
+  </div>
+  <div class="min-w-0">
+    <div class="flex items-center space-x-2.5">
+      <h1 class="text-base font-bold text-white tracking-tight truncate">Gestión de Menú e Inventario de Restaurante</h1>
+      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
+        Servidor POS Conectado
+      </span>
+    </div>
+    <p class="text-[11px] text-win-textSecondary truncate">Control de recetas, costeo de insumos, porcionamiento y disponibilidad por estaciones</p>
+  </div>
+</div>
+
+<!-- Right: Compact Inline Controls and Salon Selector -->
+<div class="flex items-center flex-wrap gap-2 shrink-0">
+  <!-- Salon Dropdown -->
+  <button class="h-8 px-2.5 inline-flex items-center space-x-1.5 text-xs font-medium text-white bg-win-surfaceAlt/90 hover:bg-win-hover border border-win-border rounded-lg shadow-fluent-button transition-all focus:outline-none focus:ring-1 focus:ring-win-accent" type="button"><svg class="w-3.5 h-3.5 text-win-textMuted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg><span class="text-win-textMuted text-[10px] font-semibold uppercase tracking-wider mr-0.5">Sede:</span><span class="truncate max-w-[150px]">SEDE_01 - Tienda Principal</span><svg class="w-3 h-3 text-win-textMuted ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+
+  <!-- Quick Actions -->
+  <button class="h-8 px-2.5 flex items-center space-x-1.5 bg-win-surfaceAlt hover:bg-win-hover border border-win-border rounded-lg text-xs font-medium text-win-text transition-colors shadow-fluent-button" type="button">
+    <svg class="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" x2="12" y1="8" y2="12"></line>
+      <line x1="12" x2="12.01" y1="16" y2="16"></line>
+    </svg>
+    <span class="">Comandas</span>
+    <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">8</span>
+  </button>
+
+  <button class="h-8 px-2.5 flex items-center space-x-1.5 bg-win-surfaceAlt hover:bg-win-hover border border-win-border rounded-lg text-xs font-medium text-win-text transition-colors shadow-fluent-button" type="button">
+    <svg class="w-3.5 h-3.5 text-win-textMuted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10"></circle>
+      <polyline points="12 6 12 12 16 14"></polyline>
+    </svg>
+    <span class="">Historial</span>
+  </button>
+
+  <!-- POS Terminal User -->
+  <div class="h-8 w-8 rounded-lg bg-win-surfaceAlt border border-win-border flex items-center justify-center text-win-accent cursor-pointer hover:border-win-accent transition-colors shadow-fluent-button" title="Terminal 04 - Chef de Turno">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+      <circle cx="12" cy="7" r="4"></circle>
+    </svg>
+  </div>
+</div></section>
+<!-- END: HeaderAndLocationBar -->
+<!-- BEGIN: InfoCardMetricsGrid -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5" data-purpose="metrics-summary">
+<!-- KPI Card 1: Valorización Stock -->
+<article class="bg-win-surface/90 border border-win-border rounded-lg p-3.5 shadow-fluent-card relative overflow-hidden group hover:border-win-borderLight transition-all">
+<div class="flex items-center justify-between text-win-textMuted text-[11px] font-semibold tracking-wider uppercase mb-1">
+<span class="">Valorización Insumos &amp; Menú</span>
+<svg class="w-4 h-4 text-emerald-400/80" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<rect height="16" rx="2" width="20" x="2" y="4"></rect>
+<line x1="2" x2="22" y1="10" y2="10"></line>
+</svg>
+</div>
+<div class="flex items-baseline space-x-2 mt-1">
+<span class="text-2xl font-bold text-white tracking-tight">S/ 1,485.50</span>
+</div>
+<div class="mt-2.5 flex items-center space-x-1.5 text-xs text-emerald-400">
+<span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="text-[11px]">Sincronizado con Almacén Central</span>
+</div>
+</article>
+<!-- KPI Card 2: Resumen Productos -->
+<article class="bg-win-surface/90 border border-win-border rounded-lg p-3.5 shadow-fluent-card relative group hover:border-win-borderLight transition-all">
+<div class="flex items-center justify-between text-win-textMuted text-[11px] font-semibold tracking-wider uppercase mb-1">
+<span class="">Resumen Platos &amp; Bebidas</span>
+<svg class="w-4 h-4 text-blue-400/80" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+<rect height="4" rx="1" ry="1" width="8" x="8" y="2"></rect>
+</svg>
+</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="text-xs text-win-textSecondary">Total Catálogo</span>
+<span class="text-sm font-bold text-white">184</span>
+</div>
+<div class="mt-1 flex items-center justify-between text-[11px]">
+<span class="text-emerald-400 flex items-center">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1"></span> Activos en Carta: 162
+            </span>
+<span class="text-amber-400 flex items-center">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-400 mr-1"></span> Críticos: 22
+            </span>
+</div>
+</article>
+<!-- KPI Card 3: Categorías de Cocina -->
+<article class="bg-win-surface/90 border border-win-border rounded-lg p-3.5 shadow-fluent-card relative group hover:border-win-borderLight transition-all">
+<div class="flex items-center justify-between text-win-textMuted text-[11px] font-semibold tracking-wider uppercase mb-1">
+<span class="">Distribución de Cocina</span>
+<svg class="w-4 h-4 text-purple-400/80" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+<polyline points="2 17 12 22 22 17"></polyline>
+<polyline points="2 12 12 17 22 12"></polyline>
+</svg>
+</div>
+<div class="flex items-baseline space-x-2 mt-1">
+<span class="text-2xl font-bold text-amber-400 tracking-tight">12 Categorías</span>
+</div>
+<div class="mt-2 text-[11px] text-win-textSecondary truncate">
+            4 Estaciones operativas (Cocina, Bar, Parrilla, Frío)
+          </div>
+</article>
+<!-- KPI Card 4: Alerta Crítica -->
+<article class="bg-win-surface/90 border border-rose-500/30 rounded-lg p-3.5 shadow-fluent-card relative overflow-hidden group hover:border-rose-500/50 transition-all bg-gradient-to-r from-rose-950/20 to-transparent">
+<div class="flex items-center justify-between text-rose-300 text-[11px] font-semibold tracking-wider uppercase mb-1">
+<span class="flex items-center">
+<svg class="w-3.5 h-3.5 mr-1 text-rose-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+<line x1="12" x2="12" y1="9" y2="13"></line>
+<line x1="12" x2="12.01" y1="17" y2="17"></line>
+</svg>
+              Ingredientes Críticos
+            </span>
+</div>
+<div class="flex items-baseline space-x-2 mt-1">
+<span class="text-2xl font-bold text-rose-400 tracking-tight">14 Insumos</span>
+</div>
+<div class="mt-2 text-[11px] text-rose-300/80 font-medium">
+            Requieren reposición inmediata para turno tarde
+          </div>
+</article>
+</section>
+<!-- END: InfoCardMetricsGrid -->
+<!-- BEGIN: SearchAndToolBar -->
+<section class="space-y-3" data-purpose="toolbar-controls">
+<!-- Search bar & Main Actions -->
+<div class="flex flex-col md:flex-row items-stretch md:items-center gap-3">
+<!-- WinUI Styled Search Input -->
+<div class="relative flex-1">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-win-textMuted">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<circle cx="11" cy="11" r="8"></circle>
+<line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+</svg>
+</div>
+<input class="w-full pl-10 pr-4 py-2 bg-win-surfaceAlt border border-win-border rounded-lg text-xs placeholder-win-textMuted text-white focus:outline-none focus:ring-1 focus:ring-win-accent focus:border-win-accent transition-colors shadow-inner" placeholder="Buscar plato, ingrediente, categoría o código PLU... (Ej: Lomo, Ceviche, PLU-102)" type="text">
+</div>
+<!-- Action Buttons Group -->
+<div class="flex items-center space-x-2 shrink-0">
+<!-- Filter Button -->
+<button class="h-9 px-3.5 inline-flex items-center space-x-1.5 bg-win-surfaceAlt hover:bg-win-hover border border-win-border text-win-text rounded-lg text-xs font-medium shadow-fluent-button transition-colors" type="button">
+<svg class="w-3.5 h-3.5 text-win-textMuted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+</svg>
+<span class="">Filtros</span>
+</button>
+<!-- Export Button -->
+<button class="h-9 px-3.5 inline-flex items-center space-x-1.5 bg-win-surfaceAlt hover:bg-win-hover border border-win-border text-win-text rounded-lg text-xs font-medium shadow-fluent-button transition-colors" type="button">
+<svg class="w-3.5 h-3.5 text-win-textMuted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+<polyline points="7 10 12 15 17 10"></polyline>
+<line x1="12" x2="12" y1="15" y2="3"></line>
+</svg>
+<span class="">Exportar Carta</span>
+</button>
+<!-- Primary Accent Button -->
+<button class="h-9 px-4 inline-flex items-center space-x-1.5 bg-win-accent hover:bg-win-accentHover text-white rounded-lg text-xs font-semibold shadow-fluent-button transition-colors focus:ring-2 focus:ring-sky-400" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+<line x1="12" x2="12" y1="5" y2="19"></line>
+<line x1="5" x2="19" y1="12" y2="12"></line>
+</svg>
+<span class="">Nuevo Plato / Ítem</span>
+</button>
+</div>
+</div>
+<!-- Horizontal Category Pills / Tags with smooth horizontal scroll -->
+<div class="flex items-center space-x-1.5 overflow-x-auto pb-1 pt-0.5 no-scrollbar text-xs">
+<button class="px-3.5 py-1.5 rounded-full font-medium bg-win-accent text-white shadow-sm shrink-0">
+            Todos los Platos (184)
+          </button>
+<button class="px-3.5 py-1.5 rounded-full font-medium bg-win-surfaceAlt hover:bg-win-hover text-win-textSecondary hover:text-white border border-win-border shrink-0 transition-colors">
+            Entradas
+          </button>
+<button class="px-3.5 py-1.5 rounded-full font-medium bg-win-surfaceAlt hover:bg-win-hover text-win-textSecondary hover:text-white border border-win-border shrink-0 transition-colors">
+            Platos de Fondo
+          </button>
+<button class="px-3.5 py-1.5 rounded-full font-medium bg-win-surfaceAlt hover:bg-win-hover text-win-textSecondary hover:text-white border border-win-border shrink-0 transition-colors">
+            Ceviches &amp; Pescados
+          </button>
+<button class="px-3.5 py-1.5 rounded-full font-medium bg-win-surfaceAlt hover:bg-win-hover text-win-textSecondary hover:text-white border border-win-border shrink-0 transition-colors">
+            Carnes &amp; Parrillas
+          </button>
+<button class="px-3.5 py-1.5 rounded-full font-medium bg-win-surfaceAlt hover:bg-win-hover text-win-textSecondary hover:text-white border border-win-border shrink-0 transition-colors">
+            Pastas Artesanales
+          </button>
+<button class="px-3.5 py-1.5 rounded-full font-medium bg-win-surfaceAlt hover:bg-win-hover text-win-textSecondary hover:text-white border border-win-border shrink-0 transition-colors">
+            Bebidas &amp; Cócteles
+          </button>
+<button class="px-3.5 py-1.5 rounded-full font-medium bg-win-surfaceAlt hover:bg-win-hover text-win-textSecondary hover:text-white border border-win-border shrink-0 transition-colors">
+            Cervezas &amp; Vinos
+          </button>
+<button class="px-3.5 py-1.5 rounded-full font-medium bg-win-surfaceAlt hover:bg-win-hover text-win-textSecondary hover:text-white border border-win-border shrink-0 transition-colors">
+            Postres Caseros
+          </button>
+<button class="px-3.5 py-1.5 rounded-full font-medium bg-win-surfaceAlt hover:bg-win-hover text-win-textSecondary hover:text-white border border-win-border shrink-0 transition-colors">
+            Guarniciones
+          </button>
+<button class="px-3.5 py-1.5 rounded-full font-medium bg-win-surfaceAlt hover:bg-win-hover text-win-textSecondary hover:text-white border border-win-border shrink-0 transition-colors">
+            Menú Ejecutivo
+          </button>
+</div>
+</section>
+<!-- END: SearchAndToolBar -->
+<!-- BEGIN: WinUIDataGridTable -->
+<section class="flex-1 min-h-0 bg-win-surface/80 border border-win-border rounded-xl flex flex-col overflow-hidden shadow-fluent-card" data-purpose="datagrid-container">
+<!-- Scrollable Table Viewport -->
+<div class="flex-1 overflow-auto">
+<table class="w-full border-collapse text-left text-xs">
+<!-- Header Row -->
+<thead class="sticky top-0 z-10 bg-win-surfaceAlt/95 backdrop-blur-md border-b border-win-border text-[11px] font-semibold text-win-textMuted uppercase tracking-wider">
+<tr>
+
+<th class="py-3 px-3 w-16" scope="col">PLU</th>
+<th class="py-3 px-4" scope="col">Plato / Ítem de Carta</th>
+<th class="py-3 px-4" scope="col">Categoría</th>
+<th class="py-3 px-3" scope="col">Estación</th>
+<th class="py-3 px-4 text-right" scope="col">Costo Insumo</th>
+<th class="py-3 px-4 text-right" scope="col">Precio Carta</th>
+<th class="py-3 px-4 text-center" scope="col">Porciones Disp.</th>
+<th class="py-3 px-3 text-center" scope="col">Estado</th>
+<th class="py-3 px-4 text-center w-28" scope="col">Acciones</th>
+</tr>
+</thead>
+<!-- Table Rows with Authentic Restaurant Data -->
+<tbody class="divide-y divide-win-border/70 text-win-text">
+<!-- Row 1: Lomo Saltado -->
+<tr class="hover:bg-win-hover/40 transition-colors group">
+
+<td class="py-2.5 px-3 font-mono text-win-accent font-semibold">101</td>
+<td class="py-2.5 px-4 font-medium text-white">
+<div class="flex items-center space-x-2">
+<span class="">Lomo Saltado Criollo</span>
+<span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">CALIENTE</span>
+</div>
+<div class="text-[10px] text-win-textMuted">Receta: Lomo fino 220g, cebolla, tomate, papas amarillas</div>
+</td>
+<td class="py-2.5 px-4 text-win-textSecondary">Carnes &amp; Parrillas</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">COCINA 1</span>
+</td>
+<td class="py-2.5 px-4 text-right font-mono text-win-textSecondary">S/ 14.50</td>
+<td class="py-2.5 px-4 text-right font-mono font-bold text-white">S/ 42.00</td>
+<td class="py-2.5 px-4 text-center">
+<span class="px-2 py-0.5 rounded font-mono font-bold bg-emerald-500/10 text-emerald-400">35 porc.</span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span> En Carta
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-center">
+<div class="flex items-center justify-center space-x-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-white" title="Editar Plato" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+</button>
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-white" title="Receta &amp; Escandallo" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" x2="7.01" y1="7" y2="7"></line></svg>
+</button>
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-amber-400" title="Pausar Ítem" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="10" x2="10" y1="15" y2="9"></line><line x1="14" x2="14" y1="15" y2="9"></line></svg>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Ceviche Clásico Mixto -->
+<tr class="hover:bg-win-hover/40 transition-colors group">
+
+<td class="py-2.5 px-3 font-mono text-win-accent font-semibold">102</td>
+<td class="py-2.5 px-4 font-medium text-white">
+<div class="flex items-center space-x-2">
+<span class="">Ceviche Clásico Mixto</span>
+<span class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-semibold">FRÍA</span>
+</div>
+<div class="text-[10px] text-win-textMuted">Pesca del día, pulpo, calamar, leche de tigre artesanal</div>
+</td>
+<td class="py-2.5 px-4 text-win-textSecondary">Ceviches &amp; Pescados</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">COCINA FRÍA</span>
+</td>
+<td class="py-2.5 px-4 text-right font-mono text-win-textSecondary">S/ 12.00</td>
+<td class="py-2.5 px-4 text-right font-mono font-bold text-white">S/ 38.00</td>
+<td class="py-2.5 px-4 text-center">
+<span class="px-2 py-0.5 rounded font-mono font-bold bg-emerald-500/10 text-emerald-400">18 porc.</span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span> En Carta
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-center">
+<div class="flex items-center justify-center space-x-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-white" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-white" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" x2="7.01" y1="7" y2="7"></line></svg></button>
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-amber-400" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="10" x2="10" y1="15" y2="9"></line><line x1="14" x2="14" y1="15" y2="9"></line></svg></button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Pisco Sour Tradicional -->
+<tr class="hover:bg-win-hover/40 transition-colors group">
+
+<td class="py-2.5 px-3 font-mono text-win-accent font-semibold">205</td>
+<td class="py-2.5 px-4 font-medium text-white">
+<div class="flex items-center space-x-2">
+<span class="">Pisco Sour Quebranta 4oz</span>
+<span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-semibold">BAR</span>
+</div>
+<div class="text-[10px] text-win-textMuted">Pisco Quebranta 4oz, limón de Chulucanas, jarabe de goma</div>
+</td>
+<td class="py-2.5 px-4 text-win-textSecondary">Bebidas &amp; Cócteles</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">BARRA PRINCIPAL</span>
+</td>
+<td class="py-2.5 px-4 text-right font-mono text-win-textSecondary">S/ 4.50</td>
+<td class="py-2.5 px-4 text-right font-mono font-bold text-white">S/ 22.00</td>
+<td class="py-2.5 px-4 text-center">
+<span class="px-2 py-0.5 rounded font-mono font-bold bg-emerald-500/10 text-emerald-400">80 copas</span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span> En Carta
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-center">
+<div class="flex items-center justify-center space-x-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-white" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-white" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" x2="7.01" y1="7" y2="7"></line></svg></button>
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-amber-400" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="10" x2="10" y1="15" y2="9"></line><line x1="14" x2="14" y1="15" y2="9"></line></svg></button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Arroz con Mariscos (Alerta Stock Bajo) -->
+<tr class="hover:bg-win-hover/40 transition-colors group bg-amber-500/[0.03]">
+
+<td class="py-2.5 px-3 font-mono text-win-accent font-semibold">108</td>
+<td class="py-2.5 px-4 font-medium text-white">
+<div class="flex items-center space-x-2">
+<span class="">Arroz con Mariscos Meloso</span>
+<span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">CALIENTE</span>
+</div>
+<div class="text-[10px] text-amber-300/80">Insumo crítico: Langostino u15 (solo 4 porciones restantes)</div>
+</td>
+<td class="py-2.5 px-4 text-win-textSecondary">Ceviches &amp; Pescados</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">COCINA 1</span>
+</td>
+<td class="py-2.5 px-4 text-right font-mono text-win-textSecondary">S/ 15.00</td>
+<td class="py-2.5 px-4 text-right font-mono font-bold text-white">S/ 40.00</td>
+<td class="py-2.5 px-4 text-center">
+<span class="px-2 py-0.5 rounded font-mono font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">4 porc.</span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/20 text-amber-300">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-400 mr-1.5 animate-pulse"></span> Stock Bajo
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-center">
+<div class="flex items-center justify-center space-x-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-white" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-white" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" x2="7.01" y1="7" y2="7"></line></svg></button>
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-amber-400" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="10" x2="10" y1="15" y2="9"></line><line x1="14" x2="14" y1="15" y2="9"></line></svg></button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Suspiro a la Limeña (Agotado) -->
+<tr class="hover:bg-win-hover/40 transition-colors group bg-rose-500/[0.03]">
+
+<td class="py-2.5 px-3 font-mono text-win-accent font-semibold">412</td>
+<td class="py-2.5 px-4 font-medium text-white">
+<div class="flex items-center space-x-2">
+<span class="line-through text-win-textMuted">Suspiro a la Limeña</span>
+<span class="text-[10px] px-1.5 py-0.5 rounded bg-pink-500/20 text-pink-300 font-semibold">POSTRES</span>
+</div>
+<div class="text-[10px] text-rose-400">Sin stock de manjar de yemas en mise en place</div>
+</td>
+<td class="py-2.5 px-4 text-win-textSecondary">Postres Caseros</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-pink-500/10 text-pink-400 border border-pink-500/20">ESTACIÓN REPOSTERÍA</span>
+</td>
+<td class="py-2.5 px-4 text-right font-mono text-win-textSecondary">S/ 3.20</td>
+<td class="py-2.5 px-4 text-right font-mono font-bold text-win-textMuted line-through">S/ 16.00</td>
+<td class="py-2.5 px-4 text-center">
+<span class="px-2 py-0.5 rounded font-mono font-bold bg-rose-500/20 text-rose-400">0 porc.</span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-rose-500/20 text-rose-400">
+<span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span> Agotado
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-center">
+<div class="flex items-center justify-center space-x-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-white" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-white" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" x2="7.01" y1="7" y2="7"></line></svg></button>
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-emerald-400" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></button>
+</div>
+</td>
+</tr>
+<!-- Row 6: Cerveza Artesanal IPA -->
+<tr class="hover:bg-win-hover/40 transition-colors group">
+
+<td class="py-2.5 px-3 font-mono text-win-accent font-semibold">301</td>
+<td class="py-2.5 px-4 font-medium text-white">
+<div class="flex items-center space-x-2">
+<span class="">Cerveza Artesanal Cumbres IPA 330ml</span>
+<span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">BOTELLA</span>
+</div>
+<div class="text-[10px] text-win-textMuted">Lote L-2026-B con rotación FIFO al día</div>
+</td>
+<td class="py-2.5 px-4 text-win-textSecondary">Cervezas &amp; Vinos</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">BARRA PRINCIPAL</span>
+</td>
+<td class="py-2.5 px-4 text-right font-mono text-win-textSecondary">S/ 7.00</td>
+<td class="py-2.5 px-4 text-right font-mono font-bold text-white">S/ 18.00</td>
+<td class="py-2.5 px-4 text-center">
+<span class="px-2 py-0.5 rounded font-mono font-bold bg-emerald-500/10 text-emerald-400">45 bot.</span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span> En Carta
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-center">
+<div class="flex items-center justify-center space-x-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-white" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-white" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" x2="7.01" y1="7" y2="7"></line></svg></button>
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-amber-400" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="10" x2="10" y1="15" y2="9"></line><line x1="14" x2="14" y1="15" y2="9"></line></svg></button>
+</div>
+</td>
+</tr>
+<!-- Row 7: Fettuccine a la Huancaína -->
+<tr class="hover:bg-win-hover/40 transition-colors group">
+
+<td class="py-2.5 px-3 font-mono text-win-accent font-semibold">115</td>
+<td class="py-2.5 px-4 font-medium text-white">
+<div class="flex items-center space-x-2">
+<span class="">Fettuccine a la Huancaína con Lomo</span>
+<span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">CALIENTE</span>
+</div>
+<div class="text-[10px] text-win-textMuted">Pasta al huevo artesanal, salsa huancaína, trozos de lomo</div>
+</td>
+<td class="py-2.5 px-4 text-win-textSecondary">Pastas Artesanales</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">COCINA 2 (PASTAS)</span>
+</td>
+<td class="py-2.5 px-4 text-right font-mono text-win-textSecondary">S/ 11.50</td>
+<td class="py-2.5 px-4 text-right font-mono font-bold text-white">S/ 36.00</td>
+<td class="py-2.5 px-4 text-center">
+<span class="px-2 py-0.5 rounded font-mono font-bold bg-emerald-500/10 text-emerald-400">22 porc.</span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span> En Carta
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-center">
+<div class="flex items-center justify-center space-x-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-white" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-white" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" x2="7.01" y1="7" y2="7"></line></svg></button>
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-amber-400" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="10" x2="10" y1="15" y2="9"></line><line x1="14" x2="14" y1="15" y2="9"></line></svg></button>
+</div>
+</td>
+</tr>
+<!-- Row 8: Causa Rellena de Pollo -->
+<tr class="hover:bg-win-hover/40 transition-colors group">
+
+<td class="py-2.5 px-3 font-mono text-win-accent font-semibold">120</td>
+<td class="py-2.5 px-4 font-medium text-white">
+<div class="flex items-center space-x-2">
+<span class="">Causa Limeña Rellena de Pollo &amp; Palta</span>
+<span class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-semibold">FRÍA</span>
+</div>
+<div class="text-[10px] text-win-textMuted">Papa amarilla prensada con ají amarillo y limón sutil</div>
+</td>
+<td class="py-2.5 px-4 text-win-textSecondary">Entradas</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">COCINA FRÍA</span>
+</td>
+<td class="py-2.5 px-4 text-right font-mono text-win-textSecondary">S/ 5.00</td>
+<td class="py-2.5 px-4 text-right font-mono font-bold text-white">S/ 20.00</td>
+<td class="py-2.5 px-4 text-center">
+<span class="px-2 py-0.5 rounded font-mono font-bold bg-emerald-500/10 text-emerald-400">15 porc.</span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span> En Carta
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-center">
+<div class="flex items-center justify-center space-x-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-white" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-white" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" x2="7.01" y1="7" y2="7"></line></svg></button>
+<button class="p-1.5 rounded hover:bg-win-surfaceAlt text-win-textSecondary hover:text-amber-400" type="button"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="10" x2="10" y1="15" y2="9"></line><line x1="14" x2="14" y1="15" y2="9"></line></svg></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- END: Scrollable Table Viewport -->
+<!-- BEGIN: TableFooterPagination -->
+<footer class="h-12 bg-win-surfaceAlt/90 border-t border-win-border flex items-center justify-between px-4 shrink-0 text-xs" data-purpose="table-pagination">
+<!-- Counter info & View Mode Selector -->
+<div class="flex items-center space-x-3">
+<span class="text-win-textSecondary">
+              Mostrando <strong class="text-white font-semibold">1 - 8</strong> de <strong class="text-white font-semibold">184</strong> platos y productos
+            </span>
+<div class="h-4 w-px bg-win-border"></div>
+<!-- Refresh Button -->
+<button class="p-1 text-win-textMuted hover:text-white rounded hover:bg-win-hover transition-colors" title="Actualizar datos" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<polyline points="23 4 23 10 17 10"></polyline>
+<polyline points="1 20 1 14 7 14"></polyline>
+<path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+</svg>
+</button>
+<!-- View Mode Switch -->
+<button class="p-1 text-win-textMuted hover:text-white rounded hover:bg-win-hover transition-colors" title="Vista compacta" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+</button>
+</div>
+<!-- Windows 11 Styled Paginator -->
+<div class="flex items-center space-x-1">
+<button class="w-7 h-7 flex items-center justify-center rounded-md bg-win-surface border border-win-border text-win-textMuted hover:text-white disabled:opacity-40" disabled="">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+</button>
+<button class="w-7 h-7 flex items-center justify-center rounded-md bg-win-accent text-white font-semibold text-xs shadow-fluent-button">
+              1
+            </button>
+<button class="w-7 h-7 flex items-center justify-center rounded-md bg-win-surface hover:bg-win-hover border border-win-border text-win-textSecondary hover:text-white transition-colors">
+              2
+            </button>
+<button class="w-7 h-7 flex items-center justify-center rounded-md bg-win-surface hover:bg-win-hover border border-win-border text-win-textSecondary hover:text-white transition-colors">
+              3
+            </button>
+<span class="text-win-textMuted px-1">...</span>
+<button class="w-7 h-7 flex items-center justify-center rounded-md bg-win-surface hover:bg-win-hover border border-win-border text-win-textSecondary hover:text-white transition-colors">
+              12
+            </button>
+<button class="w-7 h-7 flex items-center justify-center rounded-md bg-win-surface hover:bg-win-hover border border-win-border text-win-textSecondary hover:text-white transition-colors">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+</button>
+</div>
+</footer>
+<!-- END: TableFooterPagination -->
+</section>
+<!-- END: WinUIDataGridTable -->
+</main>
+<!-- END: MainContentArea -->
+<!-- BEGIN: NativeStatusBar -->
+
+<!-- END: NativeStatusBar -->
+</div>
+<!-- END: Windows 11 Native Window Container -->
+
+
+
+
+</body></html>

@@ -1,0 +1,186 @@
+﻿<UserControl
+    x:Class="sabores_wanka.Views.HistorialDeVentas.VentaDetalleView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <!-- Detalle de venta 3.0: replica de detalles de venta/code.html. -->
+    <!-- El ojo del historial (Ingresos y Por cobrar) abre esta vista flotante -->
+    <!-- precargada con Cargar(venta); es solo lectura y avisa con CerrarSolicitado. -->
+    <Grid Background="#99000000">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
+        <Grid x:Name="ModalRaiz" MaxWidth="900" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid.RenderTransform>
+                <TranslateTransform x:Name="ModalDesplazar"/>
+            </Grid.RenderTransform>
+        <StackPanel Spacing="16" Padding="24">
+
+            <!-- Tarjeta principal -->
+            <Border Background="#181f24" BorderBrush="#242d35" BorderThickness="1" CornerRadius="16">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Header: titulo + ticket + estado (arrastrar mueve la ventana) -->
+                    <Grid x:Name="ModalMover" Padding="20,16" Background="Transparent" BorderBrush="#242d35" BorderThickness="0,0,0,1" PointerPressed="ModalMover_PointerPressed" PointerMoved="ModalMover_PointerMoved" PointerReleased="ModalMover_PointerReleased" PointerCanceled="ModalMover_PointerReleased" PointerCaptureLost="ModalMover_PointerReleased">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="34" Height="34" CornerRadius="10" Background="#fb923c1a" BorderBrush="#fb923c4d" BorderThickness="1">
+                                <FontIcon Glyph="&#xE7B3;" FontSize="15" Foreground="#fb923c" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <TextBlock Text="Detalle de Venta" Foreground="White" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="TituloTicketText" Text="#B001-0000000" Foreground="#10b981" FontSize="14" FontWeight="Bold" FontFamily="Consolas" VerticalAlignment="Center"/>
+                                    <Border x:Name="EstadoBadge" Background="#10b98133" CornerRadius="8" Padding="10,4">
+                                        <TextBlock x:Name="EstadoBadgeText" Text="PAGADO" Foreground="#10b981" FontSize="10" FontWeight="Black"/>
+                                    </Border>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock x:Name="SubtipoText" Text="Boleta de Venta - Sabores Wanka" Foreground="#9ca3af" FontSize="11"/>
+                                    <TextBlock x:Name="FechaText" Text="07/10/2026 00:00" Foreground="#9ca3af" FontSize="11" FontFamily="Consolas"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                        <Button Grid.Column="1" Click="CerrarButton_Click" Background="#242c33" BorderThickness="0" CornerRadius="8" Padding="10,8" MinWidth="0" MinHeight="0" VerticalAlignment="Center" ToolTipService.ToolTip="Cerrar">
+                            <FontIcon Glyph="&#xE711;" FontSize="12" Foreground="#9ca3af"/>
+                        </Button>
+                    </Grid>
+
+                    <!-- Cuerpo: datos + items + totales -->
+                    <StackPanel Grid.Row="1" Padding="20,16" Spacing="14">
+
+                        <!-- 4 tarjetas de datos -->
+                        <Grid ColumnSpacing="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Background="#141f2e" BorderBrush="#203046" BorderThickness="1" CornerRadius="10" Padding="12,10">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="MESA" Foreground="#9ca3af" FontSize="10" FontWeight="Bold"/>
+                                    <TextBlock x:Name="MesaText" Text="MESA 01" Foreground="#fb923c" FontSize="12" FontWeight="Black"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="1" Background="#141f2e" BorderBrush="#203046" BorderThickness="1" CornerRadius="10" Padding="12,10">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="MOZO / ATENDIDO POR" Foreground="#9ca3af" FontSize="10" FontWeight="Bold"/>
+                                    <TextBlock x:Name="MozoText" Text="Mostrador" Foreground="White" FontSize="12"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="2" Background="#141f2e" BorderBrush="#203046" BorderThickness="1" CornerRadius="10" Padding="12,10">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="CLIENTE" Foreground="#9ca3af" FontSize="10" FontWeight="Bold"/>
+                                    <TextBlock x:Name="ClienteText" Text="Cliente Ocasional" Foreground="White" FontSize="12"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="3" Background="#141f2e" BorderBrush="#203046" BorderThickness="1" CornerRadius="10" Padding="12,10">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="MÉTODO DE PAGO" Foreground="#9ca3af" FontSize="10" FontWeight="Bold"/>
+                                    <TextBlock x:Name="MetodoText" Text="Efectivo" Foreground="#10b981" FontSize="12" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- Items -->
+                        <StackPanel Spacing="8">
+                            <Grid>
+                                <TextBlock Text="ÍTEMS DEL COMPROBANTE" Foreground="#9ca3af" FontSize="10" FontWeight="Bold" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="ConteoText" Text="0 artículos" Foreground="#9ca3af" FontSize="10" FontFamily="Consolas" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            </Grid>
+                            <Border Background="#0c1421" BorderBrush="#1e2d42" BorderThickness="1" CornerRadius="10">
+                                <StackPanel>
+                                    <Grid Padding="12,10" Background="#131e2e">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="52"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="96"/>
+                                            <ColumnDefinition Width="96"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="CANT." Foreground="#9ca3af" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="DESCRIPCIÓN / PRODUCTO" Foreground="#9ca3af" FontSize="10" FontWeight="Bold"/>
+                                        <TextBlock Grid.Column="2" Text="P. UNIT." Foreground="#9ca3af" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                        <TextBlock Grid.Column="3" Text="IMPORTE" Foreground="#9ca3af" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                    <ScrollViewer MaxHeight="260" VerticalScrollBarVisibility="Auto">
+                                        <StackPanel x:Name="ItemsPanel" Spacing="0"/>
+                                    </ScrollViewer>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Totales: estado de cobro + desglose IGV -->
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Background="#121c2d" BorderBrush="#1e2d42" BorderThickness="1" CornerRadius="10" Padding="14,12" VerticalAlignment="Center">
+                                <StackPanel Spacing="6">
+                                    <TextBlock x:Name="CobroTituloText" Text="ESTADO DE COBRO" Foreground="#9ca3af" FontSize="10" FontWeight="Bold"/>
+                                    <TextBlock x:Name="CobroDetalleText" Text="Cobrado" Foreground="White" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock x:Name="CobroMontoText" Text="S/ 0.00" Foreground="#10b981" FontSize="16" FontWeight="Black" FontFamily="Consolas"/>
+                                </StackPanel>
+                            </Border>
+                            <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+                                <Grid>
+                                    <TextBlock Text="Subtotal (Op. Gravada):" Foreground="#9ca3af" FontSize="11" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="SubtotalText" Text="S/ 0.00" Foreground="#d1d5db" FontSize="11" FontFamily="Consolas" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="I.G.V. (18%):" Foreground="#9ca3af" FontSize="11" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="IgvText" Text="S/ 0.00" Foreground="#d1d5db" FontSize="11" FontFamily="Consolas" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                </Grid>
+                                <Grid Margin="0,6,0,0">
+                                    <TextBlock Text="TOTAL A PAGAR:" Foreground="White" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="TotalText" Text="S/ 0.00" Foreground="#10b981" FontSize="26" FontWeight="Black" FontFamily="Consolas" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Footer -->
+                    <Grid Grid.Row="2" Padding="20,14" BorderBrush="#242d35" BorderThickness="0,1,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE73E;" FontSize="13" Foreground="#10b981" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="NotaText" Text="Comprobante emitido correctamente." Foreground="#9ca3af" FontSize="11" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <Button Click="ReimprimirButton_Click" Background="#242c33" BorderBrush="#2b3540" BorderThickness="1" CornerRadius="8" Padding="14,7" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Imprimir">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE74E;" FontSize="12" Foreground="#d1d5db"/>
+                                    <TextBlock Text="Reimprimir Ticket" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Click="CopiarButton_Click" Background="#242c33" BorderBrush="#2b3540" BorderThickness="1" CornerRadius="8" Padding="14,7" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Copiar">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE8C8;" FontSize="12" Foreground="#60a5fa"/>
+                                    <TextBlock Text="Copiar factura" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Click="CerrarButton_Click" Background="#10b981" BorderThickness="0" CornerRadius="8" Padding="16,7" MinWidth="0" MinHeight="0">
+                                <TextBlock Text="Cerrar" Foreground="#052e22" FontSize="12" FontWeight="Bold"/>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </StackPanel>
+        </Grid>
+    </ScrollViewer>
+    </Grid>
+</UserControl>

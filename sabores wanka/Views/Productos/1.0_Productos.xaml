@@ -1,0 +1,472 @@
+﻿<UserControl
+    x:Class="sabores_wanka.Views.Productos.ProductosView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <!-- Réplica frontend de Productos/code.html (solo visual + filtros sobre muestra).
+         Header, 4 KPI, buscador + pills de categoría, tabla de 8 platos y footer fijo. -->
+    <Grid Background="#131519">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+    <StackPanel Grid.Row="0" Spacing="16" Padding="24,24,24,8">
+
+            <!-- Header -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <Border Width="36" Height="36" CornerRadius="10" Background="#0e2a22" BorderBrush="#10b98166" BorderThickness="1">
+                        <FontIcon Glyph="&#xE8A9;" FontSize="15" Foreground="#34d399" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="Gestión de Menú e Inventario de Restaurante" Foreground="White" FontWeight="Bold" FontSize="15"/>
+                            <Border Background="#10b9811a" CornerRadius="10" Padding="8,3" BorderBrush="#10b98133" BorderThickness="1" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <Ellipse Width="6" Height="6" Fill="#34d399" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Servidor POS Conectado" Foreground="#34d399" FontSize="10"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Text="Control de recetas, costeo de insumos, porcionamiento y disponibilidad por estaciones" Foreground="#9ca3af" FontSize="11" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <Button Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="8" Padding="10,7">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="SEDE:" Foreground="#6b7280" FontSize="10" FontWeight="Bold"/>
+                            <TextBlock Text="SEDE_01 - Tienda Principal" Foreground="White" FontSize="11"/>
+                            <FontIcon Glyph="&#xE70D;" FontSize="10" Foreground="#6b7280"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="8" Padding="10,7">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE713;" FontSize="12" Foreground="#60a5fa"/>
+                            <TextBlock Text="Comandas" Foreground="White" FontSize="11"/>
+                            <Border Background="#3b82f633" CornerRadius="8" Padding="6,1" BorderBrush="#3b82f64d" BorderThickness="1"><TextBlock Text="8" Foreground="#93c5fd" FontSize="10" FontWeight="Bold"/></Border>
+                        </StackPanel>
+                    </Button>
+                    <Button Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="8" Padding="10,7">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE81C;" FontSize="12" Foreground="#9ca3af"/>
+                            <TextBlock Text="Historial" Foreground="White" FontSize="11"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- KPI -->
+            <Grid ColumnSpacing="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border Background="#1c1f26" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="12" Padding="14">
+                    <StackPanel Spacing="6">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="VALORIZACIÓN INSUMOS &amp; MENÚ" Foreground="#6b7280" FontSize="10" FontWeight="Bold"/>
+                            <FontIcon Glyph="&#xE8C7;" FontSize="13" Foreground="#34d399" HorizontalAlignment="Right"/>
+                        </StackPanel>
+                        <TextBlock Text="S/ 1,485.50" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <Ellipse Width="6" Height="6" Fill="#10b981" VerticalAlignment="Center"/>
+                            <TextBlock Text="Sincronizado con Almacén Central" Foreground="#34d399" FontSize="10"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Background="#1c1f26" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="12" Padding="14">
+                    <StackPanel Spacing="6">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="RESUMEN PLATOS &amp; BEBIDAS" Foreground="#6b7280" FontSize="10" FontWeight="Bold"/>
+                            <FontIcon Glyph="&#xE7B8;" FontSize="13" Foreground="#60a5fa" HorizontalAlignment="Right"/>
+                        </StackPanel>
+                        <Grid>
+                            <TextBlock Text="Total Catálogo" Foreground="#9ca3af" FontSize="11" VerticalAlignment="Center"/>
+                            <TextBlock Text="184" Foreground="White" FontSize="15" FontWeight="Bold" HorizontalAlignment="Right"/>
+                        </Grid>
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal" Spacing="4"><Ellipse Width="6" Height="6" Fill="#10b981" VerticalAlignment="Center"/><TextBlock Text="Activos en Carta: 162" Foreground="#34d399" FontSize="10"/></StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4"><Ellipse Width="6" Height="6" Fill="#f59e0b" VerticalAlignment="Center"/><TextBlock Text="Críticos: 22" Foreground="#fbbf24" FontSize="10"/></StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Background="#1c1f26" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="12" Padding="14">
+                    <StackPanel Spacing="6">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="DISTRIBUCIÓN DE COCINA" Foreground="#6b7280" FontSize="10" FontWeight="Bold"/>
+                            <FontIcon Glyph="&#xE8B7;" FontSize="13" Foreground="#a78bfa" HorizontalAlignment="Right"/>
+                        </StackPanel>
+                        <TextBlock Text="12 Categorías" Foreground="#fbbf24" FontSize="20" FontWeight="Bold"/>
+                        <TextBlock Text="4 Estaciones operativas (Cocina, Bar, Parrilla, Frío)" Foreground="#9ca3af" FontSize="10"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="3" Background="#2a1518" BorderBrush="#e11d4866" BorderThickness="1" CornerRadius="12" Padding="14">
+                    <StackPanel Spacing="6">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE7BA;" FontSize="13" Foreground="#fb7185"/>
+                            <TextBlock Text="INGREDIENTES CRÍTICOS" Foreground="#fda4af" FontSize="10" FontWeight="Bold"/>
+                        </StackPanel>
+                        <TextBlock Text="14 Insumos" Foreground="#fb7185" FontSize="20" FontWeight="Bold"/>
+                        <TextBlock Text="Requieren reposición inmediata para turno tarde" Foreground="#fda4af" FontSize="10" Opacity="0.8"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Buscador + acciones -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Border Background="#232731" CornerRadius="8" BorderBrush="#2e3442" BorderThickness="1" Padding="12,6">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Glyph="&#xE721;" FontSize="13" Foreground="#6b7280" VerticalAlignment="Center"/>
+                        <TextBox x:Name="BuscadorProductosTextBox" Grid.Column="1" Margin="8,0,0,0" Background="Transparent" BorderThickness="0" Foreground="White" FontSize="11" PlaceholderText="Buscar plato, ingrediente, categoría o código PLU... (Ej: Lomo, Ceviche, PLU-102)" PlaceholderForeground="#6b7280" VerticalAlignment="Center" TextChanged="BuscadorProductosTextBox_TextChanged"/>
+                    </Grid>
+                </Border>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" Margin="8,0,0,0" VerticalAlignment="Center">
+                    <Button Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="8" Padding="12,8">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE71C;" FontSize="12" Foreground="#9ca3af"/>
+                            <TextBlock Text="Filtros" Foreground="White" FontSize="11"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Click="ExportarCartaButton_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="8" Padding="12,8">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE74E;" FontSize="12" Foreground="#9ca3af"/>
+                            <TextBlock Text="Exportar Carta" Foreground="White" FontSize="11"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Click="NuevoPlatoButton_Click" Background="#0078d4" CornerRadius="8" Padding="14,8" BorderThickness="0">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE710;" FontSize="12" Foreground="White"/>
+                            <TextBlock Text="Nuevo Plato / Ítem" Foreground="White" FontSize="11" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- Pills de categoría -->
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" VerticalAlignment="Center">
+                <StackPanel x:Name="PillsPanel" Orientation="Horizontal" Spacing="6">
+                    <Button Tag="todos" Click="CategoriaPill_Click" Background="#0078d4" CornerRadius="14" Padding="14,6" BorderThickness="0"><TextBlock Text="Todos los Platos (184)" Foreground="White" FontSize="11" FontWeight="SemiBold"/></Button>
+                    <Button Tag="Entradas" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Entradas" Foreground="#9ca3af" FontSize="11"/></Button>
+                    <Button Tag="Platos de Fondo" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Platos de Fondo" Foreground="#9ca3af" FontSize="11"/></Button>
+                    <Button Tag="Ceviches" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Ceviches &amp; Pescados" Foreground="#9ca3af" FontSize="11"/></Button>
+                    <Button Tag="Carnes" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Carnes &amp; Parrillas" Foreground="#9ca3af" FontSize="11"/></Button>
+                    <Button Tag="Pastas" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Pastas Artesanales" Foreground="#9ca3af" FontSize="11"/></Button>
+                    <Button Tag="Bebidas" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Bebidas &amp; Cócteles" Foreground="#9ca3af" FontSize="11"/></Button>
+                    <Button Tag="Cervezas" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Cervezas &amp; Vinos" Foreground="#9ca3af" FontSize="11"/></Button>
+                    <Button Tag="Postres" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Postres Caseros" Foreground="#9ca3af" FontSize="11"/></Button>
+                    <Button Tag="Guarniciones" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Guarniciones" Foreground="#9ca3af" FontSize="11"/></Button>
+                    <Button Tag="Menú Ejecutivo" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Menú Ejecutivo" Foreground="#9ca3af" FontSize="11"/></Button>
+                </StackPanel>
+            </ScrollViewer>
+        </StackPanel>
+
+            <!-- Solo la tabla hace scroll; header, KPIs, buscador y pills quedan fijos -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,8,24,8">
+            <StackPanel Spacing="0">
+            <!-- Tabla -->
+            <Border Background="#1c1f26" CornerRadius="12" BorderBrush="#2e3442" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Background="#232731" Padding="12,10" CornerRadius="12,12,0,0" BorderBrush="#2e3442" BorderThickness="0,0,0,1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="110"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="PLU" Foreground="#6b7280" FontSize="10" FontWeight="Bold"/>
+                        <TextBlock Grid.Column="1" Text="PLATO / ÍTEM DE CARTA" Foreground="#6b7280" FontSize="10" FontWeight="Bold"/>
+                        <TextBlock Grid.Column="2" Text="CATEGORÍA" Foreground="#6b7280" FontSize="10" FontWeight="Bold"/>
+                        <TextBlock Grid.Column="3" Text="ESTACIÓN" Foreground="#6b7280" FontSize="10" FontWeight="Bold"/>
+                        <TextBlock Grid.Column="4" Text="COSTO INSUMO" Foreground="#6b7280" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Column="5" Text="PRECIO CARTA" Foreground="#6b7280" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Column="6" Text="PORCIONES DISP." Foreground="#6b7280" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="7" Text="ESTADO" Foreground="#6b7280" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="8" Text="ACCIONES" Foreground="#6b7280" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    </Grid>
+
+                    <Grid x:Name="TablaProductos" Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Fila 101 -->
+                        <Grid Grid.Row="0" Padding="12,10" BorderBrush="#2e3442" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="110"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="101" Foreground="#2b88d8" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Lomo Saltado Criollo" Foreground="White" FontSize="12" FontWeight="SemiBold"/><Border Background="#f59e0b33" CornerRadius="4" Padding="6,1"><TextBlock Text="CALIENTE" Foreground="#fbbf24" FontSize="9" FontWeight="Bold"/></Border></StackPanel>
+                                <TextBlock Text="Receta: Lomo fino 220g, cebolla, tomate, papas amarillas" Foreground="#6b7280" FontSize="10"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="Carnes &amp; Parrillas" Foreground="#9ca3af" FontSize="11" VerticalAlignment="Center"/>
+                            <Border Grid.Column="3" Background="#3b82f61a" CornerRadius="4" Padding="6,2" BorderBrush="#3b82f633" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Center"><TextBlock Text="COCINA 1" Foreground="#60a5fa" FontSize="9" FontWeight="Bold"/></Border>
+                            <TextBlock Grid.Column="4" Text="S/ 14.50" Foreground="#9ca3af" FontFamily="Consolas" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="5" Text="S/ 42.00" Foreground="White" FontFamily="Consolas" FontSize="11" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Border Grid.Column="6" Background="#10b9811a" CornerRadius="4" Padding="6,2" HorizontalAlignment="Center" VerticalAlignment="Center"><TextBlock Text="35 porc." Foreground="#34d399" FontFamily="Consolas" FontSize="10" FontWeight="Bold"/></Border>
+                            <Border Grid.Column="7" Background="#10b9811a" CornerRadius="10" Padding="8,3" HorizontalAlignment="Center" VerticalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="4"><Ellipse Width="6" Height="6" Fill="#34d399" VerticalAlignment="Center"/><TextBlock Text="En Carta" Foreground="#34d399" FontSize="10"/></StackPanel></Border>
+                            <StackPanel Grid.Column="8" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Center" VerticalAlignment="Center"><Button Tag="101" Click="AccionEditarPlato_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Editar plato"><FontIcon Glyph="&#xE70F;" FontSize="12" Foreground="#9ca3af"/></Button><Button Tag="101" Click="AccionReceta_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Receta y escandallo"><FontIcon Glyph="&#xE8FD;" FontSize="12" Foreground="#9ca3af"/></Button><Button Tag="101" Click="AccionPausar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Pausar ítem"><FontIcon Glyph="&#xE769;" FontSize="12" Foreground="#9ca3af"/></Button></StackPanel>
+                        </Grid>
+
+                        <!-- Fila 102 -->
+                        <Grid Grid.Row="1" Padding="12,10" BorderBrush="#2e3442" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="110"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="102" Foreground="#2b88d8" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Ceviche Clásico Mixto" Foreground="White" FontSize="12" FontWeight="SemiBold"/><Border Background="#22d3ee33" CornerRadius="4" Padding="6,1"><TextBlock Text="FRÍA" Foreground="#67e8f9" FontSize="9" FontWeight="Bold"/></Border></StackPanel>
+                                <TextBlock Text="Pesca del día, pulpo, calamar, leche de tigre artesanal" Foreground="#6b7280" FontSize="10"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="Ceviches &amp; Pescados" Foreground="#9ca3af" FontSize="11" VerticalAlignment="Center"/>
+                            <Border Grid.Column="3" Background="#22d3ee1a" CornerRadius="4" Padding="6,2" BorderBrush="#22d3ee33" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Center"><TextBlock Text="COCINA FRÍA" Foreground="#67e8f9" FontSize="9" FontWeight="Bold"/></Border>
+                            <TextBlock Grid.Column="4" Text="S/ 12.00" Foreground="#9ca3af" FontFamily="Consolas" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="5" Text="S/ 38.00" Foreground="White" FontFamily="Consolas" FontSize="11" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Border Grid.Column="6" Background="#10b9811a" CornerRadius="4" Padding="6,2" HorizontalAlignment="Center" VerticalAlignment="Center"><TextBlock Text="18 porc." Foreground="#34d399" FontFamily="Consolas" FontSize="10" FontWeight="Bold"/></Border>
+                            <Border Grid.Column="7" Background="#10b9811a" CornerRadius="10" Padding="8,3" HorizontalAlignment="Center" VerticalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="4"><Ellipse Width="6" Height="6" Fill="#34d399" VerticalAlignment="Center"/><TextBlock Text="En Carta" Foreground="#34d399" FontSize="10"/></StackPanel></Border>
+                            <StackPanel Grid.Column="8" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Center" VerticalAlignment="Center"><Button Tag="102" Click="AccionEditarPlato_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Editar plato"><FontIcon Glyph="&#xE70F;" FontSize="12" Foreground="#9ca3af"/></Button><Button Tag="102" Click="AccionReceta_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Receta y escandallo"><FontIcon Glyph="&#xE8FD;" FontSize="12" Foreground="#9ca3af"/></Button><Button Tag="102" Click="AccionPausar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Pausar ítem"><FontIcon Glyph="&#xE769;" FontSize="12" Foreground="#9ca3af"/></Button></StackPanel>
+                        </Grid>
+
+                        <!-- Fila 205 -->
+                        <Grid Grid.Row="2" Padding="12,10" BorderBrush="#2e3442" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="110"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="205" Foreground="#2b88d8" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Pisco Sour Quebranta 4oz" Foreground="White" FontSize="12" FontWeight="SemiBold"/><Border Background="#818cf833" CornerRadius="4" Padding="6,1"><TextBlock Text="BAR" Foreground="#a5b4fc" FontSize="9" FontWeight="Bold"/></Border></StackPanel>
+                                <TextBlock Text="Pisco Quebranta 4oz, limón de Chulucanas, jarabe de goma" Foreground="#6b7280" FontSize="10"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="Bebidas &amp; Cócteles" Foreground="#9ca3af" FontSize="11" VerticalAlignment="Center"/>
+                            <Border Grid.Column="3" Background="#a855f71a" CornerRadius="4" Padding="6,2" BorderBrush="#a855f733" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Center"><TextBlock Text="BARRA PRINCIPAL" Foreground="#c4b5fd" FontSize="9" FontWeight="Bold"/></Border>
+                            <TextBlock Grid.Column="4" Text="S/ 4.50" Foreground="#9ca3af" FontFamily="Consolas" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="5" Text="S/ 22.00" Foreground="White" FontFamily="Consolas" FontSize="11" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Border Grid.Column="6" Background="#10b9811a" CornerRadius="4" Padding="6,2" HorizontalAlignment="Center" VerticalAlignment="Center"><TextBlock Text="80 copas" Foreground="#34d399" FontFamily="Consolas" FontSize="10" FontWeight="Bold"/></Border>
+                            <Border Grid.Column="7" Background="#10b9811a" CornerRadius="10" Padding="8,3" HorizontalAlignment="Center" VerticalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="4"><Ellipse Width="6" Height="6" Fill="#34d399" VerticalAlignment="Center"/><TextBlock Text="En Carta" Foreground="#34d399" FontSize="10"/></StackPanel></Border>
+                            <StackPanel Grid.Column="8" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Center" VerticalAlignment="Center"><Button Tag="205" Click="AccionEditarPlato_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Editar plato"><FontIcon Glyph="&#xE70F;" FontSize="12" Foreground="#9ca3af"/></Button><Button Tag="205" Click="AccionReceta_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Receta y escandallo"><FontIcon Glyph="&#xE8FD;" FontSize="12" Foreground="#9ca3af"/></Button><Button Tag="205" Click="AccionPausar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Pausar ítem"><FontIcon Glyph="&#xE769;" FontSize="12" Foreground="#9ca3af"/></Button></StackPanel>
+                        </Grid>
+
+                        <!-- Fila 108 -->
+                        <Grid Grid.Row="3" Padding="12,10" BorderBrush="#2e3442" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="110"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="108" Foreground="#2b88d8" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Arroz con Mariscos Meloso" Foreground="White" FontSize="12" FontWeight="SemiBold"/><Border Background="#f59e0b33" CornerRadius="4" Padding="6,1"><TextBlock Text="CALIENTE" Foreground="#fbbf24" FontSize="9" FontWeight="Bold"/></Border></StackPanel>
+                                <TextBlock Text="Insumo crítico: Langostino u15 (solo 4 porciones restantes)" Foreground="#fbbf24" FontSize="10" Opacity="0.8"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="Ceviches &amp; Pescados" Foreground="#9ca3af" FontSize="11" VerticalAlignment="Center"/>
+                            <Border Grid.Column="3" Background="#3b82f61a" CornerRadius="4" Padding="6,2" BorderBrush="#3b82f633" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Center"><TextBlock Text="COCINA 1" Foreground="#60a5fa" FontSize="9" FontWeight="Bold"/></Border>
+                            <TextBlock Grid.Column="4" Text="S/ 15.00" Foreground="#9ca3af" FontFamily="Consolas" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="5" Text="S/ 40.00" Foreground="White" FontFamily="Consolas" FontSize="11" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Border Grid.Column="6" Background="#f59e0b33" CornerRadius="4" Padding="6,2" BorderBrush="#f59e0b66" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center"><TextBlock Text="4 porc." Foreground="#fbbf24" FontFamily="Consolas" FontSize="10" FontWeight="Bold"/></Border>
+                            <Border Grid.Column="7" Background="#f59e0b33" CornerRadius="10" Padding="8,3" HorizontalAlignment="Center" VerticalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="4"><Ellipse Width="6" Height="6" Fill="#fbbf24" VerticalAlignment="Center"/><TextBlock Text="Stock Bajo" Foreground="#fbbf24" FontSize="10"/></StackPanel></Border>
+                            <StackPanel Grid.Column="8" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Center" VerticalAlignment="Center"><Button Tag="108" Click="AccionEditarPlato_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Editar plato"><FontIcon Glyph="&#xE70F;" FontSize="12" Foreground="#9ca3af"/></Button><Button Tag="108" Click="AccionReceta_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Receta y escandallo"><FontIcon Glyph="&#xE8FD;" FontSize="12" Foreground="#9ca3af"/></Button><Button Tag="108" Click="AccionPausar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Pausar ítem"><FontIcon Glyph="&#xE769;" FontSize="12" Foreground="#9ca3af"/></Button></StackPanel>
+                        </Grid>
+
+                        <!-- Fila 412 -->
+                        <Grid Grid.Row="4" Padding="12,10" BorderBrush="#2e3442" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="110"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="412" Foreground="#2b88d8" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Suspiro a la Limeña" Foreground="#6b7280" FontSize="12" FontWeight="SemiBold"/><Border Background="#ec489933" CornerRadius="4" Padding="6,1"><TextBlock Text="POSTRES" Foreground="#f9a8d4" FontSize="9" FontWeight="Bold"/></Border></StackPanel>
+                                <TextBlock Text="Sin stock de manjar de yemas en mise en place" Foreground="#fb7185" FontSize="10"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="Postres Caseros" Foreground="#9ca3af" FontSize="11" VerticalAlignment="Center"/>
+                            <Border Grid.Column="3" Background="#ec48991a" CornerRadius="4" Padding="6,2" BorderBrush="#ec489933" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Center"><TextBlock Text="ESTACIÓN REPOSTERÍA" Foreground="#f9a8d4" FontSize="9" FontWeight="Bold"/></Border>
+                            <TextBlock Grid.Column="4" Text="S/ 3.20" Foreground="#9ca3af" FontFamily="Consolas" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="5" Text="S/ 16.00" Foreground="#6b7280" FontFamily="Consolas" FontSize="11" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Border Grid.Column="6" Background="#e11d4833" CornerRadius="4" Padding="6,2" HorizontalAlignment="Center" VerticalAlignment="Center"><TextBlock Text="0 porc." Foreground="#fb7185" FontFamily="Consolas" FontSize="10" FontWeight="Bold"/></Border>
+                            <Border Grid.Column="7" Background="#e11d4833" CornerRadius="10" Padding="8,3" HorizontalAlignment="Center" VerticalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="4"><Ellipse Width="6" Height="6" Fill="#fb7185" VerticalAlignment="Center"/><TextBlock Text="Agotado" Foreground="#fb7185" FontSize="10"/></StackPanel></Border>
+                            <StackPanel Grid.Column="8" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Center" VerticalAlignment="Center"><Button Tag="412" Click="AccionEditarPlato_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Editar plato"><FontIcon Glyph="&#xE70F;" FontSize="12" Foreground="#9ca3af"/></Button><Button Tag="412" Click="AccionReceta_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Receta y escandallo"><FontIcon Glyph="&#xE8FD;" FontSize="12" Foreground="#9ca3af"/></Button><Button Tag="412" Click="AccionReactivar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Reactivar ítem"><FontIcon Glyph="&#xE768;" FontSize="12" Foreground="#34d399"/></Button></StackPanel>
+                        </Grid>
+
+                        <!-- Fila 301 -->
+                        <Grid Grid.Row="5" Padding="12,10" BorderBrush="#2e3442" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="110"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="301" Foreground="#2b88d8" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Cerveza Artesanal Cumbres IPA 330ml" Foreground="White" FontSize="12" FontWeight="SemiBold"/><Border Background="#10b98133" CornerRadius="4" Padding="6,1"><TextBlock Text="BOTELLA" Foreground="#34d399" FontSize="9" FontWeight="Bold"/></Border></StackPanel>
+                                <TextBlock Text="Lote L-2026-B con rotación FIFO al día" Foreground="#6b7280" FontSize="10"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="Cervezas &amp; Vinos" Foreground="#9ca3af" FontSize="11" VerticalAlignment="Center"/>
+                            <Border Grid.Column="3" Background="#a855f71a" CornerRadius="4" Padding="6,2" BorderBrush="#a855f733" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Center"><TextBlock Text="BARRA PRINCIPAL" Foreground="#c4b5fd" FontSize="9" FontWeight="Bold"/></Border>
+                            <TextBlock Grid.Column="4" Text="S/ 7.00" Foreground="#9ca3af" FontFamily="Consolas" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="5" Text="S/ 18.00" Foreground="White" FontFamily="Consolas" FontSize="11" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Border Grid.Column="6" Background="#10b9811a" CornerRadius="4" Padding="6,2" HorizontalAlignment="Center" VerticalAlignment="Center"><TextBlock Text="45 bot." Foreground="#34d399" FontFamily="Consolas" FontSize="10" FontWeight="Bold"/></Border>
+                            <Border Grid.Column="7" Background="#10b9811a" CornerRadius="10" Padding="8,3" HorizontalAlignment="Center" VerticalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="4"><Ellipse Width="6" Height="6" Fill="#34d399" VerticalAlignment="Center"/><TextBlock Text="En Carta" Foreground="#34d399" FontSize="10"/></StackPanel></Border>
+                            <StackPanel Grid.Column="8" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Center" VerticalAlignment="Center"><Button Tag="301" Click="AccionEditarPlato_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Editar plato"><FontIcon Glyph="&#xE70F;" FontSize="12" Foreground="#9ca3af"/></Button><Button Tag="301" Click="AccionReceta_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Receta y escandallo"><FontIcon Glyph="&#xE8FD;" FontSize="12" Foreground="#9ca3af"/></Button><Button Tag="301" Click="AccionPausar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Pausar ítem"><FontIcon Glyph="&#xE769;" FontSize="12" Foreground="#9ca3af"/></Button></StackPanel>
+                        </Grid>
+
+                        <!-- Fila 115 -->
+                        <Grid Grid.Row="6" Padding="12,10" BorderBrush="#2e3442" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="110"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="115" Foreground="#2b88d8" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Fettuccine a la Huancaína con Lomo" Foreground="White" FontSize="12" FontWeight="SemiBold"/><Border Background="#f59e0b33" CornerRadius="4" Padding="6,1"><TextBlock Text="CALIENTE" Foreground="#fbbf24" FontSize="9" FontWeight="Bold"/></Border></StackPanel>
+                                <TextBlock Text="Pasta al huevo artesanal, salsa huancaína, trozos de lomo" Foreground="#6b7280" FontSize="10"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="Pastas Artesanales" Foreground="#9ca3af" FontSize="11" VerticalAlignment="Center"/>
+                            <Border Grid.Column="3" Background="#3b82f61a" CornerRadius="4" Padding="6,2" BorderBrush="#3b82f633" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Center"><TextBlock Text="COCINA 2 (PASTAS)" Foreground="#60a5fa" FontSize="9" FontWeight="Bold"/></Border>
+                            <TextBlock Grid.Column="4" Text="S/ 11.50" Foreground="#9ca3af" FontFamily="Consolas" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="5" Text="S/ 36.00" Foreground="White" FontFamily="Consolas" FontSize="11" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Border Grid.Column="6" Background="#10b9811a" CornerRadius="4" Padding="6,2" HorizontalAlignment="Center" VerticalAlignment="Center"><TextBlock Text="22 porc." Foreground="#34d399" FontFamily="Consolas" FontSize="10" FontWeight="Bold"/></Border>
+                            <Border Grid.Column="7" Background="#10b9811a" CornerRadius="10" Padding="8,3" HorizontalAlignment="Center" VerticalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="4"><Ellipse Width="6" Height="6" Fill="#34d399" VerticalAlignment="Center"/><TextBlock Text="En Carta" Foreground="#34d399" FontSize="10"/></StackPanel></Border>
+                            <StackPanel Grid.Column="8" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Center" VerticalAlignment="Center"><Button Tag="115" Click="AccionEditarPlato_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Editar plato"><FontIcon Glyph="&#xE70F;" FontSize="12" Foreground="#9ca3af"/></Button><Button Tag="115" Click="AccionReceta_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Receta y escandallo"><FontIcon Glyph="&#xE8FD;" FontSize="12" Foreground="#9ca3af"/></Button><Button Tag="115" Click="AccionPausar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Pausar ítem"><FontIcon Glyph="&#xE769;" FontSize="12" Foreground="#9ca3af"/></Button></StackPanel>
+                        </Grid>
+
+                        <!-- Fila 120 -->
+                        <Grid Grid.Row="7" Padding="12,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="110"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="120" Foreground="#2b88d8" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Causa Limeña Rellena de Pollo &amp; Palta" Foreground="White" FontSize="12" FontWeight="SemiBold"/><Border Background="#22d3ee33" CornerRadius="4" Padding="6,1"><TextBlock Text="FRÍA" Foreground="#67e8f9" FontSize="9" FontWeight="Bold"/></Border></StackPanel>
+                                <TextBlock Text="Papa amarilla prensada con ají amarillo y limón sutil" Foreground="#6b7280" FontSize="10"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="Entradas" Foreground="#9ca3af" FontSize="11" VerticalAlignment="Center"/>
+                            <Border Grid.Column="3" Background="#22d3ee1a" CornerRadius="4" Padding="6,2" BorderBrush="#22d3ee33" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Center"><TextBlock Text="COCINA FRÍA" Foreground="#67e8f9" FontSize="9" FontWeight="Bold"/></Border>
+                            <TextBlock Grid.Column="4" Text="S/ 5.00" Foreground="#9ca3af" FontFamily="Consolas" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="5" Text="S/ 20.00" Foreground="White" FontFamily="Consolas" FontSize="11" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Border Grid.Column="6" Background="#10b9811a" CornerRadius="4" Padding="6,2" HorizontalAlignment="Center" VerticalAlignment="Center"><TextBlock Text="15 porc." Foreground="#34d399" FontFamily="Consolas" FontSize="10" FontWeight="Bold"/></Border>
+                            <Border Grid.Column="7" Background="#10b9811a" CornerRadius="10" Padding="8,3" HorizontalAlignment="Center" VerticalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="4"><Ellipse Width="6" Height="6" Fill="#34d399" VerticalAlignment="Center"/><TextBlock Text="En Carta" Foreground="#34d399" FontSize="10"/></StackPanel></Border>
+                            <StackPanel Grid.Column="8" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Center" VerticalAlignment="Center"><Button Tag="120" Click="AccionEditarPlato_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Editar plato"><FontIcon Glyph="&#xE70F;" FontSize="12" Foreground="#9ca3af"/></Button><Button Tag="120" Click="AccionReceta_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Receta y escandallo"><FontIcon Glyph="&#xE8FD;" FontSize="12" Foreground="#9ca3af"/></Button><Button Tag="120" Click="AccionPausar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Pausar ítem"><FontIcon Glyph="&#xE769;" FontSize="12" Foreground="#9ca3af"/></Button></StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <TextBlock Text="Catálogo de muestra — sin backend todavía" Foreground="#475569" FontSize="10" HorizontalAlignment="Center" Margin="0,8,0,8"/>
+            </StackPanel>
+        </ScrollViewer>
+
+    <!-- Footer fijo abajo: paginación siempre visible aunque haya pocas filas. -->
+    <Border Grid.Row="2" Background="#232731" CornerRadius="12" BorderBrush="#2e3442" BorderThickness="1" Padding="12,8" Margin="24,0,24,16">
+        <Grid>
+            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <TextBlock Text="Mostrando" Foreground="#9ca3af" FontSize="11"/>
+                <TextBlock x:Name="MostrandoProductosText" Text="8" Foreground="White" FontSize="11" FontWeight="Bold"/>
+                <TextBlock Text="de 184 platos y productos" Foreground="#9ca3af" FontSize="11"/>
+                <Button Click="RefrescarButton_Click" Background="Transparent" BorderThickness="0" Padding="6" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Actualizar datos">
+                    <FontIcon Glyph="&#xE72C;" FontSize="12" Foreground="#9ca3af"/>
+                </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Button Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="6" Padding="8,4" MinWidth="0" MinHeight="0"><FontIcon Glyph="&#xE76B;" FontSize="11" Foreground="#6b7280"/></Button>
+                <Button Background="#0078d4" CornerRadius="6" Padding="10,4" BorderThickness="0" MinWidth="0" MinHeight="0"><TextBlock Text="1" Foreground="White" FontSize="11" FontWeight="Bold"/></Button>
+                <Button Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="6" Padding="10,4" MinWidth="0" MinHeight="0"><TextBlock Text="2" Foreground="#9ca3af" FontSize="11"/></Button>
+                <Button Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="6" Padding="10,4" MinWidth="0" MinHeight="0"><TextBlock Text="3" Foreground="#9ca3af" FontSize="11"/></Button>
+                <TextBlock Text="..." Foreground="#6b7280" FontSize="11" VerticalAlignment="Center"/>
+                <Button Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="6" Padding="10,4" MinWidth="0" MinHeight="0"><TextBlock Text="12" Foreground="#9ca3af" FontSize="11"/></Button>
+                <Button Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="6" Padding="8,4" MinWidth="0" MinHeight="0"><FontIcon Glyph="&#xE76C;" FontSize="11" Foreground="#9ca3af"/></Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+    </Grid>
+</UserControl>

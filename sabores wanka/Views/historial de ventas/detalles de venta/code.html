@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sabores Wanka - Historial de Ventas y Detalle de Ticket</title>
+<!-- Tailwind CSS CDN with forms and container queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brandDark: '#080d15',
+            surfaceDark: '#0f1723',
+            cardDark: '#131d2b',
+            accentGreen: '#00d07e',
+            accentOrange: '#f95700',
+            borderDark: '#1e293b'
+          },
+          fontFamily: {
+            mono: ['Consolas', 'Monaco', 'Courier New', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+<!-- Custom styles for POS theme styling -->
+<style data-purpose="custom-decorations">
+    /* Subtle custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f1723;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+    .custom-glow {
+      box-shadow: 0 0 15px -3px rgba(0, 208, 126, 0.15);
+    }
+  </style>
+</head>
+<body class="bg-[#090d14] text-slate-200 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-white flex flex-col justify-between relative overflow-x-hidden">
+<!-- BEGIN: MainHeader -->
+<header class="w-full bg-[#0d1420] border-b border-[#182335] px-6 py-3 flex items-center justify-between sticky top-0 z-20">
+<!-- Brand & System Status -->
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-xl bg-[#f55106] flex items-center justify-center font-bold text-white text-base shadow-lg shadow-orange-950/40">
+        SW
+      </div>
+<div>
+<div class="flex items-baseline space-x-2">
+<span class="text-white font-bold text-base tracking-wide">Sabores Wanka</span>
+<span class="text-slate-500 font-normal text-sm">| Historial de Ventas</span>
+</div>
+<div class="flex items-center space-x-1.5 text-xs text-emerald-400 font-medium">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+<span>Sistema en Línea</span>
+</div>
+</div>
+</div>
+<!-- Navigation Pills -->
+<nav aria-label="Navegación principal" class="flex items-center space-x-2">
+<button class="flex items-center space-x-2 bg-[#00df82] text-[#091510] px-4 py-2 rounded-xl text-xs font-bold tracking-wide shadow-sm hover:brightness-105 transition-all">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path>
+<path d="M22 10H2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Transacciones</span>
+</button>
+<button class="flex items-center space-x-2 bg-[#141e2e] text-slate-300 hover:text-white hover:bg-[#1a283c] px-4 py-2 rounded-xl text-xs font-medium border border-[#1d2a3f] transition-all">
+<svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Cierres de caja</span>
+</button>
+<button class="flex items-center space-x-2 bg-[#141e2e] text-slate-300 hover:text-white hover:bg-[#1a283c] px-4 py-2 rounded-xl text-xs font-medium border border-[#1d2a3f] transition-all">
+<svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Comandas / Cocina</span>
+</button>
+</nav>
+<!-- Top Right Action -->
+<div class="flex items-center space-x-4">
+<button class="bg-[#00df82] hover:bg-[#00ca76] text-[#051a11] px-5 py-2.5 rounded-xl text-xs font-black tracking-wider uppercase flex items-center space-x-2 shadow-lg shadow-emerald-950/30 transition-all">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3"></path>
+</svg>
+<span>CERRAR CAJA</span>
+</button>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: DashboardBody -->
+<main class="w-full max-w-[1840px] mx-auto px-6 py-5 space-y-6 flex-1">
+<!-- BEGIN: KPISection -->
+<section aria-label="Métricas Principales" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+<!-- Card 1: Balance del Día -->
+<div class="bg-[#101826] border border-[#1b283c] rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center space-x-2 text-slate-300 text-xs font-medium">
+<svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Balance del Día</span>
+</div>
+<span class="bg-sky-500/20 text-sky-400 text-[11px] font-bold px-2 py-0.5 rounded-md">
+            +18.4%
+          </span>
+</div>
+<div class="my-2">
+<h2 class="text-3xl font-extrabold text-white tracking-tight">S/ 62.00</h2>
+</div>
+<div class="pt-2">
+<div class="flex justify-between items-center text-[11px] mb-2">
+<span class="text-slate-400">Saldo acumulado: <span class="text-sky-400 font-semibold">S/ 3,920.50</span></span>
+</div>
+<div class="w-full bg-[#172336] h-1.5 rounded-full overflow-hidden">
+<div class="bg-sky-500 h-1.5 rounded-full w-[45%]"></div>
+</div>
+</div>
+</div>
+<!-- Card 2: Ventas Totales -->
+<div class="bg-[#0d221d] border border-[#134335] rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center space-x-2 text-emerald-400 text-xs font-semibold">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Ventas Totales</span>
+</div>
+<span class="bg-emerald-950/80 border border-emerald-500/30 text-emerald-300 text-[11px] font-bold px-2 py-0.5 rounded-md">
+            En Vivo
+          </span>
+</div>
+<div class="my-1">
+<h2 class="text-3xl font-black text-white tracking-tight">S/ 62.00</h2>
+<p class="text-[10px] tracking-wider uppercase font-semibold text-emerald-500/80 mt-1">INGRESOS BRUTOS HOY (SALÓN + LLEVAR)</p>
+</div>
+<div class="pt-2 flex items-center justify-between text-xs text-slate-300 font-medium">
+<span>Meta del día: S/ 2,000.00</span>
+<span class="text-white font-bold text-sm">74%</span>
+</div>
+</div>
+<!-- Card 3: Gastos / Egresos -->
+<div class="bg-[#211116] border border-[#481c25] rounded-2xl p-5 flex flex-col justify-between relative">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center space-x-2 text-rose-300 text-xs font-semibold">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Gastos / Egresos</span>
+</div>
+<span class="text-slate-400 text-[11px]">0 compras</span>
+</div>
+<div class="my-1">
+<h2 class="text-3xl font-black text-white tracking-tight">S/ 0.00</h2>
+<p class="text-[10px] tracking-wider uppercase font-semibold text-rose-400/80 mt-1">PAGOS PROVEEDORES / CAJA CHICA</p>
+</div>
+<div class="pt-2 flex items-center justify-between text-xs text-rose-300/80 border-t border-rose-950/40">
+<span>Salida autorizada</span>
+<svg class="w-3.5 h-3.5 text-rose-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+</div>
+</div>
+<!-- Card 4: Transacciones & Promedio -->
+<div class="bg-[#101826] border border-[#1b283c] rounded-2xl p-4 flex flex-col justify-between space-y-3">
+<!-- Top row: Nº Transacciones -->
+<div class="flex items-center justify-between pb-3 border-b border-[#1b273a]">
+<div>
+<span class="text-[10px] tracking-wider uppercase font-bold text-slate-400">N° TRANSACCIONES</span>
+<div class="text-2xl font-black text-white mt-0.5">3</div>
+</div>
+<div class="w-9 h-9 rounded-xl bg-red-950/40 border border-red-900/40 flex items-center justify-center text-red-400">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+</div>
+<!-- Bottom row: Ticket Promedio -->
+<div class="flex items-center justify-between">
+<div>
+<span class="text-[10px] tracking-wider uppercase font-bold text-slate-400">TICKET PROMEDIO</span>
+<div class="text-xl font-black text-white mt-0.5">S/ 20.67</div>
+</div>
+<div class="w-8 h-8 rounded-lg bg-[#142332] border border-[#1d354a] flex items-center justify-center text-teal-400">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</div>
+</section>
+<!-- END: KPISection -->
+<!-- BEGIN: TableFilterBar -->
+<section class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pt-2">
+<!-- Tabs -->
+<div class="flex items-center space-x-6 border-b border-[#1b283c] lg:border-none pb-2 lg:pb-0">
+<button class="flex items-center space-x-2 text-emerald-400 font-bold text-xs pb-2 border-b-2 border-emerald-400">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Ingresos (Ventas)</span>
+<span class="bg-emerald-950 text-emerald-400 px-1.5 py-0.2 rounded-md text-[10px] border border-emerald-800">3</span>
+</button>
+<button class="flex items-center space-x-2 text-slate-400 hover:text-slate-200 font-medium text-xs pb-2 transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Egresos</span>
+<span class="bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded-md text-[10px]">0</span>
+</button>
+<button class="flex items-center space-x-2 text-slate-400 hover:text-slate-200 font-medium text-xs pb-2 transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Por cobrar</span>
+<span class="bg-cyan-950 text-cyan-400 px-1.5 py-0.2 rounded-md text-[10px] border border-cyan-800">1</span>
+</button>
+</div>
+<!-- Controls & Search -->
+<div class="flex items-center flex-wrap gap-2.5">
+<!-- Filter Icon button -->
+<button class="p-2.5 bg-[#121b29] hover:bg-[#182436] border border-[#1e2a3c] rounded-xl text-slate-300">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<!-- Dropdown Mesas -->
+<div class="relative">
+<select class="appearance-none bg-[#121b29] border border-[#1e2a3c] text-slate-300 text-xs rounded-xl pl-3 pr-8 py-2.5 hover:border-slate-600 focus:outline-none cursor-pointer">
+<option>Todos los clientes / Mesas</option>
+<option>MESA 01</option>
+<option>MESA 02</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- Dropdown Diario -->
+<div class="relative">
+<select class="appearance-none bg-[#121b29] border border-[#1e2a3c] text-slate-300 text-xs rounded-xl pl-3 pr-8 py-2.5 hover:border-slate-600 focus:outline-none cursor-pointer">
+<option>Diario</option>
+<option>Semanal</option>
+<option>Mensual</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- Botón Hoy -->
+<button class="flex items-center space-x-2 bg-[#121b29] hover:bg-[#182436] border border-[#1e2a3c] text-slate-300 px-3.5 py-2.5 rounded-xl text-xs font-medium">
+<svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Hoy</span>
+</button>
+<!-- Search input -->
+<div class="relative w-64">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</span>
+<input class="w-full bg-[#121b29] border border-[#1e2a3c] text-slate-200 text-xs rounded-xl pl-9 pr-3 py-2.5 placeholder-slate-500 focus:outline-none focus:border-emerald-500/50" placeholder="Buscar ticket, cliente..." type="text"/>
+</div>
+</div>
+</section>
+<!-- END: TableFilterBar -->
+<!-- BEGIN: TransactionsTableCard -->
+<section class="bg-[#101826] border border-[#1a2638] rounded-2xl overflow-hidden shadow-2xl">
+<!-- Table Header Bar -->
+<div class="px-6 py-4 flex items-center justify-between border-b border-[#182436]">
+<div class="flex items-center space-x-2.5">
+<div class="w-7 h-7 rounded-lg bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<h3 class="text-sm font-bold text-white tracking-wide">Ventas del Periodo</h3>
+</div>
+<div class="flex items-center space-x-1 text-slate-400 text-xs">
+<svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Mostrando <strong class="text-white">3</strong> de <strong class="text-white">3</strong></span>
+</div>
+</div>
+<!-- Table Body -->
+<div class="overflow-x-auto">
+<table class="w-full text-left text-xs text-slate-300">
+<thead class="bg-[#0b121e] text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-[#182436]">
+<tr>
+<th class="py-3 px-6" scope="col">TICKET / BOLETA #</th>
+<th class="py-3 px-6" scope="col">FECHA Y HORA</th>
+<th class="py-3 px-6" scope="col">MESA / CLIENTE</th>
+<th class="py-3 px-6" scope="col">MOZO</th>
+<th class="py-3 px-6" scope="col">TOTAL</th>
+<th class="py-3 px-6" scope="col">ESTADO</th>
+<th class="py-3 px-6 text-right" scope="col">ACCIONES</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#162233]">
+<!-- Row 1 -->
+<tr class="hover:bg-[#131f31]/60 transition-colors">
+<td class="py-4 px-6 font-mono text-white font-semibold">
+<span class="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-2"></span>
+                B001-0000011
+              </td>
+<td class="py-4 px-6 text-slate-300 font-mono">07/10/2026 00:00</td>
+<td class="py-4 px-6">
+<div class="flex items-center space-x-2">
+<span class="bg-[#5a2c0c] border border-orange-500/40 text-orange-300 text-[10px] font-black px-2 py-0.5 rounded">MESA 01</span>
+<span class="text-slate-200">Cliente Ocasional</span>
+</div>
+</td>
+<td class="py-4 px-6 italic text-slate-400 font-serif">Mostrador</td>
+<td class="py-4 px-6">
+<div class="text-[#00df82] font-black text-sm">S/ 8.00</div>
+<div class="text-[10px] text-slate-400">Efectivo</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#0d2a23] text-emerald-400 border border-emerald-800">
+                  ✓ PAGADO
+                </span>
+</td>
+<td class="py-4 px-6 text-right space-x-2.5 text-slate-400">
+<button class="hover:text-sky-400" title="Guardar / Imprimir"><svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+<button class="hover:text-emerald-400" title="Ver Detalle"><svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+<button class="hover:text-amber-400" title="Editar"><svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+<button class="hover:text-cyan-400" title="Copiar"><svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+<button class="hover:text-red-400" title="Eliminar"><svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+</td>
+</tr>
+<!-- Row 2: SELECTED / HIGHLIGHTED ITEM FOR MODAL -->
+<tr class="bg-[#132233]/70 hover:bg-[#16273b] transition-colors border-l-4 border-l-emerald-400">
+<td class="py-4 px-6 font-mono text-white font-bold">
+<span class="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-2 ring-2 ring-emerald-500/30"></span>
+                B001-0000010
+              </td>
+<td class="py-4 px-6 text-slate-300 font-mono">07/10/2026 00:00</td>
+<td class="py-4 px-6">
+<div class="flex items-center space-x-2">
+<span class="bg-[#5a2c0c] border border-orange-500/40 text-orange-300 text-[10px] font-black px-2 py-0.5 rounded">MESA 01</span>
+<span class="text-slate-200">Cliente Ocasional</span>
+</div>
+</td>
+<td class="py-4 px-6 italic text-slate-400 font-serif">Mostrador</td>
+<td class="py-4 px-6">
+<div class="text-[#00df82] font-black text-sm">S/ 22.00</div>
+<div class="text-[10px] text-slate-400">Efectivo</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#0d2a23] text-emerald-400 border border-emerald-800">
+                  ✓ PAGADO
+                </span>
+</td>
+<td class="py-4 px-6 text-right space-x-2.5 text-slate-400">
+<button class="hover:text-sky-400" title="Guardar / Imprimir"><svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+<button class="text-emerald-400 p-1 bg-emerald-950/60 rounded border border-emerald-500/30" title="Ver Detalle (Activo)"><svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+<button class="hover:text-amber-400" title="Editar"><svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+<button class="hover:text-cyan-400" title="Copiar"><svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+<button class="hover:text-red-400" title="Eliminar"><svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-[#131f31]/60 transition-colors">
+<td class="py-4 px-6 font-mono text-white font-semibold">
+<span class="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-2"></span>
+                B001-0000009
+              </td>
+<td class="py-4 px-6 text-slate-300 font-mono">07/10/2026 00:00</td>
+<td class="py-4 px-6">
+<div class="flex items-center space-x-2">
+<span class="bg-[#5a2c0c] border border-orange-500/40 text-orange-300 text-[10px] font-black px-2 py-0.5 rounded">MESA 01</span>
+<span class="text-slate-200">Cliente Ocasional</span>
+</div>
+</td>
+<td class="py-4 px-6 italic text-slate-400 font-serif">Mostrador</td>
+<td class="py-4 px-6">
+<div class="text-[#00df82] font-black text-sm">S/ 32.00</div>
+<div class="text-[10px] text-slate-400">Efectivo</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#0d2a23] text-emerald-400 border border-emerald-800">
+                  ✓ PAGADO
+                </span>
+</td>
+<td class="py-4 px-6 text-right space-x-2.5 text-slate-400">
+<button class="hover:text-sky-400" title="Guardar / Imprimir"><svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+<button class="hover:text-emerald-400" title="Ver Detalle"><svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+<button class="hover:text-amber-400" title="Editar"><svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+<button class="hover:text-cyan-400" title="Copiar"><svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+<button class="hover:text-red-400" title="Eliminar"><svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- END: TransactionsTableCard -->
+<!-- Footer Note -->
+<footer class="text-center py-4 text-xs text-slate-500">
+      Acciones y buscador activos sobre datos de muestra — sin backend todavía
+    </footer>
+</main>
+<!-- END: DashboardBody -->
+<!-- BEGIN: SaleDetailsModal (Ticket B001-0000010 Modal Pop-up) -->
+<aside aria-labelledby="modal-title" aria-modal="true" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fade-in" id="saleDetailsModal" role="dialog">
+<!-- Modal Card Box -->
+<div class="bg-[#0f1725] border border-[#23354d] w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+<!-- Modal Top Header -->
+<div class="px-6 py-4 bg-[#121c2d] border-b border-[#213045] flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-9 h-9 rounded-xl bg-orange-500/20 border border-orange-500/30 flex items-center justify-center text-[#f55106]">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<div class="flex items-center space-x-2.5">
+<h2 class="text-base font-bold text-white tracking-wide" id="modal-title">
+                Detalle de Venta · <span class="font-mono text-emerald-400">#B001-0000010</span>
+</h2>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-950 text-emerald-400 border border-emerald-700">
+                ✓ PAGADO
+              </span>
+</div>
+<p class="text-xs text-slate-400">Boleta Electrónica de Venta - Sabores Wanka</p>
+</div>
+</div>
+<!-- Close Button -->
+<button aria-label="Cerrar modal" class="text-slate-400 hover:text-white p-2 rounded-lg bg-[#18263a] hover:bg-[#20334e] transition-colors" onclick="document.getElementById('saleDetailsModal').style.display='none'">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path>
+</svg>
+</button>
+</div>
+<!-- Modal Scrollable Content -->
+<div class="p-6 overflow-y-auto space-y-5 divide-y divide-[#1d2a3d]">
+<!-- General Info Tiles -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+<!-- Mesa -->
+<div class="bg-[#141f2e] border border-[#203046] p-3 rounded-xl">
+<span class="text-slate-400 text-[10px] uppercase font-bold tracking-wider block mb-1">Mesa</span>
+<span class="bg-[#5a2c0c] border border-orange-500/40 text-orange-300 font-extrabold px-2 py-0.5 rounded text-[11px] inline-block">
+              MESA 01
+            </span>
+</div>
+<!-- Mozo -->
+<div class="bg-[#141f2e] border border-[#203046] p-3 rounded-xl">
+<span class="text-slate-400 text-[10px] uppercase font-bold tracking-wider block mb-1">Mozo / Atendido por</span>
+<span class="text-white font-medium">Mostrador</span>
+</div>
+<!-- Cliente -->
+<div class="bg-[#141f2e] border border-[#203046] p-3 rounded-xl">
+<span class="text-slate-400 text-[10px] uppercase font-bold tracking-wider block mb-1">Cliente</span>
+<span class="text-white font-medium">Cliente Ocasional</span>
+</div>
+<!-- Método de pago -->
+<div class="bg-[#141f2e] border border-[#203046] p-3 rounded-xl">
+<span class="text-slate-400 text-[10px] uppercase font-bold tracking-wider block mb-1">Método de Pago</span>
+<div class="flex items-center space-x-1 text-emerald-400 font-bold">
+<span>💵 Efectivo</span>
+</div>
+</div>
+</div>
+<!-- Consumed Items Table -->
+<div class="pt-4 space-y-2">
+<div class="flex items-center justify-between text-xs font-bold text-slate-300 mb-2">
+<span>ÍTEMS DEL COMPROBANTE</span>
+<span class="text-slate-500 font-mono text-[11px]">3 artículos</span>
+</div>
+<div class="border border-[#1e2d42] rounded-xl overflow-hidden bg-[#0c1421]">
+<table class="w-full text-left text-xs">
+<thead class="bg-[#131e2e] text-[10px] uppercase text-slate-400 border-b border-[#1e2d42] font-semibold">
+<tr>
+<th class="py-2.5 px-3 w-12 text-center">Cant.</th>
+<th class="py-2.5 px-3">Descripción / Producto</th>
+<th class="py-2.5 px-3 text-right">P. Unit.</th>
+<th class="py-2.5 px-3 text-right">Importe</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#182538] text-slate-300 font-mono">
+<tr class="hover:bg-[#142032]/50 transition-colors">
+<td class="py-3 px-3 text-center text-white font-bold">1x</td>
+<td class="py-3 px-3 font-sans text-white font-medium">
+                    Caldo de Gallina Especial
+                    <span class="block text-[10px] text-slate-400 font-mono">Con presa pierna + huevo cocido</span>
+</td>
+<td class="py-3 px-3 text-right text-slate-300">S/ 14.00</td>
+<td class="py-3 px-3 text-right text-white font-semibold">S/ 14.00</td>
+</tr>
+<tr class="hover:bg-[#142032]/50 transition-colors">
+<td class="py-3 px-3 text-center text-white font-bold">1x</td>
+<td class="py-3 px-3 font-sans text-white font-medium">
+                    Porción de Cancha Serrana
+                    <span class="block text-[10px] text-slate-400 font-mono">Guarnición crocante tradicional</span>
+</td>
+<td class="py-3 px-3 text-right text-slate-300">S/ 3.00</td>
+<td class="py-3 px-3 text-right text-white font-semibold">S/ 3.00</td>
+</tr>
+<tr class="hover:bg-[#142032]/50 transition-colors">
+<td class="py-3 px-3 text-center text-white font-bold">1x</td>
+<td class="py-3 px-3 font-sans text-white font-medium">
+                    Chicha Morada Jarra Personal
+                    <span class="block text-[10px] text-slate-400 font-mono">Bebida casera con maíz morado y frutas</span>
+</td>
+<td class="py-3 px-3 text-right text-slate-300">S/ 5.00</td>
+<td class="py-3 px-3 text-right text-white font-semibold">S/ 5.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Totals & Cash Calculation -->
+<div class="pt-4 grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+<!-- Left: Payment details -->
+<div class="bg-[#121c2d] border border-[#1e2d42] p-3 rounded-xl text-xs space-y-1.5">
+<div class="flex justify-between text-slate-400">
+<span>Monto recibido (Efectivo):</span>
+<span class="text-white font-mono font-medium">S/ 50.00</span>
+</div>
+<div class="flex justify-between text-slate-400">
+<span>Total liquidado:</span>
+<span class="text-white font-mono font-medium">S/ 22.00</span>
+</div>
+<div class="flex justify-between text-emerald-400 font-bold border-t border-[#1c293c] pt-1">
+<span>Vuelto entregado:</span>
+<span class="font-mono text-sm">S/ 28.00</span>
+</div>
+</div>
+<!-- Right: Tax breakdown & Grand Total -->
+<div class="text-right space-y-1 text-xs">
+<div class="flex justify-between text-slate-400">
+<span>Subtotal (Op. Gravada):</span>
+<span class="text-slate-200 font-mono">S/ 18.64</span>
+</div>
+<div class="flex justify-between text-slate-400">
+<span>I.G.V. (18%):</span>
+<span class="text-slate-200 font-mono">S/ 3.36</span>
+</div>
+<div class="flex justify-between items-baseline pt-2 border-t border-[#223348]">
+<span class="text-slate-200 text-sm font-bold uppercase tracking-wide">TOTAL A PAGAR:</span>
+<span class="text-3xl font-black text-[#00df82] font-mono tracking-tight">S/ 22.00</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Bottom Actions -->
+<div class="px-6 py-4 bg-[#111927] border-t border-[#1f2e42] flex flex-wrap items-center justify-between gap-3">
+<div class="flex items-center space-x-2 text-[11px] text-slate-500">
+<svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Comprobante emitido correctamente a SUNAT</span>
+</div>
+<div class="flex items-center space-x-2.5">
+<button class="flex items-center space-x-1.5 px-4 py-2 bg-[#1b273b] hover:bg-[#253650] border border-[#2b3c54] text-white rounded-xl text-xs font-semibold transition-all" onclick="window.print()">
+<svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Reimprimir Ticket</span>
+</button>
+<button class="flex items-center space-x-1.5 px-4 py-2 bg-[#1b273b] hover:bg-[#253650] border border-[#2b3c54] text-white rounded-xl text-xs font-semibold transition-all">
+<svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Descargar PDF</span>
+</button>
+<button class="px-4 py-2 bg-[#00df82] hover:bg-[#00ca76] text-[#051a11] rounded-xl text-xs font-bold transition-all shadow-md" onclick="document.getElementById('saleDetailsModal').style.display='none'">
+            Cerrar
+          </button>
+</div>
+</div>
+</div>
+</aside>
+<!-- END: SaleDetailsModal -->
+<!-- BEGIN: InteractiveHandlers -->
+<script data-purpose="event-handlers">
+    // Esc key to dismiss modal
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        const modal = document.getElementById('saleDetailsModal');
+        if (modal) {
+          modal.style.display = 'none';
+        }
+      }
+    });
+  </script>
+<!-- END: InteractiveHandlers -->
+</body></html>

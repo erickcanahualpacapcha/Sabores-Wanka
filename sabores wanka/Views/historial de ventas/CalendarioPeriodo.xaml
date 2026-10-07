@@ -1,0 +1,54 @@
+﻿<UserControl
+    x:Class="sabores_wanka.Views.HistorialDeVentas.CalendarioPeriodoControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <!-- Calendario del filtro por periodo (patrón Nachis PremiumCalendarControl).
+         Diario/Semanal = grilla de días (semanal resalta la semana);
+         Mensual = solo meses; Anual = solo años. -->
+    <Border Background="#161c28" BorderBrush="#2b353f" BorderThickness="1" CornerRadius="12" Padding="12" Width="308">
+        <StackPanel Spacing="8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="MesTituloText" Text="OCTUBRE 2026" Foreground="#7dd3fc" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+                <Button Grid.Column="2" Click="HoyButton_Click" Background="Transparent" BorderThickness="0" Padding="8,4" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Ir a hoy">
+                    <TextBlock Text="Hoy" Foreground="#9ca3af" FontSize="11"/>
+                </Button>
+                <Button Grid.Column="3" Click="AnteriorButton_Click" Background="Transparent" BorderThickness="0" Padding="8,4" MinWidth="0" MinHeight="0">
+                    <FontIcon Glyph="&#xE70E;" FontSize="11" Foreground="#9ca3af"/>
+                </Button>
+                <Button Grid.Column="4" Click="SiguienteButton_Click" Background="Transparent" BorderThickness="0" Padding="8,4" MinWidth="0" MinHeight="0">
+                    <FontIcon Glyph="&#xE70D;" FontSize="11" Foreground="#9ca3af"/>
+                </Button>
+            </Grid>
+            <Grid x:Name="DiasHeader" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Lun" Foreground="#64748b" FontSize="10" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="Mar" Foreground="#64748b" FontSize="10" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="Mié" Foreground="#64748b" FontSize="10" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="Jue" Foreground="#64748b" FontSize="10" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="4" Text="Vie" Foreground="#64748b" FontSize="10" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="5" Text="Sáb" Foreground="#64748b" FontSize="10" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="6" Text="Dom" Foreground="#64748b" FontSize="10" HorizontalAlignment="Center"/>
+            </Grid>
+            <Grid x:Name="CeldasGrid"/>
+        </StackPanel>
+    </Border>
+</UserControl>

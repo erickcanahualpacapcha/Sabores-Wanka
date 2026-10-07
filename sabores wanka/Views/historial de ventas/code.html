@@ -1,0 +1,706 @@
+<!DOCTYPE html><html class="h-full bg-[#121619] text-gray-200" lang="es" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Sabores Wanka - Historial de Ventas POS</title>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              orange: '#ea580c',
+              emerald: '#059669',
+              emeraldDark: '#064e3b',
+              burgundy: '#991b1b',
+              charcoal: '#171c20',
+              cardBg: '#1f262b',
+              borderDark: '#2a333a'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Plus Jakarta Sans', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<style data-purpose="custom-scrollbars">
+    /* Barra de desplazamiento refinada para tema oscuro */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #121619;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2a333a;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3b4752;
+    }
+  </style>
+<style data-purpose="status-glow">
+    /* Efecto sutil para badges de estado */
+    .glow-emerald {
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+    }
+    .glow-amber {
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col font-sans selection:bg-emerald-600 selection:text-white bg-[#121619] antialiased">
+<!-- BEGIN: MainHeader -->
+<header class="border-b border-[#242b32] bg-[#161b20] sticky top-0 z-30 px-4 sm:px-6 py-3" data-purpose="main-navbar">
+<div class="max-w-[1850px] mx-auto flex flex-wrap items-center justify-between gap-4">
+<!-- Lado Izquierdo: Identidad de Marca y Estado -->
+<div class="flex items-center gap-4">
+<!-- Logo / Isotipo "SW" con estética terracota -->
+<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-600 to-orange-700 flex items-center justify-center font-bold text-white text-lg shadow-md border border-orange-500/30">
+          SW
+        </div>
+<div>
+<div class="flex items-center gap-2">
+<h1 class="text-xl font-bold tracking-tight text-white">Sabores Wanka</h1>
+<span class="text-gray-400 font-normal">|</span>
+<span class="text-base text-gray-300 font-medium">Historial de Ventas</span>
+</div>
+<div class="flex items-center gap-2 mt-0.5 text-xs text-gray-400">
+<span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+<span class="text-emerald-400 font-medium">Sistema en Línea</span>
+<span class="">•</span>
+
+</div>
+</div>
+</div>
+<!-- Centro: Pestañas de Vista de Alto Nivel -->
+<nav class="hidden xl:flex items-center bg-[#1e252c] p-1 rounded-xl border border-[#2b353f]">
+<button class="px-4 py-1.5 rounded-lg bg-white/10 text-white font-medium text-xs transition shadow-sm border border-white/5 flex items-center gap-2">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="receipt" aria-hidden="true" class="lucide lucide-receipt w-3.5 h-3.5 text-emerald-400"><path d="M12 17V7"></path><path d="M16 8h-6a2 2 0 0 0 0 4h4a2 2 0 0 1 0 4H8"></path><path d="M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z"></path></svg>
+          Transacciones
+        </button>
+<button class="px-4 py-1.5 rounded-lg text-gray-400 hover:text-gray-200 text-xs font-medium transition hover:bg-white/5 flex items-center gap-2">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="vault" aria-hidden="true" class="lucide lucide-vault w-3.5 h-3.5"><rect width="18" height="18" x="3" y="3" rx="2"></rect><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"></circle><path d="m7.9 7.9 2.7 2.7"></path><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle><path d="m13.4 10.6 2.7-2.7"></path><circle cx="7.5" cy="16.5" r=".5" fill="currentColor"></circle><path d="m7.9 16.1 2.7-2.7"></path><circle cx="16.5" cy="16.5" r=".5" fill="currentColor"></circle><path d="m13.4 13.4 2.7 2.7"></path><circle cx="12" cy="12" r="2"></circle></svg>
+          Cierres de caja
+        </button>
+<button class="px-4 py-1.5 rounded-lg text-gray-400 hover:text-gray-200 text-xs font-medium transition hover:bg-white/5 flex items-center gap-2">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="utensils-crossed" aria-hidden="true" class="lucide lucide-utensils-crossed w-3.5 h-3.5"><path d="m16 2-2.3 2.3a3 3 0 0 0 0 4.2l1.8 1.8a3 3 0 0 0 4.2 0L22 8"></path><path d="M15 15 3.3 3.3a4.2 4.2 0 0 0 0 6l7.3 7.3c.7.7 2 .7 2.8 0L15 15Zm0 0 7 7"></path><path d="m2.1 21.8 6.4-6.3"></path><path d="m19 5-7 7"></path></svg>
+          Comandas / Cocina
+        </button>
+</nav>
+<!-- Lado Derecho: Acciones de Sincronización, Sucursal y Cierre -->
+<div class="flex items-center flex-wrap gap-2.5">
+<!-- Botón Sync con indicador ámbar -->
+
+<!-- Botón Outbox -->
+
+<!-- Botón Incremental -->
+
+<!-- Botón Destacado: Cerrar Caja -->
+<button class="h-9 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-emerald-900/30 transition border border-emerald-400/40">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="landmark" aria-hidden="true" class="lucide lucide-landmark w-4 h-4"><path d="M10 18v-7"></path><path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z"></path><path d="M14 18v-7"></path><path d="M18 18v-7"></path><path d="M3 22h18"></path><path d="M6 18v-7"></path></svg>
+<span class="">CERRAR CAJA</span>
+</button>
+<!-- Selector de Local/Sucursal -->
+<div class="relative">
+
+</div>
+</div>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 max-w-[1850px] w-full mx-auto p-4 sm:p-6 space-y-6">
+<!-- BEGIN: KPICardsSection -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" data-purpose="metric-cards">
+<!-- Card 1: Balance General / Neto -->
+<article class="bg-[#1b2228] border border-[#27323b] rounded-2xl p-5 shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between text-gray-400">
+<div class="flex items-center gap-2 text-xs uppercase tracking-wider font-semibold">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="wallet" aria-hidden="true" class="lucide lucide-wallet w-4 h-4 text-sky-400"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"></path><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path></svg>
+<span class="">Balance del Día</span>
+</div>
+<span class="text-xs bg-sky-950/60 text-sky-300 border border-sky-800/40 px-2 py-0.5 rounded-md font-mono font-medium">+18.4%</span>
+</div>
+<div class="my-3">
+<div class="text-3xl font-extrabold text-white tracking-tight">S/ 1,360.00</div>
+<div class="text-xs text-gray-400 mt-1 flex items-center gap-1.5">
+<span class="font-medium text-gray-300">Saldo acumulado en caja:</span>
+<span class="text-sky-300 font-mono font-semibold">S/ 3,920.50</span>
+</div>
+</div>
+<div class="w-full bg-[#27323b] h-1.5 rounded-full overflow-hidden mt-1">
+<div class="bg-sky-500 h-full rounded-full" style="width: 72%"></div>
+</div>
+</article>
+<!-- Card 2: Ventas Totales (Acento Verde Esmeralda Moderno) -->
+<article class="bg-gradient-to-br from-[#0c533c] to-[#083b2a] border border-emerald-500/40 rounded-2xl p-5 shadow-lg shadow-emerald-950/20 text-white flex flex-col justify-between relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-28 h-28 bg-emerald-400/10 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between text-emerald-200">
+<div class="flex items-center gap-2 text-xs uppercase tracking-wider font-semibold">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trending-up" aria-hidden="true" class="lucide lucide-trending-up w-4 h-4 text-emerald-300"><path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path></svg>
+<span class="">Ventas Totales</span>
+</div>
+<span class="text-[11px] bg-emerald-400/20 text-emerald-200 px-2 py-0.5 rounded-md font-semibold border border-emerald-300/30">En Vivo</span>
+</div>
+<div class="my-3">
+<div class="text-3xl font-extrabold tracking-tight text-white">S/ 1,480.00</div>
+<div class="text-xs text-emerald-200/90 font-medium tracking-wide mt-1">
+            INGRESOS BRUTOS HOY (SALÓN + LLEVAR)
+          </div>
+</div>
+<div class="flex items-center justify-between text-xs text-emerald-200/70 pt-2 border-t border-emerald-400/20">
+<span class="">Meta del día: S/ 2,000.00</span>
+<span class="font-bold text-white font-mono">74%</span>
+</div>
+</article>
+<!-- Card 3: Gastos / Egresos (Rojo Borgoña Elegante) -->
+<article class="bg-gradient-to-br from-[#5c1c1d] to-[#3f1314] border border-rose-600/30 rounded-2xl p-5 shadow-lg shadow-rose-950/20 text-white flex flex-col justify-between relative overflow-hidden">
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-rose-500/10 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between text-rose-200">
+<div class="flex items-center gap-2 text-xs uppercase tracking-wider font-semibold">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="receipt-text" aria-hidden="true" class="lucide lucide-receipt-text w-4 h-4 text-rose-300"><path d="M13 16H8"></path><path d="M14 8H8"></path><path d="M16 12H8"></path><path d="M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z"></path></svg>
+<span class="">Gastos / Egresos</span>
+</div>
+<span class="text-xs text-rose-300/90 font-mono">2 compras</span>
+</div>
+<div class="my-3">
+<div class="text-3xl font-extrabold tracking-tight text-white">S/ 120.00</div>
+<div class="text-xs text-rose-200/80 font-medium tracking-wide mt-1">
+            PAGOS PROVEEDORES / CAJA CHICA (VERDURAS)
+          </div>
+</div>
+<div class="flex items-center justify-between text-xs text-rose-200/70 pt-2 border-t border-rose-500/20">
+<span class="">Salida autorizada por Administrador</span>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="check-circle-2" aria-hidden="true" class="lucide lucide-check-circle-2 w-3.5 h-3.5 text-rose-300"><circle cx="12" cy="12" r="10"></circle><path d="m16 9-5.5 5.5L8 12"></path></svg>
+</div>
+</article>
+<!-- Card 4: Métricas Operativas (Transacciones + Ticket Promedio) -->
+<article class="bg-[#1b2228] border border-[#27323b] rounded-2xl p-4 flex flex-col justify-between gap-3 shadow-sm">
+<!-- Sub-métrica 1: Conteo de órdenes -->
+<div class="bg-[#151a1e] rounded-xl p-3 border border-[#252f38] flex items-center justify-between">
+<div>
+<span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400 block">N° Transacciones</span>
+<span class="text-2xl font-black text-white font-mono mt-0.5">38</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-400">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="layers" aria-hidden="true" class="lucide lucide-layers w-5 h-5"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"></path><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"></path><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"></path></svg>
+</div>
+</div>
+<!-- Sub-métrica 2: Ticket promedio -->
+<div class="bg-[#151a1e] rounded-xl p-3 border border-[#252f38] flex items-center justify-between">
+<div>
+<span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400 block">Ticket Promedio</span>
+<span class="text-xl font-bold text-white font-mono mt-0.5">S/ 38.95</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400" title="Promedio por mesa/pedido">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="info" aria-hidden="true" class="lucide lucide-info w-5 h-5"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+</div>
+</div>
+</article>
+</section>
+<!-- END: KPICardsSection -->
+<!-- BEGIN: SecondaryNavigationAndFilters -->
+<section class="space-y-4" data-purpose="table-navigation-controls">
+<!-- Pestañas de Vista Contable / Operativa -->
+<div class="flex items-center justify-between border-b border-[#242c33] pb-1 overflow-x-auto">
+<div class="flex items-center gap-6 text-sm font-semibold whitespace-nowrap">
+<button class="relative py-2.5 text-emerald-400 flex items-center gap-2 after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-emerald-400">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-down-left" aria-hidden="true" class="lucide lucide-arrow-down-left w-4 h-4"><path d="M17 7 7 17"></path><path d="M17 17H7V7"></path></svg>
+<span class="">Ingresos (Ventas)</span>
+<span class="bg-emerald-500/20 text-emerald-400 text-xs px-2 py-0.5 rounded-full font-bold ml-0.5">38</span>
+</button>
+<button class="py-2.5 text-gray-400 hover:text-gray-200 transition flex items-center gap-2">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-up-right" aria-hidden="true" class="lucide lucide-arrow-up-right w-4 h-4"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+<span class="">Egresos</span>
+<span class="bg-[#242c33] text-gray-300 text-xs px-2 py-0.5 rounded-full">2</span>
+</button>
+<button class="py-2.5 text-gray-400 hover:text-gray-200 transition flex items-center gap-2">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="file-clock" aria-hidden="true" class="lucide lucide-file-clock w-4 h-4"><path d="M16 22h2a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v2.85"></path><path d="M14 2v5a1 1 0 0 0 1 1h5"></path><path d="M8 14v2.2l1.6 1"></path><circle cx="8" cy="16" r="6"></circle></svg>
+<span class="">Por cobrar / Cuentas</span>
+<span class="bg-amber-500/20 text-amber-300 text-xs px-2 py-0.5 rounded-full font-bold">1</span>
+</button>
+<button class="py-2.5 text-gray-400 hover:text-gray-200 transition flex items-center gap-2">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="award" aria-hidden="true" class="lucide lucide-award w-4 h-4"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"></path><circle cx="12" cy="8" r="6"></circle></svg>
+<span class="">Platos más vendidos</span>
+</button>
+</div>
+<div class="hidden sm:flex items-center gap-2 text-xs text-gray-400">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sparkles" aria-hidden="true" class="lucide lucide-sparkles w-3.5 h-3.5 text-amber-400"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path><path d="M20 2v4"></path><path d="M22 4h-4"></path><circle cx="4" cy="20" r="2"></circle></svg>
+<span class="">Turno Huancayo #12 - Mozo líder: Carlos M.</span>
+</div>
+</div>
+<!-- Barra de Filtros, Fechas y Buscador -->
+<div class="flex flex-wrap items-center justify-between gap-3 bg-[#192026] p-2.5 rounded-xl border border-[#27323b]" data-purpose="filters-bar">
+<div class="flex flex-wrap items-center gap-2.5 flex-1 min-w-[320px]">
+<!-- Botón de Filtrado Avanzado -->
+<button class="h-10 w-10 flex items-center justify-center rounded-lg bg-[#202931] border border-[#2d3a46] text-gray-300 hover:bg-[#28343f] hover:text-white transition" title="Filtros avanzados">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders-horizontal" aria-hidden="true" class="lucide lucide-sliders-horizontal w-4 h-4"><path d="M10 5H3"></path><path d="M12 19H3"></path><path d="M14 3v4"></path><path d="M16 17v4"></path><path d="M21 12h-9"></path><path d="M21 19h-5"></path><path d="M21 5h-7"></path><path d="M8 10v4"></path><path d="M8 12H3"></path></svg>
+</button>
+<!-- Selector de Mesas / Clientes -->
+<div class="relative min-w-[190px]">
+<select class="w-full h-10 pl-3 pr-8 bg-[#202931] border border-[#2d3a46] rounded-lg text-xs font-medium text-gray-200 appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
+<option value="all">Todos los clientes / Mesas</option>
+<option value="salon">Salón Principal (Mesa 01 a 12)</option>
+<option value="terraza">Zona Terraza / Wanka</option>
+<option value="delivery">Para Llevar / Delivery</option>
+<option value="vip">Zona Familiar Privada</option>
+</select>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-down" aria-hidden="true" class="lucide lucide-chevron-down w-3.5 h-3.5 text-gray-400 absolute right-3 top-3.5 pointer-events-none"><path d="m6 9 6 6 6-6"></path></svg>
+</div>
+<!-- Selector de Rango Temporal -->
+<div class="relative min-w-[140px]">
+<select class="w-full h-10 pl-3 pr-8 bg-[#202931] border border-[#2d3a46] rounded-lg text-xs font-medium text-gray-200 appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
+<option value="today">Diario (Hoy)</option>
+<option value="yesterday">Ayer</option>
+<option value="weekly">Esta Semana</option>
+<option value="custom">Personalizado...</option>
+</select>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-down" aria-hidden="true" class="lucide lucide-chevron-down w-3.5 h-3.5 text-gray-400 absolute right-3 top-3.5 pointer-events-none"><path d="m6 9 6 6 6-6"></path></svg>
+</div>
+<!-- Selector de Fecha con Icono Calendario -->
+<button class="h-10 px-3.5 rounded-lg bg-[#202931] border border-[#2d3a46] text-xs font-semibold text-gray-200 flex items-center gap-2 hover:bg-[#28343f] transition">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="calendar" aria-hidden="true" class="lucide lucide-calendar w-4 h-4 text-emerald-400"><path d="M8 2v3"></path><path d="M16 2v3"></path><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18"></path></svg>
+<span class="">24 Oct 2024</span>
+</button>
+</div>
+<!-- Buscador Global de Tickets / Platos -->
+<div class="relative w-full md:w-96">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="search" aria-hidden="true" class="lucide lucide-search w-4 h-4 text-gray-400 absolute left-3.5 top-3 pointer-events-none"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
+<input class="w-full h-10 pl-10 pr-4 bg-[#14191d] border border-[#2b3540] rounded-lg text-xs text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition" placeholder="Buscar ticket, comanda, cliente, plato..." type="text">
+</div>
+</div>
+</section>
+<!-- END: SecondaryNavigationAndFilters -->
+<!-- BEGIN: TransactionsTableSection -->
+<section class="bg-[#181f24] rounded-2xl border border-[#242d35] shadow-xl overflow-hidden" data-purpose="sales-data-table">
+<!-- Encabezado de la Sección de Tabla -->
+<div class="px-5 py-3.5 border-b border-[#242d35] flex items-center justify-between bg-[#1b2329]/80">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="list-ordered" aria-hidden="true" class="lucide lucide-list-ordered w-4 h-4"><path d="M11 5h10"></path><path d="M11 12h10"></path><path d="M11 19h10"></path><path d="M4 4h1v5"></path><path d="M4 9h2"></path><path d="M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02"></path></svg>
+</div>
+<h2 class="text-sm font-bold uppercase tracking-wider text-gray-200">Ventas del Periodo</h2>
+</div>
+<div class="flex items-center gap-2 text-xs text-gray-400 font-medium">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="info" aria-hidden="true" class="lucide lucide-info w-3.5 h-3.5 text-gray-400"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+<span class="">Mostrando <span class="text-white font-bold">6</span> de <span class="text-white font-bold">38</span> resultados</span>
+</div>
+</div>
+<!-- Tabla Responsive -->
+<div class="overflow-x-auto">
+<table class="w-full text-left text-xs text-gray-300">
+<thead class="bg-[#14181c] text-gray-400 uppercase text-[11px] font-bold tracking-wider border-b border-[#242d35]">
+<tr>
+<th class="py-3 px-4" scope="col">TICKET / BOLETA #</th>
+<th class="py-3 px-4" scope="col">FECHA Y HORA</th>
+<th class="py-3 px-4" scope="col">MESA / CLIENTE</th>
+<th class="py-3 px-4" scope="col">MOZO / MESERO</th>
+
+<th class="py-3 px-4" scope="col">TOTAL</th>
+<th class="py-3 px-4 text-center" scope="col">MÉTODO / ESTADO</th>
+<th class="py-3 px-4 text-right" scope="col">ACCIONES</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#232b33]">
+<!-- Fila 1: Pachamanca Tradicional Wanka -->
+<tr class="hover:bg-[#1f2830] transition group">
+<td class="py-3.5 px-4 font-mono font-bold text-white flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+<span class="">B001-0029841</span>
+</td>
+<td class="py-3.5 px-4 text-gray-300 font-mono text-[11px]">
+                24/10/2024 14:42
+              </td>
+<td class="py-3.5 px-4 font-medium text-white">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-orange-500/15 text-orange-300 border border-orange-500/30 rounded text-[10px] font-bold">MESA 04</span>
+<span class="">Familia Quispe</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-gray-300 italic">Luis Huamán</td>
+
+<td class="py-3.5 px-4">
+<div class="text-emerald-400 font-black font-mono text-sm">S/ 85.00</div>
+<div class="text-[10px] text-gray-400 flex items-center gap-1 font-medium mt-0.5">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="smartphone" aria-hidden="true" class="lucide lucide-smartphone w-3 h-3 text-purple-400"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect><path d="M12 18h.01"></path></svg>
+<span class="">Yape / Plin</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 glow-emerald">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="check" aria-hidden="true" class="lucide lucide-check w-3 h-3"><path d="M20 6 9 17l-5-5"></path></svg>
+                  PAGADO
+                </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<!-- Botones de Acción de Fila -->
+<div class="inline-flex items-center gap-1 text-gray-400">
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Imprimir Ticket">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="printer" aria-hidden="true" class="lucide lucide-printer w-4 h-4 text-sky-400"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"></path><rect x="6" y="14" width="12" height="8" rx="1"></rect></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Ver Detalle">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="eye" aria-hidden="true" class="lucide lucide-eye w-4 h-4 text-gray-300"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Editar Comanda">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="pencil" aria-hidden="true" class="lucide lucide-pencil w-4 h-4 text-amber-400"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Enviar WhatsApp">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="phone" aria-hidden="true" class="lucide lucide-phone w-4 h-4 text-emerald-400"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Duplicar">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="copy" aria-hidden="true" class="lucide lucide-copy w-4 h-4 text-blue-400"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-rose-500/20 rounded-md transition" title="Anular">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trash-2" aria-hidden="true" class="lucide lucide-trash-2 w-4 h-4 text-rose-400"><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+</button>
+</div>
+</td>
+</tr>
+<!-- Fila 2: Trucha Frita a la Huancaína -->
+<tr class="hover:bg-[#1f2830] transition group">
+<td class="py-3.5 px-4 font-mono font-bold text-white flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+<span class="">B001-0029840</span>
+</td>
+<td class="py-3.5 px-4 text-gray-300 font-mono text-[11px]">
+                24/10/2024 14:28
+              </td>
+<td class="py-3.5 px-4 font-medium text-white">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-sky-500/15 text-sky-300 border border-sky-500/30 rounded text-[10px] font-bold">MESA 02</span>
+<span class="">Ing. Marco Ramos</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-gray-300 italic">
+                Rosa Cárdenas
+              </td>
+
+<td class="py-3.5 px-4">
+<div class="text-emerald-400 font-black font-mono text-sm">S/ 64.00</div>
+<div class="text-[10px] text-gray-400 flex items-center gap-1 font-medium mt-0.5">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="banknote" aria-hidden="true" class="lucide lucide-banknote w-3 h-3 text-emerald-400"><rect width="20" height="12" x="2" y="6" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
+<span class="">Efectivo</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 glow-emerald">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="check" aria-hidden="true" class="lucide lucide-check w-3 h-3"><path d="M20 6 9 17l-5-5"></path></svg>
+                  PAGADO
+                </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center gap-1 text-gray-400">
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Imprimir Ticket">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="printer" aria-hidden="true" class="lucide lucide-printer w-4 h-4 text-sky-400"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"></path><rect x="6" y="14" width="12" height="8" rx="1"></rect></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Ver Detalle">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="eye" aria-hidden="true" class="lucide lucide-eye w-4 h-4 text-gray-300"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Editar Comanda">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="pencil" aria-hidden="true" class="lucide lucide-pencil w-4 h-4 text-amber-400"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Enviar WhatsApp">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="phone" aria-hidden="true" class="lucide lucide-phone w-4 h-4 text-emerald-400"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Duplicar">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="copy" aria-hidden="true" class="lucide lucide-copy w-4 h-4 text-blue-400"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-rose-500/20 rounded-md transition" title="Anular">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trash-2" aria-hidden="true" class="lucide lucide-trash-2 w-4 h-4 text-rose-400"><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+</button>
+</div>
+</td>
+</tr>
+<!-- Fila 3: Caldo de Mote / Caldo de Gallina (Mesa en atención) -->
+<tr class="hover:bg-[#1f2830] transition group">
+<td class="py-3.5 px-4 font-mono font-bold text-white flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+<span class="">T002-0004128</span>
+</td>
+<td class="py-3.5 px-4 text-gray-300 font-mono text-[11px]">
+                24/10/2024 14:15
+              </td>
+<td class="py-3.5 px-4 font-medium text-white">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-purple-500/15 text-purple-300 border border-purple-500/30 rounded text-[10px] font-bold">MESA 08</span>
+<span class="">Cliente Ocasional</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-gray-300 italic">
+                Carlos Meléndez
+              </td>
+
+<td class="py-3.5 px-4">
+<div class="text-amber-400 font-black font-mono text-sm">S/ 28.00</div>
+<div class="text-[10px] text-gray-400 flex items-center gap-1 font-medium mt-0.5">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="credit-card" aria-hidden="true" class="lucide lucide-credit-card w-3 h-3 text-cyan-400"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line><path d="M6 14h2"></path></svg>
+<span class="">Tarjeta VISA</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40 glow-amber">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="utensils" aria-hidden="true" class="lucide lucide-utensils w-3 h-3"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path></svg>
+                  EN MESA
+                </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center gap-1 text-gray-400">
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Imprimir Ticket">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="printer" aria-hidden="true" class="lucide lucide-printer w-4 h-4 text-sky-400"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"></path><rect x="6" y="14" width="12" height="8" rx="1"></rect></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Ver Detalle">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="eye" aria-hidden="true" class="lucide lucide-eye w-4 h-4 text-gray-300"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg>
+</button>
+<button class="px-2 py-1 text-xs rounded bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-white transition font-medium flex items-center gap-1" title="Ir a Comanda">Ir</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Enviar WhatsApp">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="phone" aria-hidden="true" class="lucide lucide-phone w-4 h-4 text-emerald-400"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Duplicar">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="copy" aria-hidden="true" class="lucide lucide-copy w-4 h-4 text-blue-400"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-rose-500/20 rounded-md transition" title="Anular">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trash-2" aria-hidden="true" class="lucide lucide-trash-2 w-4 h-4 text-rose-400"><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+</button>
+</div>
+</td>
+</tr>
+<!-- Fila 4: Lomo Saltado Wanka al Wok -->
+<tr class="hover:bg-[#1f2830] transition group">
+<td class="py-3.5 px-4 font-mono font-bold text-white flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+<span class="">B001-0029839</span>
+</td>
+<td class="py-3.5 px-4 text-gray-300 font-mono text-[11px]">
+                24/10/2024 13:50
+              </td>
+<td class="py-3.5 px-4 font-medium text-white">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded text-[10px] font-bold">LLEVAR #12</span>
+<span class="">Sonia Baldeón</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-gray-300 italic">
+                Caja Mostrador
+              </td>
+
+<td class="py-3.5 px-4">
+<div class="text-emerald-400 font-black font-mono text-sm">S/ 42.00</div>
+<div class="text-[10px] text-gray-400 flex items-center gap-1 font-medium mt-0.5">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="banknote" aria-hidden="true" class="lucide lucide-banknote w-3 h-3 text-emerald-400"><rect width="20" height="12" x="2" y="6" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
+<span class="">Efectivo</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 glow-emerald">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="check" aria-hidden="true" class="lucide lucide-check w-3 h-3"><path d="M20 6 9 17l-5-5"></path></svg>
+                  PAGADO
+                </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center gap-1 text-gray-400">
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Imprimir Ticket">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="printer" aria-hidden="true" class="lucide lucide-printer w-4 h-4 text-sky-400"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"></path><rect x="6" y="14" width="12" height="8" rx="1"></rect></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Ver Detalle">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="eye" aria-hidden="true" class="lucide lucide-eye w-4 h-4 text-gray-300"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Editar Comanda">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="pencil" aria-hidden="true" class="lucide lucide-pencil w-4 h-4 text-amber-400"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Enviar WhatsApp">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="phone" aria-hidden="true" class="lucide lucide-phone w-4 h-4 text-emerald-400"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Duplicar">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="copy" aria-hidden="true" class="lucide lucide-copy w-4 h-4 text-blue-400"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-rose-500/20 rounded-md transition" title="Anular">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trash-2" aria-hidden="true" class="lucide lucide-trash-2 w-4 h-4 text-rose-400"><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+</button>
+</div>
+</td>
+</tr>
+<!-- Fila 5: Cuy Chactado y Choclo con Queso -->
+<tr class="hover:bg-[#1f2830] transition group">
+<td class="py-3.5 px-4 font-mono font-bold text-white flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+<span class="">B001-0029838</span>
+</td>
+<td class="py-3.5 px-4 text-gray-300 font-mono text-[11px]">
+                24/10/2024 13:20
+              </td>
+<td class="py-3.5 px-4 font-medium text-white">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-orange-500/15 text-orange-300 border border-orange-500/30 rounded text-[10px] font-bold">MESA 09</span>
+<span class="">Lic. David Tovar</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-gray-300 italic">Luis Mesa</td>
+
+<td class="py-3.5 px-4">
+<div class="text-emerald-400 font-black font-mono text-sm">S/ 96.00</div>
+<div class="text-[10px] text-gray-400 flex items-center gap-1 font-medium mt-0.5">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="credit-card" aria-hidden="true" class="lucide lucide-credit-card w-3 h-3 text-cyan-400"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line><path d="M6 14h2"></path></svg>
+<span class="">Tarjeta Mastercard</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 glow-emerald">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="check" aria-hidden="true" class="lucide lucide-check w-3 h-3"><path d="M20 6 9 17l-5-5"></path></svg>
+                  PAGADO
+                </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center gap-1 text-gray-400">
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Imprimir Ticket">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="printer" aria-hidden="true" class="lucide lucide-printer w-4 h-4 text-sky-400"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"></path><rect x="6" y="14" width="12" height="8" rx="1"></rect></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Ver Detalle">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="eye" aria-hidden="true" class="lucide lucide-eye w-4 h-4 text-gray-300"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Editar Comanda">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="pencil" aria-hidden="true" class="lucide lucide-pencil w-4 h-4 text-amber-400"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Enviar WhatsApp">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="phone" aria-hidden="true" class="lucide lucide-phone w-4 h-4 text-emerald-400"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Duplicar">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="copy" aria-hidden="true" class="lucide lucide-copy w-4 h-4 text-blue-400"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-rose-500/20 rounded-md transition" title="Anular">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trash-2" aria-hidden="true" class="lucide lucide-trash-2 w-4 h-4 text-rose-400"><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+</button>
+</div>
+</td>
+</tr>
+<!-- Fila 6: Arroz con Pato Wanka -->
+<tr class="hover:bg-[#1f2830] transition group">
+<td class="py-3.5 px-4 font-mono font-bold text-white flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+<span class="">B001-0029837</span>
+</td>
+<td class="py-3.5 px-4 text-gray-300 font-mono text-[11px]">
+                24/10/2024 12:55
+              </td>
+<td class="py-3.5 px-4 font-medium text-white">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-orange-500/15 text-orange-300 border border-orange-500/30 rounded text-[10px] font-bold">MESA 01</span>
+<span class="">Fiorella Huamán</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-gray-300 italic">
+                Rosa Cárdenas
+              </td>
+
+<td class="py-3.5 px-4">
+<div class="text-emerald-400 font-black font-mono text-sm">S/ 48.00</div>
+<div class="text-[10px] text-gray-400 flex items-center gap-1 font-medium mt-0.5">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="smartphone" aria-hidden="true" class="lucide lucide-smartphone w-3 h-3 text-purple-400"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect><path d="M12 18h.01"></path></svg>
+<span class="">Yape / Plin</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 glow-emerald">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="check" aria-hidden="true" class="lucide lucide-check w-3 h-3"><path d="M20 6 9 17l-5-5"></path></svg>
+                  PAGADO
+                </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center gap-1 text-gray-400">
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Imprimir Ticket">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="printer" aria-hidden="true" class="lucide lucide-printer w-4 h-4 text-sky-400"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"></path><rect x="6" y="14" width="12" height="8" rx="1"></rect></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Ver Detalle">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="eye" aria-hidden="true" class="lucide lucide-eye w-4 h-4 text-gray-300"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Editar Comanda">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="pencil" aria-hidden="true" class="lucide lucide-pencil w-4 h-4 text-amber-400"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Enviar WhatsApp">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="phone" aria-hidden="true" class="lucide lucide-phone w-4 h-4 text-emerald-400"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition" title="Duplicar">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="copy" aria-hidden="true" class="lucide lucide-copy w-4 h-4 text-blue-400"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
+</button>
+<button class="p-1.5 hover:text-white hover:bg-rose-500/20 rounded-md transition" title="Anular">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trash-2" aria-hidden="true" class="lucide lucide-trash-2 w-4 h-4 text-rose-400"><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Fin de Tabla -->
+<!-- BEGIN: TableFooterAndPagination -->
+<div class="px-5 py-3.5 bg-[#14181c] border-t border-[#242d35] flex flex-wrap items-center justify-between gap-4 text-xs text-gray-400" data-purpose="table-footer-pagination">
+<!-- Lado Izquierdo: Paginado y Monitor Sync -->
+<div class="flex items-center flex-wrap gap-4">
+<div class="flex items-center gap-2">
+<span class="">Resultados por página:</span>
+<select class="bg-[#1e262c] text-white text-xs border border-[#2e3943] rounded px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
+<option selected="" value="10">10</option>
+<option value="25">25</option>
+<option value="50">50</option>
+</select>
+</div>
+<span class="text-gray-600">|</span>
+<span class="font-medium text-gray-300">Total: <span class="text-white font-bold">38</span> transacciones registradas</span>
+<button class="px-3 py-1 rounded bg-[#1e262c] hover:bg-[#27323b] text-gray-300 hover:text-white border border-[#2e3943] transition flex items-center gap-1.5 font-semibold text-[11px]">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="activity" aria-hidden="true" class="lucide lucide-activity w-3.5 h-3.5 text-emerald-400"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"></path></svg>
+<span class="">MONITOR SYNC</span>
+</button>
+</div>
+<!-- Lado Derecho: Controles de Paginación -->
+<div class="flex items-center gap-1.5">
+<button class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-[#1f2830] transition border border-[#26313a] disabled:opacity-40" disabled="">
+            Anterior
+          </button>
+<button class="w-8 h-8 rounded-lg bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shadow-sm">
+            1
+          </button>
+<button class="w-8 h-8 rounded-lg text-gray-400 hover:text-white hover:bg-[#1f2830] transition text-xs flex items-center justify-center border border-[#26313a]">
+            2
+          </button>
+<button class="w-8 h-8 rounded-lg text-gray-400 hover:text-white hover:bg-[#1f2830] transition text-xs flex items-center justify-center border border-[#26313a]">
+            3
+          </button>
+<span class="px-1 text-gray-500">...</span>
+<button class="px-3 py-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-[#1f2830] transition border border-[#26313a]">
+            Siguiente
+          </button>
+</div>
+</div>
+<!-- END: TableFooterAndPagination -->
+</section>
+<!-- END: TransactionsTableSection -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: BottomStatusBar -->
+
+<!-- END: BottomStatusBar -->
+<!-- Scripts: Lucide Icons Rendering -->
+<script data-purpose="icon-initialization">
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    });
+  </script>
+
+
+
+
+</body></html>

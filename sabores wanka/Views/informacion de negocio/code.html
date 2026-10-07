@@ -1,0 +1,575 @@
+<!DOCTYPE html><html class="h-full bg-[#050d0b]" lang="es"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Configuración de Negocio - Sistema POS</title>
+<!-- Tailwind CSS v3 with Forms Plugin -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              darkest: '#050d0b',
+              dark: '#081411',
+              panel: '#0c1b17',
+              panelLight: '#11241f',
+              card: '#0f201b',
+              border: '#18382f',
+              borderLight: '#235245',
+              accent: '#10b981',
+              accentHover: '#059669',
+              gold: '#eab308',
+              goldLight: '#f6d87c',
+              goldDark: '#cca152',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            receipt: ['"Courier New"', 'Courier', 'monospace', 'Consolas'],
+          }
+        }
+      }
+    }
+  </script>
+<!-- Typography & Global Styles -->
+<style data-purpose="typography">
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .font-receipt {
+      font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
+      letter-spacing: -0.025em;
+    }
+  </style>
+<!-- Custom Element Layout Styles -->
+<style data-purpose="custom-scrollbars">
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #081411;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #18382f;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #235245;
+    }
+  </style>
+</head>
+<body class="h-full bg-[#050d0b] text-slate-200 antialiased selection:bg-emerald-500 selection:text-black flex flex-col justify-between">
+<!-- BEGIN: DesktopContainer -->
+<div class="min-h-screen flex flex-col justify-between w-full p-4 lg:p-6 max-w-[1720px] mx-auto">
+<!-- BEGIN: TopBar Controls -->
+<!-- Window OS Control simulation bar -->
+<div class="w-full flex items-center justify-between pb-3 pt-1 text-xs text-emerald-500/50 select-none">
+<div class="flex items-center gap-2">
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500/60 animate-pulse"></span>
+<span class="font-mono text-[11px] tracking-wider text-emerald-400/80">SISTEMA POS v4.2 // ESTACIÓN ACTIVA</span>
+</div>
+<div class="flex items-center gap-4 text-emerald-400/40 hover:text-emerald-300">
+<div class="px-2 py-0.5 rounded border border-emerald-950 bg-emerald-950/20 text-[10px] tracking-widest text-emerald-400">
+          TERMINAL 01 - PRINCIPAL
+        </div>
+<div class="flex items-center gap-3 pr-2">
+<span class="cursor-pointer hover:text-white">─</span>
+<span class="cursor-pointer hover:text-white">□</span>
+<span class="cursor-pointer hover:text-red-400">✕</span>
+</div>
+</div>
+</div>
+<!-- END: TopBar Controls -->
+<!-- BEGIN: SystemHeader -->
+<header class="w-full bg-[#0c1b17] border border-[#16362d] rounded-2xl p-5 mb-5 shadow-2xl relative overflow-hidden backdrop-blur-sm">
+<!-- Ambient Glow Decor -->
+<div class="absolute -top-16 -left-16 w-48 h-48 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+<!-- Title and Icon Area -->
+<div class="flex items-start md:items-center gap-4">
+<div class="w-13 h-13 p-3 rounded-xl bg-[#122822] border border-[#1f483c] text-emerald-400 shadow-inner flex items-center justify-center">
+<!-- Gear Icon -->
+<svg class="w-7 h-7 text-emerald-400 animate-spin-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<h1 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+              Configuración de Negocio
+            </h1>
+<p class="text-xs md:text-sm text-emerald-400/70 mt-0.5">
+              Personaliza facturación, branding, datos fiscales e impresoras térmicas
+            </p>
+</div>
+</div>
+<!-- Right Side: Status Badges and POS Return Action -->
+<div class="flex items-center flex-wrap gap-3">
+<!-- System Status Badge -->
+<div class="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#081512] border border-[#16342b]">
+<span class="text-xs text-slate-400">Estado del Sistema</span>
+<span class="flex items-center gap-1.5 text-xs font-semibold text-emerald-400">
+<span class="w-2 h-2 rounded-full bg-emerald-400 inline-block shadow-[0_0_8px_#10b981]"></span>
+              En Línea
+            </span>
+</div>
+<!-- License Tier Pill -->
+<div class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#182315] border border-amber-500/30 text-amber-300 text-xs font-medium">
+<!-- Crown/Shield Icon -->
+<svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 011.414 1.155l-1.5 6A1 1 0 0115 13H5a1 1 0 01-.967-.74l-1.5-6A1 1 0 013.947 5.1l1.6.8L9.5 4.324V3a1 1 0 011-1zm-5 13a1 1 0 000 2h10a1 1 0 100-2H5z" fill-rule="evenodd"></path>
+</svg>
+<span class="tracking-wide">PRO / Premium</span>
+</div>
+<!-- Back to POS button -->
+<a class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#132c25] hover:bg-[#183a31] border border-[#235345] text-emerald-200 text-xs font-medium transition duration-150" href="#">
+<svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="">Volver al POS</span>
+</a>
+</div>
+</div>
+</header>
+<!-- END: SystemHeader -->
+<!-- BEGIN: MainTabsNavigation -->
+<nav aria-label="Pestañas de Configuración" class="flex items-center gap-3 mb-6">
+<!-- Tab 1: Información de Negocio (Active with gold/warm tone as reference) -->
+<button class="tab-button px-6 py-2.5 rounded-full text-sm font-semibold tracking-wide transition-all duration-150 shadow-md bg-[#ddb159] text-[#121f1a] hover:bg-[#e4be6d] border border-[#ddb159] flex items-center gap-2" data-purpose="tab-trigger-business" id="tab-btn-business" type="button">
+<!-- Store Icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path>
+</svg>
+<span class="">Información de Negocio</span>
+</button>
+<!-- Tab 2: Impresoras (Explicitly requested replacing Hardware) -->
+<button class="tab-button px-6 py-2.5 rounded-full text-sm font-medium tracking-wide transition-all duration-150 bg-[#091512] text-emerald-300/80 hover:text-emerald-100 hover:bg-[#0f231e] border border-[#16362e] flex items-center gap-2" data-purpose="tab-trigger-printers" id="tab-btn-printers" type="button">
+<!-- Printer Icon -->
+<svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="">Impresoras</span>
+<span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] bg-[#14322a] text-emerald-300 font-mono">3 activas</span>
+</button>
+</nav>
+<!-- END: MainTabsNavigation -->
+<!-- BEGIN: TabContentBusiness -->
+<main class="grid grid-cols-1 xl:grid-cols-12 gap-6 flex-1 items-start" id="view-business">
+<!-- LEFT COLUMN: Forms (7 Cols) -->
+<section aria-labelledby="section-company-data" class="xl:col-span-7 flex flex-col gap-6">
+<!-- Card 1: Datos de la Empresa -->
+<div class="bg-[#0b1814] border border-[#16372d] rounded-2xl p-6 shadow-xl backdrop-blur-sm">
+<!-- Card Header -->
+<div class="flex items-center justify-between pb-5 mb-5 border-b border-[#142f26]">
+<div>
+<h2 class="text-lg font-bold text-white tracking-tight flex items-center gap-2" id="section-company-data">
+                Datos de la Empresa
+              </h2>
+<p class="text-xs text-emerald-400/60 mt-0.5">Información que figurará en boletas, facturas y tickets térmicos</p>
+</div>
+<button class="text-xs font-semibold text-emerald-400 hover:text-emerald-300 tracking-wide underline underline-offset-4 decoration-emerald-500/40 hover:decoration-emerald-400 transition" type="button">
+              Historial de Cambios
+            </button>
+</div>
+<!-- Card Body: Grid with Logo and Inputs -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Logo Upload Block (Left Box) -->
+<div class="md:col-span-4 flex flex-col">
+<label class="text-[11px] font-bold uppercase tracking-wider text-emerald-400/80 mb-2">
+                Logotipo Ticket
+              </label>
+<div class="flex-1 min-h-[175px] rounded-xl border border-dashed border-[#204a3e] bg-[#071310] hover:bg-[#0a1a15] transition flex flex-col items-center justify-center p-4 text-center group cursor-pointer relative overflow-hidden">
+<input accept="image/png, image/jpeg" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" id="ticket-logo-input" type="file">
+<div class="w-12 h-12 rounded-xl bg-[#10241e] border border-[#1e463a] flex items-center justify-center mb-2.5 text-amber-400 group-hover:scale-105 transition">
+<svg class="w-6 h-6 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<span class="text-xs font-semibold text-emerald-200">Cambiar Logotipo</span>
+<span class="text-[10px] text-emerald-500/50 mt-1">Arrastra o haz clic aquí</span>
+</div>
+<p class="text-[11px] text-emerald-500/60 mt-2 text-center md:text-left">
+                Recomendado: 400x400px PNG / Monocromático para ticket térmico
+              </p>
+</div>
+<!-- Form Fields Grid (Right 8 columns) -->
+<div class="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Input: Nombre Comercial -->
+<div class="sm:col-span-1">
+<label class="block text-[11px] font-bold uppercase tracking-wider text-emerald-400/80 mb-1.5" for="input-biz-name">
+                  Nombre Comercial
+                </label>
+<div class="relative">
+<input class="w-full bg-[#071411] border border-[#173a30] focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 rounded-lg px-3.5 py-2.5 text-sm text-white font-medium placeholder-zinc-600 transition" id="input-biz-name" type="text" value="SABORES WANKA">
+</div>
+</div>
+<!-- Input: RUC / NIT -->
+<div class="sm:col-span-1">
+<label class="block text-[11px] font-bold uppercase tracking-wider text-emerald-400/80 mb-1.5" for="input-ruc">
+                  RUC / NIT
+                </label>
+<input class="w-full bg-[#071411] border border-[#173a30] focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 rounded-lg px-3.5 py-2.5 text-sm text-white font-medium placeholder-zinc-600 font-mono transition" id="input-ruc" type="text" value="101840998026">
+</div>
+<!-- Input: Teléfono / WhatsApp -->
+<div class="sm:col-span-1">
+<label class="block text-[11px] font-bold uppercase tracking-wider text-emerald-400/80 mb-1.5" for="input-phone">
+                  Teléfono / WhatsApp
+                </label>
+<input class="w-full bg-[#071411] border border-[#173a30] focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 rounded-lg px-3.5 py-2.5 text-sm text-white font-medium placeholder-zinc-600 transition" id="input-phone" type="text" value="+51 999 999 999">
+</div>
+<!-- Dropdown: Moneda -->
+<div class="sm:col-span-1">
+<label class="block text-[11px] font-bold uppercase tracking-wider text-emerald-400/80 mb-1.5" for="select-currency">
+                  Moneda
+                </label>
+<div class="relative">
+<select class="w-full bg-[#071411] border border-[#173a30] focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 rounded-lg px-3.5 py-2.5 text-sm text-white font-medium appearance-none cursor-pointer pr-10 transition" id="select-currency">
+<option selected="" value="PEN">S/ Sol Peruano (PEN)</option>
+<option value="USD">$ Dólar Americano (USD)</option>
+<option value="EUR">€ Euro (EUR)</option>
+<option value="COP">$ Peso Colombiano (COP)</option>
+<option value="MXN">$ Peso Mexicano (MXN)</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-emerald-400">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Input: Dirección Fiscal -->
+<div class="sm:col-span-2">
+<label class="block text-[11px] font-bold uppercase tracking-wider text-emerald-400/80 mb-1.5" for="input-address">
+                  Dirección Fiscal
+                </label>
+<input class="w-full bg-[#071411] border border-[#173a30] focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 rounded-lg px-3.5 py-2.5 text-sm text-white font-medium placeholder-zinc-600 transition" id="input-address" type="text" value="Torre Tagle y Ciro 450 - Huancayo">
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2: Redes Sociales y Datos de Contacto -->
+<div class="bg-[#0b1814] border border-[#16372d] rounded-2xl p-6 shadow-xl backdrop-blur-sm">
+<div class="flex items-center justify-between pb-4 mb-5 border-b border-[#142f26]">
+<div>
+<h2 class="text-lg font-bold text-white tracking-tight">Redes Sociales y Pie de Ticket</h2>
+<p class="text-xs text-emerald-400/60 mt-0.5">Personaliza mensajes impresos de fidelización y canales digitales</p>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Instagram -->
+<div>
+<label class="block text-[11px] font-bold uppercase tracking-wider text-emerald-400/80 mb-1.5" for="input-instagram">
+                Instagram
+              </label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-xs text-emerald-500/70">@</span>
+<input class="w-full bg-[#071411] border border-[#173a30] focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 rounded-lg pl-8 pr-3.5 py-2.5 text-sm text-white font-medium placeholder-zinc-600 transition" id="input-instagram" type="text" value="saboreswanka">
+</div>
+</div>
+<!-- Email de Contacto -->
+<div>
+<label class="block text-[11px] font-bold uppercase tracking-wider text-emerald-400/80 mb-1.5" for="input-email">
+                Email de Contacto
+              </label>
+<input class="w-full bg-[#071411] border border-[#173a30] focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 rounded-lg px-3.5 py-2.5 text-sm text-white font-medium placeholder-zinc-600 transition" id="input-email" type="email" value="contacto@saboreswanka.pe">
+</div>
+<!-- Mensaje Personalizado Ticket -->
+<div class="sm:col-span-2">
+<label class="block text-[11px] font-bold uppercase tracking-wider text-emerald-400/80 mb-1.5" for="input-custom-footer">
+                Mensaje de Agradecimiento (Pie de Impresión)
+              </label>
+<input class="w-full bg-[#071411] border border-[#173a30] focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 rounded-lg px-3.5 py-2.5 text-sm text-white font-medium placeholder-zinc-600 transition" id="input-custom-footer" type="text" value="¡Gracias por preferirnos! Te esperamos pronto.">
+</div>
+</div>
+</div>
+</section>
+<!-- RIGHT COLUMN: Live Ticket Preview (5 Cols) -->
+<aside aria-label="Simulador de Ticket Térmico" class="xl:col-span-5 bg-[#0b1814] border border-[#16372d] rounded-2xl p-6 shadow-xl flex flex-col h-full">
+<!-- Header: Preview Title and Format Selector -->
+<div class="flex items-center justify-between pb-4 mb-4 border-b border-[#142f26]">
+<div class="flex items-center gap-2">
+<!-- Receipt Icon -->
+<svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<h3 class="text-base font-bold text-white tracking-tight">Vista Previa en Vivo</h3>
+</div>
+<!-- Format Switcher: 80mm vs 58mm -->
+<div class="inline-flex p-1 bg-[#06120e] border border-[#17382e] rounded-lg">
+<button class="px-2.5 py-1 text-xs font-semibold rounded bg-emerald-500 text-black shadow" type="button">
+              80mm
+            </button>
+<button class="px-2.5 py-1 text-xs font-medium rounded text-emerald-400/70 hover:text-white transition" type="button">
+              58mm
+            </button>
+</div>
+</div>
+<!-- Ticket Render Stage Canvas Simulation Container -->
+<div class="flex-1 bg-[#07120f] border border-[#142f26] rounded-xl p-4 sm:p-6 flex justify-center items-center overflow-auto shadow-inner">
+<!-- Realistic Thermal Receipt Paper Container -->
+<div class="w-full max-w-[360px] bg-[#121c19] text-[#e0ece8] p-5 rounded-md border border-[#214339] shadow-2xl font-receipt text-[11px] leading-relaxed relative">
+<!-- Simulated paper jagged top tear edge effect -->
+<div class="absolute -top-1.5 left-0 right-0 h-1.5 bg-repeat-x opacity-30" style="background-image: radial-gradient(circle, #214339 2px, transparent 0); background-size: 8px 8px;"></div>
+<!-- Receipt Header -->
+<div class="text-center pb-3">
+<!-- Ticket Brand Title -->
+<h4 class="text-sm font-bold tracking-wider text-white uppercase" id="preview-biz-title">SABORES WANKA</h4>
+<p class="text-[10px] text-zinc-400 mt-0.5">RESTAURANTE &amp; COMIDA TÍPICA WANKA</p>
+<p class="text-[10px] text-zinc-400" id="preview-ruc">RUC: 101840998026</p>
+<p class="text-[10px] text-zinc-400" id="preview-address">Torre Tagle y Ciro 450</p>
+<p class="text-[10px] text-zinc-400" id="preview-phone">Tel: +51 999 999 999</p>
+</div>
+<div class="border-t border-dashed border-[#244b3f] my-2"></div>
+<!-- Metadata Details -->
+<div class="space-y-0.5 text-[10px] text-zinc-300">
+<div class="flex justify-between">
+<span class="text-zinc-400 font-semibold">NOTA DE VENTA:</span>
+<span class="font-mono">T32026100600009</span>
+</div>
+<div class="flex justify-between">
+<span class="text-zinc-400">FECHA/HORA:</span>
+<span class="">Mar, 06/10/2026 07:24:27 p.m.</span>
+</div>
+<div class="flex justify-between">
+<span class="text-zinc-400">CLIENTE:</span>
+<span class="">Cliente Ocasional</span>
+</div>
+<div class="flex justify-between">
+<span class="text-zinc-400">VENDEDOR:</span>
+<span class="">Sistema POS</span>
+</div>
+</div>
+<div class="border-t border-dashed border-[#244b3f] my-2"></div>
+<!-- Ticket Items Table Header -->
+<div class="flex justify-between text-[10px] font-bold text-zinc-200 uppercase pb-1 border-b border-[#214339]">
+<span class="w-6">C</span>
+<span class="flex-1 text-left px-1">PRODUCTO</span>
+<span class="w-12 text-right">P.U.</span>
+<span class="w-12 text-right">TOTAL</span>
+</div>
+<!-- Ticket Items List -->
+<div class="space-y-1.5 py-2 text-[10px]"><div class="flex justify-between items-center text-zinc-300"><span class="w-6 text-zinc-400">1</span><span class="flex-1 text-left px-1 truncate">Pachamanca 2 Sabores</span><span class="w-12 text-right font-mono">32.00</span><span class="w-12 text-right font-mono text-white">32.00</span></div><div class="flex justify-between items-center text-zinc-300"><span class="w-6 text-zinc-400">1</span><span class="flex-1 text-left px-1 truncate">Papa a la Huancaína</span><span class="w-12 text-right font-mono">14.00</span><span class="w-12 text-right font-mono text-white">14.00</span></div><div class="flex justify-between items-center text-zinc-300"><span class="w-6 text-zinc-400">1</span><span class="flex-1 text-left px-1 truncate">Chicha de Jora - Jarra 1L</span><span class="w-12 text-right font-mono">12.00</span><span class="w-12 text-right font-mono text-white">12.00</span></div><div class="flex justify-between items-center text-zinc-300"><span class="w-6 text-zinc-400">1</span><span class="flex-1 text-left px-1 truncate">Porción Cancha Serrana</span><span class="w-12 text-right font-mono">4.00</span><span class="w-12 text-right font-mono text-white">4.00</span></div></div>
+<div class="border-t border-dashed border-[#244b3f] my-2"></div>
+<!-- Big Total Section (Highlighted Badge Box) -->
+<div class="my-2 p-2.5 rounded-lg border border-[#306454] bg-[#0c1613] flex items-baseline justify-between">
+<div>
+<span class="text-sm font-black tracking-tight text-white block">TOTAL</span>
+<span class="text-[9px] text-emerald-400 font-sans">4 Productos</span>
+</div>
+<div class="text-right">
+<span class="text-xl font-bold font-mono text-white tracking-tight" id="preview-currency-total">S/ 62.00</span>
+</div>
+</div>
+<!-- Legal and Thank You Footnote -->
+<div class="text-center pt-2 text-[9px] text-zinc-400 space-y-1">
+<p class="">Representación impresa de Nota de Venta</p>
+<p class="">Consulte validez en portal electrónico</p>
+<p class="text-emerald-300 italic pt-1 font-sans" id="preview-footer-msg">¡Gracias por preferirnos! Te esperamos pronto.</p>
+</div>
+<!-- Simulated paper bottom jagged tear effect -->
+<div class="absolute -bottom-1.5 left-0 right-0 h-1.5 bg-repeat-x opacity-30" style="background-image: radial-gradient(circle, #214339 2px, transparent 0); background-size: 8px 8px;"></div>
+</div>
+</div>
+<div class="mt-3 flex items-center justify-between text-xs text-emerald-500/70 px-1">
+<span class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            Renderizado automático en vivo
+          </span>
+<button class="hover:text-emerald-300 font-medium underline underline-offset-2" type="button">
+            Imprimir Ticket de Prueba
+          </button>
+</div>
+</aside>
+</main>
+<!-- END: TabContentBusiness -->
+<!-- BEGIN: TabContentPrinters (Hidden by default, activated on Tab click) -->
+<main aria-labelledby="section-printers" class="hidden flex-1 flex-col gap-6" id="view-printers">
+<div class="bg-[#0b1814] border border-[#16372d] rounded-2xl p-6 shadow-xl">
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 mb-5 border-b border-[#142f26]">
+<div>
+<h2 class="text-lg font-bold text-white tracking-tight flex items-center gap-2" id="section-printers">
+              Gestión de Impresoras Térmicas
+            </h2>
+<p class="text-xs text-emerald-400/60 mt-0.5">Asigna y configura puertos USB, Red LAN o Bluetooth para comandas y facturación</p>
+</div>
+<button class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold rounded-lg shadow flex items-center gap-2 transition" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+            Agregar Impresora
+          </button>
+</div>
+<!-- Printers List Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Printer 1: Caja Principal -->
+<div class="bg-[#071411] border border-[#1b4337] rounded-xl p-4 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Caja / Boletas</span>
+<span class="flex items-center gap-1 text-[11px] text-emerald-400 font-medium">
+<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Conectada
+                </span>
+</div>
+<h3 class="text-sm font-bold text-white">Epson TM-T20III</h3>
+<p class="text-xs text-zinc-400 mt-1">Conexión: USB 2.0 (Puerto COM3)</p>
+<p class="text-xs text-zinc-400">Ancho de papel: 80mm</p>
+</div>
+<div class="mt-4 pt-3 border-t border-[#133027] flex items-center justify-between">
+<button class="text-xs text-emerald-400 hover:underline">Probar Corte</button>
+<button class="text-xs text-zinc-400 hover:text-white">Configurar</button>
+</div>
+</div>
+<!-- Printer 2: Cocina -->
+<div class="bg-[#071411] border border-[#1b4337] rounded-xl p-4 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Cocina / Comandas</span>
+<span class="flex items-center gap-1 text-[11px] text-emerald-400 font-medium">
+<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Conectada
+                </span>
+</div>
+<h3 class="text-sm font-bold text-white">Bixolon SRP-330II</h3>
+<p class="text-xs text-zinc-400 mt-1">Conexión: LAN (192.168.1.150:9100)</p>
+<p class="text-xs text-zinc-400">Ancho de papel: 80mm</p>
+</div>
+<div class="mt-4 pt-3 border-t border-[#133027] flex items-center justify-between">
+<button class="text-xs text-emerald-400 hover:underline">Probar Sonido</button>
+<button class="text-xs text-zinc-400 hover:text-white">Configurar</button>
+</div>
+</div>
+<!-- Printer 3: Barra / Bebidas -->
+<div class="bg-[#071411] border border-[#1b4337] rounded-xl p-4 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">Barra &amp; Bebidas</span>
+<span class="flex items-center gap-1 text-[11px] text-emerald-400 font-medium">
+<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Conectada
+                </span>
+</div>
+<h3 class="text-sm font-bold text-white">Xprinter XP-N160M</h3>
+<p class="text-xs text-zinc-400 mt-1">Conexión: Red Wi-Fi (192.168.1.155)</p>
+<p class="text-xs text-zinc-400">Ancho de papel: 58mm</p>
+</div>
+<div class="mt-4 pt-3 border-t border-[#133027] flex items-center justify-between">
+<button class="text-xs text-emerald-400 hover:underline">Probar Ticket</button>
+<button class="text-xs text-zinc-400 hover:text-white">Configurar</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- END: TabContentPrinters -->
+<!-- BEGIN: BottomStickyActions -->
+<footer class="mt-6 pt-4 border-t border-[#142e26] flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="text-xs text-emerald-500/60 flex items-center gap-2">
+<svg class="w-4 h-4 text-emerald-400 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+        Los cambios realizados se sincronizarán con los puntos de venta y comandas activas.
+      </div>
+<div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+<button class="px-5 py-2.5 rounded-xl border border-[#1b3d33] bg-[#091512] hover:bg-[#0e211c] text-emerald-300 text-xs font-semibold transition duration-150" id="btn-discard" type="button">
+          Descartar
+        </button>
+<button class="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold shadow-[0_0_15px_rgba(16,185,129,0.3)] transition duration-150 flex items-center gap-2" id="btn-save" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+          Guardar Configuración
+        </button>
+</div>
+</footer>
+<!-- END: BottomStickyActions -->
+</div>
+<!-- END: DesktopContainer -->
+<!-- BEGIN: Interactive Preview Script -->
+<script data-purpose="ticket-live-sync">
+    // Bind live inputs to the simulated receipt preview
+    const bizInput = document.getElementById('input-biz-name');
+    const rucInput = document.getElementById('input-ruc');
+    const phoneInput = document.getElementById('input-phone');
+    const addressInput = document.getElementById('input-address');
+    const footerMsgInput = document.getElementById('input-custom-footer');
+    const currencySelect = document.getElementById('select-currency');
+
+    const previewBizTitle = document.getElementById('preview-biz-title');
+    const previewRuc = document.getElementById('preview-ruc');
+    const previewPhone = document.getElementById('preview-phone');
+    const previewAddress = document.getElementById('preview-address');
+    const previewFooterMsg = document.getElementById('preview-footer-msg');
+    const previewCurrencyTotal = document.getElementById('preview-currency-total');
+
+    // Live update listeners
+    if(bizInput) {
+      bizInput.addEventListener('input', (e) => {
+        previewBizTitle.textContent = e.target.value || 'NOMBRE COMERCIAL';
+      });
+    }
+
+    if(rucInput) {
+      rucInput.addEventListener('input', (e) => {
+        previewRuc.textContent = `RUC: ${e.target.value || '----------'}`;
+      });
+    }
+
+    if(phoneInput) {
+      phoneInput.addEventListener('input', (e) => {
+        previewPhone.textContent = `Tel: ${e.target.value || '-'}`;
+      });
+    }
+
+    if(addressInput) {
+      addressInput.addEventListener('input', (e) => {
+        previewAddress.textContent = e.target.value || 'Dirección fiscal';
+      });
+    }
+
+    if(footerMsgInput) {
+      footerMsgInput.addEventListener('input', (e) => {
+        previewFooterMsg.textContent = e.target.value || '';
+      });
+    }
+
+    if(currencySelect) {
+      currencySelect.addEventListener('change', (e) => {
+        const symbol = e.target.value === 'USD' ? '$' : e.target.value === 'EUR' ? '€' : 'S/';
+        previewCurrencyTotal.textContent = `${symbol} 17.40`;
+      });
+    }
+  </script>
+<!-- BEGIN: Tabs Switcher Script -->
+<script data-purpose="tab-navigation">
+    const tabBusiness = document.getElementById('tab-btn-business');
+    const tabPrinters = document.getElementById('tab-btn-printers');
+    const viewBusiness = document.getElementById('view-business');
+    const viewPrinters = document.getElementById('view-printers');
+
+    function setActiveTab(isBusiness) {
+      if (isBusiness) {
+        // Business Active
+        tabBusiness.className = "tab-button px-6 py-2.5 rounded-full text-sm font-semibold tracking-wide transition-all duration-150 shadow-md bg-[#ddb159] text-[#121f1a] border border-[#ddb159] flex items-center gap-2";
+        tabPrinters.className = "tab-button px-6 py-2.5 rounded-full text-sm font-medium tracking-wide transition-all duration-150 bg-[#091512] text-emerald-300/80 hover:text-emerald-100 hover:bg-[#0f231e] border border-[#16362e] flex items-center gap-2";
+        viewBusiness.classList.remove('hidden');
+        viewPrinters.classList.add('hidden');
+      } else {
+        // Printers Active
+        tabPrinters.className = "tab-button px-6 py-2.5 rounded-full text-sm font-semibold tracking-wide transition-all duration-150 shadow-md bg-[#ddb159] text-[#121f1a] border border-[#ddb159] flex items-center gap-2";
+        tabBusiness.className = "tab-button px-6 py-2.5 rounded-full text-sm font-medium tracking-wide transition-all duration-150 bg-[#091512] text-emerald-300/80 hover:text-emerald-100 hover:bg-[#0f231e] border border-[#16362e] flex items-center gap-2";
+        viewBusiness.classList.add('hidden');
+        viewPrinters.classList.remove('hidden');
+      }
+    }
+
+    if (tabBusiness && tabPrinters) {
+      tabBusiness.addEventListener('click', () => setActiveTab(true));
+      tabPrinters.addEventListener('click', () => setActiveTab(false));
+    }
+  </script>
+
+
+</body></html>

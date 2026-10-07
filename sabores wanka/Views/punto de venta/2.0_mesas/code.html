@@ -1,0 +1,511 @@
+<!DOCTYPE html><html class="h-full" lang="es" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Sabores Wanka - Punto de Venta</title>
+<!-- Tailwind CSS v3 CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Custom Tailwind Config for POS theme colors -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark: '#0c1017',
+              surface: '#151922',
+              card: '#1b202e',
+              border: '#2a3245',
+              blue: '#0084ff',
+              cyan: '#00c2ff',
+              teal: '#00cbb0',
+              accentGreen: '#00c982',
+              accentPurple: '#7038e8'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<!-- Base Custom Layout Styles -->
+<style data-purpose="custom-scrollbars-and-effects">
+    /* Custom refined dark scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0d111a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #252d3d;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #39465e;
+    }
+    .custom-scroll-hidden::-webkit-scrollbar {
+      display: none;
+    }
+    .custom-scroll-hidden {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<!-- Image clip paths and subtle glossy glow utilities -->
+<style data-purpose="card-glow-styling">
+    .card-active-glow {
+      box-shadow: 0 0 0 2px #0084ff, 0 8px 24px -4px rgba(0, 132, 255, 0.45);
+    }
+    .dish-img-bg {
+      background: radial-gradient(circle at center, #ffffff 40%, #e2e8f0 100%);
+    }
+  </style>
+</head>
+<body class="bg-[#0b0e14] text-slate-100 h-full w-full flex flex-col overflow-hidden select-none font-sans text-sm antialiased">
+<!-- BEGIN: MainContentWrapper -->
+<div class="flex-1 flex overflow-hidden" data-purpose="pos-workspace-container">
+<!-- BEGIN: LeftCatalogSection -->
+<main class="flex-1 flex flex-col overflow-hidden bg-[#0c1017]" data-purpose="product-selection-area">
+<!-- Filter Controls: Search & Horizontal Category Navigation -->
+<section class="px-5 pt-3.5 pb-2.5 flex items-center space-x-3 shrink-0" data-purpose="filter-bar">
+<!-- Quick Search Bar -->
+<div class="relative w-72 shrink-0">
+<span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<circle cx="11" cy="11" r="8"></circle>
+<line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+</svg>
+</span>
+<input class="w-full bg-[#161c28] border border-[#232c3f] rounded-full pl-10 pr-9 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors shadow-inner" placeholder="Buscar plato o bebida..." type="text">
+<button class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
+</button>
+</div>
+<!-- Scrollable Category Filter Pills based on Sabores Wanka Menu -->
+<div class="flex-1 flex items-center space-x-2 overflow-x-auto custom-scroll-hidden py-1">
+<button class="px-5 py-2 rounded-full text-xs font-semibold bg-[#0084ff] text-white shadow-md shadow-blue-600/30 whitespace-nowrap">TODOS</button>
+<button class="px-4 py-2 rounded-full text-xs font-semibold bg-[#161c28] hover:bg-[#1d2536] text-slate-300 border border-[#232c3f] whitespace-nowrap tracking-wide">CALDOS</button>
+<button class="px-4 py-2 rounded-full text-xs font-semibold bg-[#161c28] hover:bg-[#1d2536] text-slate-300 border border-[#232c3f] whitespace-nowrap tracking-wide">ENTRADAS</button>
+<button class="px-4 py-2 rounded-full text-xs font-semibold bg-[#161c28] hover:bg-[#1d2536] text-slate-300 border border-[#232c3f] whitespace-nowrap tracking-wide">PLATOS PRINCIPALES</button>
+<button class="px-4 py-2 rounded-full text-xs font-semibold bg-[#161c28] hover:bg-[#1d2536] text-slate-300 border border-[#232c3f] whitespace-nowrap tracking-wide">ESPECIALIDADES WANKA</button>
+<button class="px-4 py-2 rounded-full text-xs font-semibold bg-[#161c28] hover:bg-[#1d2536] text-slate-300 border border-[#232c3f] whitespace-nowrap tracking-wide">PACHAMANCA</button>
+<button class="px-4 py-2 rounded-full text-xs font-semibold bg-[#161c28] hover:bg-[#1d2536] text-slate-300 border border-[#232c3f] whitespace-nowrap tracking-wide">BEBIDAS FRÍAS</button>
+<button class="px-4 py-2 rounded-full text-xs font-semibold bg-[#161c28] hover:bg-[#1d2536] text-slate-300 border border-[#232c3f] whitespace-nowrap tracking-wide">BEBIDAS CALIENTES</button>
+</div>
+</section>
+<!-- Products Grid Showcase Area -->
+<section class="flex-1 overflow-y-auto px-5 py-3" data-purpose="product-matrix">
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5 pb-6">
+<!-- Card 1: Picante de Cuy (Selected) -->
+<div class="bg-[#151923] border-2 border-[#0084ff] rounded-2xl overflow-hidden flex flex-col justify-between transition-all cursor-pointer shadow-lg card-active-glow relative group">
+<div class="relative w-full h-32 overflow-hidden">
+<span class="absolute top-2 left-2 bg-[#00609c] text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10 shadow">STOCK: 15 porc.</span>
+<!-- Selection badges -->
+<div class="absolute top-2 right-2 flex items-center space-x-1 z-10">
+<span class="w-5 h-5 rounded-md bg-rose-600 text-white flex items-center justify-center text-xs font-bold shadow">✕</span>
+<span class="w-5 h-5 rounded-md bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow">1</span>
+</div>
+<img alt="Picante de Cuy" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJAplRHQmzjpJ0AyzRwd21kE5ocQ4LhwnGHahV8GeEVZjiA33_2Z6XdfnRSppj_gv07XsfmpZkLckdcjl5vBe5tGFAny_quTb0IuxSWAGTcInyeGwz-kSU2-bCrwJ18Y99hwN_o2GLiju5qFdUWQtNghYKGx_YLRnKA2Pph_bJeDtMQO_7BqYo-X90WY6oTkOkQSYnB-1qLXlBfHgoxzisZr3m0WovtT9jgfHJOVX7YMUekMFaXzpD">
+</div>
+<div class="p-3 bg-[#151b27]">
+<h3 class="text-xs font-semibold text-white truncate">Picante de Cuy</h3>
+<div class="flex items-center justify-between mt-1.5">
+<span class="text-sm font-bold text-[#00c2ff]">S/ 22.00</span>
+<span class="text-[10px] font-bold text-white bg-[#00b074] px-2 py-0.5 rounded">PLATO</span>
+</div>
+</div>
+</div>
+<!-- Card 2: Chicharrón Colorado (Selected) -->
+<div class="bg-[#151923] border border-[#232c3e] rounded-2xl overflow-hidden flex flex-col justify-between hover:border-slate-500/50 transition-all cursor-pointer shadow-md relative group">
+<div class="relative w-full h-32 overflow-hidden">
+<span class="absolute top-2 left-2 bg-[#00609c] text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10 shadow">STOCK: 20 porc.</span>
+<!-- Selection badges -->
+<div class="absolute top-2 right-2 flex items-center space-x-1 z-10">
+<span class="w-5 h-5 rounded-md bg-rose-600 text-white flex items-center justify-center text-xs font-bold shadow">✕</span>
+<span class="w-5 h-5 rounded-md bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow">1</span>
+</div>
+<img alt="Chicharrón Colorado" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADVSSlN7Y7C-V69ZBRXs2sS0rYXaSB0YkC7X456teYaK9ACpzYae97mXSdzRgjQPrd4nHeJ0QOTUfhoZ2WV6Niu2FMHsJjh_Yw40BqkBzkTr0MR0qDENOA_ktbqzObTYtT9dVcS-rGYLEwCc5HDWiEUr1_eGNqrmuZq0zBzLRLO-ZLmWWYqMFclHlNuRLBcVXglmN48frGcJxlURgBR9GMkE8Xgs4Lf1IJnJtDnWi--qumf7WPUE3t">
+</div>
+<div class="p-3 bg-[#131720]">
+<h3 class="text-xs font-semibold text-slate-100 truncate">Chicharrón Colorado</h3>
+<div class="flex items-center justify-between mt-1.5">
+<span class="text-sm font-bold text-[#00c2ff]">S/ 18.00</span>
+<span class="text-[10px] font-bold text-white bg-[#00b074] px-2 py-0.5 rounded">PLATO</span>
+</div>
+</div>
+</div>
+<!-- Card 3: Pachamanca Cuatro Sabores -->
+<div class="bg-[#151923] border border-[#232c3e] rounded-2xl overflow-hidden flex flex-col justify-between hover:border-slate-500/50 transition-all cursor-pointer shadow-md group">
+<div class="relative w-full h-32 overflow-hidden">
+<span class="absolute top-2 left-2 bg-[#00609c] text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10 shadow">STOCK: 18 porc.</span>
+<img alt="Pachamanca Cuatro Sabores" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC00yb6wCR-cb0mBElNZwHK-gFzrRuMKKJkvDxcUqQW6aVTGzoJJRNPj55SvNcKqKT-X8ZP6Yn4H2C4LNE6GNzfRZSHbgAZL32isRFF6BMon3QJsIzIciOO4pLgPh2UR-cRKTPO3Kk59_hLhA4t1d-o-dPO3vFsqu_k7QWVC3dHts6VTdrI4fKKqSdGh7nSpDQffsvAIpnNhOA2xCT12NEx4qD7X-SaCR-QR9BnwPkgAjvy3yRPh1jO">
+</div>
+<div class="p-3 bg-[#131720]">
+<h3 class="text-xs font-semibold text-slate-100 truncate">Pachamanca 4 Sabores</h3>
+<div class="flex items-center justify-between mt-1.5">
+<span class="text-sm font-bold text-[#00c2ff]">S/ 25.00</span>
+<span class="text-[10px] font-bold text-white bg-[#00b074] px-2 py-0.5 rounded">PLATO</span>
+</div>
+</div>
+</div>
+<!-- Card 4: Caldo de Cordero -->
+<div class="bg-[#151923] border border-[#232c3e] rounded-2xl overflow-hidden flex flex-col justify-between hover:border-slate-500/50 transition-all cursor-pointer shadow-md group">
+<div class="relative w-full h-32 overflow-hidden">
+<span class="absolute top-2 left-2 bg-[#00609c] text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10 shadow">STOCK: 25 porc.</span>
+<img alt="Caldo de Cordero" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATvE-EGvYQRwfAuR6sG-kWCosyWHyelM9_4kW8OIRuhFJqpiaUzXpglCPAM00YvEsOQiyWMxqnqkHcc-0AgvyJiG8VBmleV7I2duSOTgL0A2FE1Yut07GOhGRAQM0EsNF59PJSwMMTBuv1U8K9Flgy5p-ifHLp40O0wtcgiO-VVcTRD7H7ATXq-lgqMy2WB5gnGoL9E3vrbcc0GlAubuJvqPR0mPsCzMUsu20bmC7b0OWoh1scs7fK">
+</div>
+<div class="p-3 bg-[#131720]">
+<h3 class="text-xs font-semibold text-slate-100 truncate">Caldo de Cordero</h3>
+<div class="flex items-center justify-between mt-1.5">
+<span class="text-sm font-bold text-[#00c2ff]">S/ 17.00</span>
+<span class="text-[10px] font-bold text-white bg-[#e67e00] px-2 py-0.5 rounded">CALDO</span>
+</div>
+</div>
+</div>
+<!-- Card 5: Caldo de Gallina -->
+<div class="bg-[#151923] border border-[#232c3e] rounded-2xl overflow-hidden flex flex-col justify-between hover:border-slate-500/50 transition-all cursor-pointer shadow-md group">
+<div class="relative w-full h-32 overflow-hidden">
+<span class="absolute top-2 left-2 bg-[#00609c] text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10 shadow">STOCK: 30 porc.</span>
+<img alt="Caldo de Gallina" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPAQMN78YKR4iDlYz-1ngIPq2Bb4R0Zi1Ur7gR7hdyXEvD--oX8EKvbIwV1RKF8V2HRqv1It9OzTWQq9zJvICUx4_BpkxEZY22c1o7JbSAAj7WUqno4nPECFJE9iX-cVj7yi8zWFa3VZxF4Kz7-JSpn-RaFQgQXuFHCk-V8zRJe9zgO7PijC35MntLVkewqLlFLwF3L2SNNPnlbLNLNesFVlyhwQHMBkfODS2B_UEt8NRp4nlMYPZT">
+</div>
+<div class="p-3 bg-[#131720]">
+<h3 class="text-xs font-semibold text-slate-100 truncate">Caldo de Gallina</h3>
+<div class="flex items-center justify-between mt-1.5">
+<span class="text-sm font-bold text-[#00c2ff]">S/ 15.00</span>
+<span class="text-[10px] font-bold text-white bg-[#e67e00] px-2 py-0.5 rounded">CALDO</span>
+</div>
+</div>
+</div>
+<!-- Card 6: Mondongo Especial -->
+<div class="bg-[#151923] border border-[#232c3e] rounded-2xl overflow-hidden flex flex-col justify-between hover:border-slate-500/50 transition-all cursor-pointer shadow-md group">
+<div class="relative w-full h-32 overflow-hidden">
+<span class="absolute top-2 left-2 bg-[#00609c] text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10 shadow">STOCK: 12 porc.</span>
+<img alt="Mondongo Especial" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALF3vzkxubqQbLCpESj4pHTaiq-qDdg5I61R87IDmOu-DfCrVdqExvXtTa6yEm1jDWEdh3m327EIFY3m15ZOkY7FBFhyKxDUKrb95rCnx5GnxJbEWQDsDHQUudLWxLiNsZQ4a_IxQk09E_jJ58uL2-gH4sIht_4kicU3vEgtjXM4lqTt_Dx1t_ukw7z8EPZodQip8XvleCd9qe-VEYZaVPM0a0pTZ8KGw4hU-dyQL4cR1LZ-bvrqhU">
+</div>
+<div class="p-3 bg-[#131720]">
+<h3 class="text-xs font-semibold text-slate-100 truncate">Mondongo Especial</h3>
+<div class="flex items-center justify-between mt-1.5">
+<span class="text-sm font-bold text-[#00c2ff]">S/ 15.00</span>
+<span class="text-[10px] font-bold text-white bg-[#e67e00] px-2 py-0.5 rounded">CALDO</span>
+</div>
+</div>
+</div>
+<!-- Card 7: Cuy Chactado -->
+<div class="bg-[#151923] border border-[#232c3e] rounded-2xl overflow-hidden flex flex-col justify-between hover:border-slate-500/50 transition-all cursor-pointer shadow-md group">
+<div class="relative w-full h-32 overflow-hidden">
+<span class="absolute top-2 left-2 bg-[#00609c] text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10 shadow">STOCK: 10 porc.</span>
+<img alt="Cuy Chactado" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsiEHQpCpOOQmcoSkIGwm9Y-twlUmThmmXgMJ0SYmSFejtzdwwd_gUOfB4XdMLi9ID3V6EF334-x6AaZl0apdz02kdSb7PMRXqZ2Ky-juGLEG9oMcJS11OtEb4FyCeo_ePmx7k4tzXpjqxMfXCN24IurUEM3AJC1DYdglexY3Akk6rcZUZjqctnD5MpjSGCiNYRNLo_fzkMcpt83wS6c_Xq2DnxEKHBeXUSxjV8Hvfr_VzYFRHgSc_">
+</div>
+<div class="p-3 bg-[#131720]">
+<h3 class="text-xs font-semibold text-slate-100 truncate">Cuy Chactado</h3>
+<div class="flex items-center justify-between mt-1.5">
+<span class="text-sm font-bold text-[#00c2ff]">S/ 22.00</span>
+<span class="text-[10px] font-bold text-white bg-[#00b074] px-2 py-0.5 rounded">PLATO</span>
+</div>
+</div>
+</div>
+<!-- Card 8: Tamal de Pollo y Chancho -->
+<div class="bg-[#151923] border border-[#232c3e] rounded-2xl overflow-hidden flex flex-col justify-between hover:border-slate-500/50 transition-all cursor-pointer shadow-md group">
+<div class="relative w-full h-32 overflow-hidden">
+<span class="absolute top-2 left-2 bg-[#00609c] text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10 shadow">STOCK: 14 porc.</span>
+<img alt="Tamal de Pollo y Chancho" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBY6T9F-26Pw6fzPjFx4N7BStBQw0CyCyeoHaaDFuA3IhWCRF-wwt1EFMvytWDQx1rPqkkRthUVRClEpOUH6UWsoYeMtcXDNTCnlYV9RqvV12J8CSsybjwRTma1J6Htpd7CPQkI55SODjnUmdYHNtoH9LmGhkTKZlbMppKnMpnBxUb97Ke73zSeS7iWEuELIYWOyGrqD2AT11rtrQG8m4ffeq7xIH1Ha-9CoMKSX7ZSLay5aGPbYXaT">
+</div>
+<div class="p-3 bg-[#131720]">
+<h3 class="text-xs font-semibold text-slate-100 truncate">Tamal Pollo y Chancho</h3>
+<div class="flex items-center justify-between mt-1.5">
+<span class="text-sm font-bold text-[#00c2ff]">S/ 7.00</span>
+<span class="text-[10px] font-bold text-slate-300 bg-[#32394c] px-2 py-0.5 rounded">ENTRADA</span>
+</div>
+</div>
+</div>
+<!-- Card 9: Choclo Sancochado con Queso -->
+<div class="bg-[#151923] border border-[#232c3e] rounded-2xl overflow-hidden flex flex-col justify-between hover:border-slate-500/50 transition-all cursor-pointer shadow-md group">
+<div class="relative w-full h-32 overflow-hidden">
+<span class="absolute top-2 left-2 bg-[#00609c] text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10 shadow">STOCK: 20 porc.</span>
+<img alt="Choclo Sancochado con Queso" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDr_QHKatW8FM1pRe0Uo237uOQQT8z6pWPJ4nQdb77VhZSm4MHVAaYmQI_fpUIxOZZXuQLHKZnsKCz9mjlBmJ0rdik1zFQetXpbbRvWcuovIq8NSr2x_W3SfeNhKLO7kIKd55sjB_Grgw0RIohjl3WpLqcXJe4RcBAfVkrNYv8p70cT0SOMYYBJpUjkJrX7-JWejRPN7nzZyOLOXjRPiE_oyML19ZBDRnYoTrU1CdMY9GzvpBhHxyqK">
+</div>
+<div class="p-3 bg-[#131720]">
+<h3 class="text-xs font-semibold text-slate-100 truncate">Choclo con Queso</h3>
+<div class="flex items-center justify-between mt-1.5">
+<span class="text-sm font-bold text-[#00c2ff]">S/ 5.00</span>
+<span class="text-[10px] font-bold text-slate-300 bg-[#32394c] px-2 py-0.5 rounded">ENTRADA</span>
+</div>
+</div>
+</div>
+<!-- Card 10: Porción de Humitas -->
+<div class="bg-[#151923] border border-[#232c3e] rounded-2xl overflow-hidden flex flex-col justify-between hover:border-slate-500/50 transition-all cursor-pointer shadow-md group">
+<div class="relative w-full h-32 overflow-hidden">
+<span class="absolute top-2 left-2 bg-[#00609c] text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10 shadow">STOCK: 16 porc.</span>
+<img alt="Porción de Humitas" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0wKAOcGWmP8Va3BIdXlC7GCcz_nUEhjQlQJfPlamQOPZPMlDpTyf2WCE8Ao3vVsGwpNhKpxO02jssOSKzzVY23g9jSN-7yR1B892pd3kMQWnFc8skmcANasXZsRvK0sMpTQdDwzmY5enjqI8NcmUe-tuXgcmSC1KXgyJMoWccskPz3NHl3ZIFsFMWGBgj7qOOjCUWnGjSO541h8sJc3I6GmX0DAtv4e6dA8vUdb_y71vyqTSs8QW6">
+</div>
+<div class="p-3 bg-[#131720]">
+<h3 class="text-xs font-semibold text-slate-100 truncate">Porción de Humitas</h3>
+<div class="flex items-center justify-between mt-1.5">
+<span class="text-sm font-bold text-[#00c2ff]">S/ 8.00</span>
+<span class="text-[10px] font-bold text-slate-300 bg-[#32394c] px-2 py-0.5 rounded">ENTRADA</span>
+</div>
+</div>
+</div>
+<!-- Card 11: Chicha Morada 1 LT (Selected) -->
+<div class="bg-[#151923] border border-[#232c3e] rounded-2xl overflow-hidden flex flex-col justify-between hover:border-slate-500/50 transition-all cursor-pointer shadow-md relative group">
+<div class="relative w-full h-32 overflow-hidden">
+<span class="absolute top-2 left-2 bg-[#00609c] text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10 shadow">STOCK: 24 jarras</span>
+<!-- Selection badges -->
+<div class="absolute top-2 right-2 flex items-center space-x-1 z-10">
+<span class="w-5 h-5 rounded-md bg-rose-600 text-white flex items-center justify-center text-xs font-bold shadow">✕</span>
+<span class="w-5 h-5 rounded-md bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow">1</span>
+</div>
+<img alt="Chicha Morada" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOE76yE5IE6YTgZisI-kwRayrTez-RbqA2ppwIrrlevZMoEtvx4yL706dbJ7f8YqgvoWgopUXd0T70wIjG3KXmajt8NH6n3rDVLipgxtnapcmkU7iVn54g-npIoxAycSHEP4jMd53ZNCoss01m6xfJ7AhBBvBGfU2muJfixlrRnbXtfC0PjAEOvO28ZpJTlpP0LiVwAR__PXROTQyOJWEC6SM_tG37LJZ8SKldHouiGT5s34dY2XRO">
+</div>
+<div class="p-3 bg-[#131720]">
+<h3 class="text-xs font-semibold text-slate-100 truncate">Chicha Morada 1 LT</h3>
+<div class="flex items-center justify-between mt-1.5">
+<span class="text-sm font-bold text-[#00c2ff]">S/ 10.00</span>
+<span class="text-[10px] font-bold text-white bg-[#7038e8] px-2 py-0.5 rounded">BEBIDA</span>
+</div>
+</div>
+</div>
+<!-- Card 12: Chicha de Jora -->
+<div class="bg-[#151923] border border-[#232c3e] rounded-2xl overflow-hidden flex flex-col justify-between hover:border-slate-500/50 transition-all cursor-pointer shadow-md group">
+<div class="relative w-full h-32 overflow-hidden">
+<span class="absolute top-2 left-2 bg-[#00609c] text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10 shadow">STOCK: 15 jarras</span>
+<img alt="Chicha de Jora" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZVX5fkhYpLq27l9ykphxgwU9w0JY0T7gkJ9WLjupkLRcCo1zHSJnphxFpuyI1lTWJd1hDka9EFWt7rB0FtXRQb8DWyNgNIMunX4qhn6fr0aruH6lK7dJmacuS__hfflZ8PobK3rvKfD4aaZwusbJ6t0mkF5ILZK_9akPYZytBD9tWtIw-dX8BtxDdEmESVHG8mKnsvEEd8DNYEfgKNMJcdoYJHbYOUmHIJUERC-rBvt0wrCz-McdL">
+</div>
+<div class="p-3 bg-[#131720]">
+<h3 class="text-xs font-semibold text-slate-100 truncate">Chicha de Jora</h3>
+<div class="flex items-center justify-between mt-1.5">
+<span class="text-sm font-bold text-[#00c2ff]">S/ 10.00</span>
+<span class="text-[10px] font-bold text-white bg-[#7038e8] px-2 py-0.5 rounded">BEBIDA</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- END: LeftCatalogSection -->
+<!-- BEGIN: RightCheckoutSection -->
+<aside class="w-[430px] bg-[#111621] border-l border-[#1f2638] flex flex-col shrink-0 shadow-2xl relative z-10" data-purpose="cart-summary-sidebar"><!-- Header -->
+<div class="p-4 border-b border-[#1c2333] flex items-center justify-between shrink-0">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-xl bg-[#142233] border border-[#0090cb]/40 flex items-center justify-center text-[#00c2ff]">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<rect height="7" rx="1.5" width="7" x="3" y="3"></rect>
+<rect height="7" rx="1.5" width="7" x="14" y="3"></rect>
+<rect height="7" rx="1.5" width="7" x="14" y="14"></rect>
+<rect height="7" rx="1.5" width="7" x="3" y="14"></rect>
+</svg>
+</div>
+<div>
+<h2 class="text-sm font-bold text-white tracking-wide">Plano y Selección de Mesas</h2>
+<p class="text-[11px] text-slate-400 font-medium">Sede Huancayo • Salón Principal</p>
+</div>
+</div>
+<button class="px-3 py-1.5 rounded-xl bg-[#161c28] hover:bg-[#1f2638] text-[#00c2ff] hover:text-white flex items-center space-x-1.5 transition-colors border border-slate-700/40 text-xs font-semibold shrink-0 shadow-sm"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg><span class="">Agregar sala</span></button><button class="w-9 h-9 rounded-xl bg-[#161c28] hover:bg-[#1f2638] text-slate-400 hover:text-white flex items-center justify-center transition-colors border border-slate-700/40">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+<path d="M6 18L18 6M6 6l12 12"></path>
+</svg>
+</button>
+</div>
+<!-- Navigation Zones Pills -->
+<div class="px-4 pt-3.5 pb-2 flex items-center space-x-2 overflow-x-auto custom-scroll-hidden shrink-0">
+<button class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#00a8e8] text-black whitespace-nowrap shadow-md">Salón Principal (12)</button>
+<button class="px-3.5 py-1.5 rounded-xl text-xs font-medium bg-[#161c28] hover:bg-[#1d2536] text-slate-300 border border-[#232c3f] whitespace-nowrap">Terraza (6)</button>
+<button class="px-3.5 py-1.5 rounded-xl text-xs font-medium bg-[#161c28] hover:bg-[#1d2536] text-slate-300 border border-[#232c3f] whitespace-nowrap">Barra (4)</button>
+<button class="px-3.5 py-1.5 rounded-xl text-xs font-medium bg-[#161c28] hover:bg-[#1d2536] text-slate-300 border border-[#232c3f] whitespace-nowrap">Para Llevar</button>
+</div>
+<!-- Legend Indicators Row -->
+<div class="px-4 py-2 flex items-center justify-between text-[10px] font-bold tracking-wider shrink-0 border-b border-[#161c28]"><div class="flex items-center space-x-1.5 cursor-pointer"><span class="w-2 h-2 rounded-full bg-slate-400"></span><span class="text-slate-300 hover:text-white transition-colors">TODAS</span></div>
+<div class="flex items-center space-x-1.5">
+<span class="w-2 h-2 rounded-full bg-[#00e5ff]"></span>
+<span class="text-[#00e5ff]">ESTA ORDEN</span>
+</div>
+<div class="flex items-center space-x-1.5">
+<span class="w-2 h-2 rounded-full bg-[#00c982]"></span>
+<span class="text-[#00c982]">LIBRE</span>
+</div>
+<div class="flex items-center space-x-1.5">
+<span class="w-2 h-2 rounded-full bg-[#f43f5e]"></span>
+<span class="text-[#f43f5e]">OCUPADA</span>
+</div>
+<div class="flex items-center space-x-1.5">
+<span class="w-2 h-2 rounded-full bg-[#eab308]"></span>
+<span class="text-[#eab308]">RESERVADA</span>
+</div>
+</div>
+<!-- Table Cards Grid (Scrollable) -->
+<div class="flex-1 overflow-y-auto p-4 custom-scroll-hidden" data-purpose="tables-grid-container">
+<div class="grid grid-cols-2 gap-3"><!-- Mesa 01 (Libre) -->
+<div class="bg-[#0c1418] border border-[#0d3f2c] rounded-xl p-3 flex flex-col justify-between hover:border-[#156b4b] transition-colors cursor-pointer">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-black text-sm text-white">Mesa 01</span>
+<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-[#05321f] text-[#00c982] tracking-wide">LIBRE</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="text-[11px] text-slate-400 font-medium">2 Personas</span>
+<span class="text-xs font-bold text-[#00c982]">Disponible</span>
+</div>
+</div>
+<div class="mt-3 pt-2 flex items-center justify-between text-[10px] border-t border-[#161c28]"><span class="text-slate-500 font-medium">Sin comanda</span><div class="flex items-center space-x-1.5"><button title="Editar mesa" class="p-1 rounded hover:bg-[#161c28] text-slate-400 hover:text-[#00c2ff] transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button><button title="Eliminar mesa" class="p-1 rounded hover:bg-[#161c28] text-slate-400 hover:text-rose-400 transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div></div>
+</div>
+<!-- Mesa 02 (Ocupada) -->
+<div class="bg-[#160d13] border border-[#48131e] rounded-xl p-3 flex flex-col justify-between hover:border-[#6b1e2e] transition-colors cursor-pointer">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-black text-sm text-white">Mesa 02</span>
+<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-[#3d0f19] text-[#f43f5e] tracking-wide">OCUPADA</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="text-[11px] text-slate-400 font-medium">4 Personas</span>
+<span class="text-xs font-black text-[#f43f5e]">S/ 84.50</span>
+</div>
+</div>
+<div class="mt-3 pt-2 text-[10px] text-slate-400 font-medium">
+        Mozo: Ana R. <span class="text-slate-500">(45m)</span>
+</div>
+</div>
+<!-- Mesa 03 (Libre) -->
+<div class="bg-[#0c1418] border border-[#0d3f2c] rounded-xl p-3 flex flex-col justify-between hover:border-[#156b4b] transition-colors cursor-pointer">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-black text-sm text-white">Mesa 03</span>
+<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-[#05321f] text-[#00c982] tracking-wide">LIBRE</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="text-[11px] text-slate-400 font-medium">6 Personas</span>
+<span class="text-xs font-bold text-[#00c982]">Disponible</span>
+</div>
+</div>
+<div class="mt-3 pt-2 flex items-center justify-between text-[10px] border-t border-[#161c28]"><span class="text-slate-500 font-medium">Sin comanda</span><div class="flex items-center space-x-1.5"><button title="Editar mesa" class="p-1 rounded hover:bg-[#161c28] text-slate-400 hover:text-[#00c2ff] transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button><button title="Eliminar mesa" class="p-1 rounded hover:bg-[#161c28] text-slate-400 hover:text-rose-400 transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div></div>
+</div>
+<!-- Mesa 04 (Ocupada) -->
+<div class="bg-[#160d13] border border-[#48131e] rounded-xl p-3 flex flex-col justify-between hover:border-[#6b1e2e] transition-colors cursor-pointer">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-black text-sm text-white">Mesa 04</span>
+<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-[#3d0f19] text-[#f43f5e] tracking-wide">OCUPADA</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="text-[11px] text-slate-400 font-medium">4 Personas</span>
+<span class="text-xs font-black text-[#f43f5e]">S/ 112.00</span>
+</div>
+</div>
+<div class="mt-3 pt-2 text-[10px] text-slate-400 font-medium">
+        Mozo: Carlos M. <span class="text-slate-500">(18m)</span>
+</div>
+</div>
+<!-- Mesa 05 (Reserva) -->
+<div class="bg-[#17130b] border border-[#4d300b] rounded-xl p-3 flex flex-col justify-between hover:border-[#734812] transition-colors cursor-pointer">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-black text-sm text-white">Mesa 05</span>
+<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-[#3b2308] text-[#eab308] tracking-wide">RESERVA</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="text-[11px] text-slate-400 font-medium">8 Pax (Familiar)</span>
+<span class="text-xs font-black text-[#eab308]">2:30 PM</span>
+</div>
+</div>
+<div class="mt-3 pt-2 text-[10px] text-[#eab308] font-semibold">
+        Fam. Quispe C.
+      </div>
+</div>
+<!-- Mesa 06 (Libre) -->
+<div class="bg-[#0c1418] border border-[#0d3f2c] rounded-xl p-3 flex flex-col justify-between hover:border-[#156b4b] transition-colors cursor-pointer">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-black text-sm text-white">Mesa 06</span>
+<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-[#05321f] text-[#00c982] tracking-wide">LIBRE</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="text-[11px] text-slate-400 font-medium">4 Personas</span>
+<span class="text-xs font-bold text-[#00c982]">Disponible</span>
+</div>
+</div>
+<div class="mt-3 pt-2 flex items-center justify-between text-[10px] border-t border-[#161c28]"><span class="text-slate-500 font-medium">Sin comanda</span><div class="flex items-center space-x-1.5"><button title="Editar mesa" class="p-1 rounded hover:bg-[#161c28] text-slate-400 hover:text-[#00c2ff] transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button><button title="Eliminar mesa" class="p-1 rounded hover:bg-[#161c28] text-slate-400 hover:text-rose-400 transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div></div>
+</div>
+<!-- Mesa 07 (Libre) -->
+<div class="bg-[#0c1418] border border-[#0d3f2c] rounded-xl p-3 flex flex-col justify-between hover:border-[#156b4b] transition-colors cursor-pointer">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-black text-sm text-white">Mesa 07</span>
+<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-[#05321f] text-[#00c982] tracking-wide">LIBRE</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="text-[11px] text-slate-400 font-medium">4 Personas</span>
+<span class="text-xs font-bold text-[#00c982]">Disponible</span>
+</div>
+</div>
+<div class="mt-3 pt-2 flex items-center justify-between text-[10px] border-t border-[#161c28]"><span class="text-slate-500 font-medium">Sin comanda</span><div class="flex items-center space-x-1.5"><button title="Editar mesa" class="p-1 rounded hover:bg-[#161c28] text-slate-400 hover:text-[#00c2ff] transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button><button title="Eliminar mesa" class="p-1 rounded hover:bg-[#161c28] text-slate-400 hover:text-rose-400 transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div></div>
+</div>
+<!-- Mesa 08 (Active / Esta orden) -->
+<div class="bg-[#0b1622] border-2 border-[#00c2ff] rounded-xl p-3 flex flex-col justify-between shadow-lg shadow-cyan-900/20 cursor-pointer">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-black text-sm text-white">Mesa 08</span>
+<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-[#004e6e] text-[#00e5ff] tracking-wide">ACTIVA</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="text-[11px] text-slate-300 font-medium">4 Personas</span>
+<span class="text-xs font-black text-[#00c2ff]">S/ 138.00</span>
+</div>
+</div>
+<div class="mt-3 pt-2 text-[10px] text-[#00c2ff]/90 font-mono">
+        Mozo: Carlos M.
+      </div>
+</div>
+<!-- Barra 01 (Libre) -->
+<div class="bg-[#0c1418] border border-[#0d3f2c] rounded-xl p-3 flex flex-col justify-between hover:border-[#156b4b] transition-colors cursor-pointer">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-black text-sm text-white">Barra 01</span>
+<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-[#05321f] text-[#00c982] tracking-wide">LIBRE</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="text-[11px] text-slate-400 font-medium">2 Bancas</span>
+<span class="text-xs font-bold text-[#00c982]">Disponible</span>
+</div>
+</div>
+<div class="mt-3 pt-2 flex items-center justify-between text-[10px] border-t border-[#161c28]"><span class="text-slate-500 font-medium">Sin comanda</span><div class="flex items-center space-x-1.5"><button title="Editar barra" class="p-1 rounded hover:bg-[#161c28] text-slate-400 hover:text-[#00c2ff] transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button><button title="Eliminar barra" class="p-1 rounded hover:bg-[#161c28] text-slate-400 hover:text-rose-400 transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div></div>
+</div>
+<!-- Barra 02 (Libre) -->
+<div class="bg-[#0c1418] border border-[#0d3f2c] rounded-xl p-3 flex flex-col justify-between hover:border-[#156b4b] transition-colors cursor-pointer">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-black text-sm text-white">Barra ¿02</span>
+<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-[#05321f] text-[#00c982] tracking-wide">LIBRE</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="text-[11px] text-slate-400 font-medium">2 Bancas</span>
+<span class="text-xs font-bold text-[#00c982]">Disponible</span>
+</div>
+</div>
+<div class="mt-3 pt-2 flex items-center justify-between text-[10px] border-t border-[#161c28]"><span class="text-slate-500 font-medium">Sin comanda</span><div class="flex items-center space-x-1.5"><button title="Editar barra" class="p-1 rounded hover:bg-[#161c28] text-slate-400 hover:text-[#00c2ff] transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button><button title="Eliminar barra" class="p-1 rounded hover:bg-[#161c28] text-slate-400 hover:text-rose-400 transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div></div>
+</div>
+<!-- Agregar mesa -->
+<div class="bg-[#0c1017] border border-dashed border-[#232c3e] hover:border-[#00c2ff]/60 rounded-xl p-3 flex flex-col items-center justify-center text-center hover:bg-[#131720] transition-all cursor-pointer group min-h-[105px]"><div class="w-8 h-8 rounded-full bg-[#161c28] group-hover:bg-[#004e6e] text-slate-400 group-hover:text-[#00c2ff] flex items-center justify-center mb-1.5 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></div><span class="font-bold text-xs text-white group-hover:text-[#00c2ff] transition-colors">Agregar mesa</span><span class="text-[10px] text-slate-500 font-medium mt-0.5">Nueva mesa o barra</span></div></div>
+</div>
+<!-- Bottom Action Footer -->
+<div class="p-4 bg-[#0d1118] border-t border-[#1a202d] flex items-center space-x-3 shrink-0">
+<button class="flex-1 bg-[#00a8e8] hover:bg-[#0096cf] text-black font-black py-3.5 px-4 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-cyan-500/20">
+<svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
+<rect height="7" rx="1.5" width="7" x="3" y="3"></rect>
+<rect height="7" rx="1.5" width="7" x="14" y="3"></rect>
+<rect height="7" rx="1.5" width="7" x="14" y="14"></rect>
+<rect height="7" rx="1.5" width="7" x="3" y="14"></rect>
+</svg>
+<span class="text-xs font-black tracking-wider uppercase">IR A LA MESA 08</span>
+</button>
+<button class="bg-[#161c28] hover:bg-[#1f2638] text-slate-200 font-bold py-3.5 px-5 rounded-xl border border-slate-700/60 text-xs transition-colors shrink-0">
+    Cerrar
+  </button>
+</div></aside>
+<!-- END: RightCheckoutSection -->
+</div>
+<!-- END: MainContentWrapper -->
+
+
+</body></html>

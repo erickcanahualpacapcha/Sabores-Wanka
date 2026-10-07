@@ -1,0 +1,45 @@
+# ============================================================
+#  .gitignore raiz - Sabores Wanka (WinUI 3 / .NET 8)
+# ============================================================
+
+# ---- Build output -------------------------------------------
+[Bb]in/
+[Oo]bj/
+*.xbf
+*.cache
+*.pdb
+.vs/
+
+# ---- Credenciales y secretos --------------------------------
+appsettings.local.json
+*.local.json
+.env
+*.env
+
+# ---- Logs y temporales --------------------------------------
+logs/
+*.log
+*.binlog
+*.tmp
+
+# ---- Vault Obsidian (memoria de errores, NO publicar) --------
+Historial_Sabores_Wanka/
+
+# ---- Referencia local (copia de ejemplo, NO publicar) -----------
+/proyecto tiendas nachis de ejemplo/
+BovedaTest/
+
+# ---- Token de publicacion (solo local, NUNCA al repo) ---------
+tools/.github-token
+tools/*update*.zip
+
+# ---- Herramientas de IA / IDE -------------------------------
+.opencode/
+.claude/
+.agent/
+.idea/
+*.user
+*.suo
+Thumbs.db
+.DS_Store
+node_modules/

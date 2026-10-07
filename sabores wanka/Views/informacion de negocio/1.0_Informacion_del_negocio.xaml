@@ -1,0 +1,421 @@
+﻿<UserControl
+    x:Class="sabores_wanka.Views.InformacionNegocio.InformacionNegocioView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <!-- Replica de Views/informacion de negocio/code.html (Stitch): header,
+         tabs Negocio/Impresoras, formularios + ticket termico en vivo + footer.
+         Sin Frame: las tabs alternan NegocioPanel/ImpresorasPanel. -->
+    <Grid Background="#050D0B">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="20">
+            <StackPanel Spacing="20" MaxWidth="1600">
+
+                <!-- Header: titulo + estado + licencia + volver al POS -->
+                <Border Background="#0C1B17" BorderBrush="#16362D" BorderThickness="1" CornerRadius="16" Padding="20,16">
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                            <Border Width="52" Height="52" CornerRadius="12" Background="#122822" BorderBrush="#1F483C" BorderThickness="1">
+                                <FontIcon Glyph="&#xE713;" FontSize="24" Foreground="#34D399" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Configuración de Negocio" Foreground="White" FontWeight="Bold" FontSize="22"/>
+                                <TextBlock Text="Personaliza facturación, branding, datos fiscales e impresoras térmicas" Foreground="#34D399" Opacity="0.7" FontSize="12" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Background="#081512" BorderBrush="#16342B" BorderThickness="1" CornerRadius="8" Padding="12,6">
+                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <TextBlock Text="Estado del Sistema" Foreground="#94A3B8" FontSize="11" VerticalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                        <Ellipse Width="8" Height="8" Fill="#34D399" VerticalAlignment="Center"/>
+                                        <TextBlock Text="En Línea" Foreground="#34D399" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                            <Border Background="#182315" BorderBrush="#EAB308" BorderThickness="1" CornerRadius="8" Padding="12,6" Opacity="0.9">
+                                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE8A9;" FontSize="12" Foreground="#EAB308" VerticalAlignment="Center"/>
+                                    <TextBlock Text="PRO / Premium" Foreground="#F6D87C" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                            <Button x:Name="VolverPosButton" Click="VolverPosButton_Click" Background="#132C25" BorderBrush="#235345" BorderThickness="1" CornerRadius="8" Padding="14,8" MinWidth="0" MinHeight="0">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE72B;" FontSize="13" Foreground="#34D399"/>
+                                    <TextBlock Text="Volver al POS" Foreground="#A7F3D0" FontSize="12" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Tabs principales -->
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <Button x:Name="NegocioTabButton" Click="NegocioTabButton_Click" CornerRadius="20" Padding="24,10" MinWidth="0" MinHeight="0" BorderThickness="1">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon Glyph="&#xE8B7;" FontSize="14"/>
+                            <TextBlock Text="Información de Negocio" FontSize="13" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="ImpresorasTabButton" Click="ImpresorasTabButton_Click" CornerRadius="20" Padding="24,10" MinWidth="0" MinHeight="0" BorderThickness="1">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon Glyph="&#xE749;" FontSize="14"/>
+                            <TextBlock Text="Impresoras" FontSize="13" FontWeight="SemiBold"/>
+                            <Border Background="#14322A" CornerRadius="4" Padding="6,1">
+                                <TextBlock Text="3 activas" Foreground="#6EE7B7" FontSize="10" FontFamily="Consolas"/>
+                            </Border>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <!-- Vista NEGOCIO: formularios + ticket en vivo -->
+                <Grid x:Name="NegocioPanel" ColumnSpacing="20" RowSpacing="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="7*"/>
+                        <ColumnDefinition Width="5*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Columna izquierda: datos + redes -->
+                    <StackPanel Spacing="20" Grid.Column="0">
+
+                        <!-- Card Datos de la Empresa -->
+                        <Border Background="#0B1814" BorderBrush="#16372D" BorderThickness="1" CornerRadius="16" Padding="24,20">
+                            <StackPanel Spacing="16">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Datos de la Empresa" Foreground="White" FontWeight="Bold" FontSize="17"/>
+                                        <TextBlock Text="Información que figurará en boletas, facturas y tickets térmicos" Foreground="#34D399" Opacity="0.6" FontSize="11" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Content="Historial de Cambios" Background="Transparent" BorderThickness="0" Foreground="#34D399" FontSize="11" FontWeight="SemiBold" Padding="4,0" MinWidth="0" MinHeight="0"/>
+                                </Grid>
+                                <Border Background="#142F26" Height="1" HorizontalAlignment="Stretch" Opacity="0.6"/>
+                                <Grid ColumnSpacing="20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="170"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <!-- Logo ticket -->
+                                    <StackPanel Spacing="8">
+                                        <TextBlock Text="LOGOTIPO TICKET" Foreground="#34D399" Opacity="0.8" FontSize="10" FontWeight="Bold"/>
+                                        <Button x:Name="LogoButton" Click="LogoButton_Click" Background="#071310" BorderBrush="#204A3E" BorderThickness="1" CornerRadius="12" Padding="0" MinWidth="0" MinHeight="0" HorizontalAlignment="Stretch">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="BorderThickness" Value="1"/>
+                                                </Style>
+                                            </Button.Style>
+                                            <Grid Height="175" Padding="12">
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="6">
+                                                    <Border x:Name="LogoPreviewBox" Width="48" Height="48" CornerRadius="12" Background="#10241E" BorderBrush="#1E463A" BorderThickness="1" HorizontalAlignment="Center">
+                                                        <Grid>
+                                                            <FontIcon x:Name="LogoPlaceholderIcon" Glyph="&#xE896;" FontSize="22" Foreground="#EAB308" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            <Image x:Name="LogoPreview" Stretch="UniformToFill" Visibility="Collapsed"/>
+                                                        </Grid>
+                                                    </Border>
+                                                    <TextBlock Text="Cambiar Logotipo" Foreground="#A7F3D0" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="Arrastra o haz clic aquí" Foreground="#34D399" Opacity="0.5" FontSize="9" HorizontalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Button>
+                                        <TextBlock Text="Recomendado: 400x400px PNG / Monocromático para ticket térmico" Foreground="#34D399" Opacity="0.6" FontSize="10" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <!-- Campos -->
+                                    <Grid RowSpacing="12" ColumnSpacing="12" Grid.Column="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Spacing="6">
+                                            <TextBlock Text="NOMBRE COMERCIAL" Foreground="#34D399" Opacity="0.8" FontSize="10" FontWeight="Bold"/>
+                                            <TextBox x:Name="NombreTextBox" Text="SABORES WANKA" TextChanged="CampoNegocio_TextChanged" Background="#071411" BorderBrush="#173A30" Foreground="White" FontSize="13" FontWeight="SemiBold" CornerRadius="8" Padding="12,9"/>
+                                        </StackPanel>
+                                        <StackPanel Spacing="6" Grid.Column="1">
+                                            <TextBlock Text="RUC / NIT" Foreground="#34D399" Opacity="0.8" FontSize="10" FontWeight="Bold"/>
+                                            <TextBox x:Name="RucTextBox" Text="101840998026" TextChanged="CampoNegocio_TextChanged" Background="#071411" BorderBrush="#173A30" Foreground="White" FontFamily="Consolas" FontSize="13" CornerRadius="8" Padding="12,9" MaxLength="11" InputScope="Number"/>
+                                        </StackPanel>
+                                        <StackPanel Spacing="6" Grid.Row="1">
+                                            <TextBlock Text="TELÉFONO / WHATSAPP" Foreground="#34D399" Opacity="0.8" FontSize="10" FontWeight="Bold"/>
+                                            <TextBox x:Name="TelefonoTextBox" Text="+51 999 999 999" TextChanged="CampoNegocio_TextChanged" Background="#071411" BorderBrush="#173A30" Foreground="White" FontSize="13" CornerRadius="8" Padding="12,9" InputScope="TelephoneNumber"/>
+                                        </StackPanel>
+                                        <StackPanel Spacing="6" Grid.Row="1" Grid.Column="1">
+                                            <TextBlock Text="MONEDA" Foreground="#34D399" Opacity="0.8" FontSize="10" FontWeight="Bold"/>
+                                            <ComboBox x:Name="MonedaComboBox" SelectionChanged="MonedaComboBox_SelectionChanged" Background="#071411" BorderBrush="#173A30" Foreground="White" FontSize="13" CornerRadius="8" Padding="12,8" HorizontalAlignment="Stretch" SelectedIndex="0">
+                                                <ComboBoxItem Content="S/ Sol Peruano (PEN)" Tag="S/"/>
+                                                <ComboBoxItem Content="$ Dólar Americano (USD)" Tag="$"/>
+                                                <ComboBoxItem Content="€ Euro (EUR)" Tag="€"/>
+                                                <ComboBoxItem Content="$ Peso Colombiano (COP)" Tag="$"/>
+                                                <ComboBoxItem Content="$ Peso Mexicano (MXN)" Tag="$"/>
+                                            </ComboBox>
+                                        </StackPanel>
+                                        <StackPanel Spacing="6" Grid.Row="2" Grid.ColumnSpan="2">
+                                            <TextBlock Text="DIRECCIÓN FISCAL" Foreground="#34D399" Opacity="0.8" FontSize="10" FontWeight="Bold"/>
+                                            <TextBox x:Name="DireccionTextBox" Text="Torre Tagle y Ciro 450 - Huancayo" TextChanged="CampoNegocio_TextChanged" Background="#071411" BorderBrush="#173A30" Foreground="White" FontSize="13" CornerRadius="8" Padding="12,9"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Card Redes Sociales -->
+                        <Border Background="#0B1814" BorderBrush="#16372D" BorderThickness="1" CornerRadius="16" Padding="24,20">
+                            <StackPanel Spacing="16">
+                                <StackPanel>
+                                    <TextBlock Text="Redes Sociales y Pie de Ticket" Foreground="White" FontWeight="Bold" FontSize="17"/>
+                                    <TextBlock Text="Personaliza mensajes impresos de fidelización y canales digitales" Foreground="#34D399" Opacity="0.6" FontSize="11" Margin="0,2,0,0"/>
+                                </StackPanel>
+                                <Border Background="#142F26" Height="1" HorizontalAlignment="Stretch" Opacity="0.6"/>
+                                <Grid RowSpacing="12" ColumnSpacing="12">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Spacing="6">
+                                        <TextBlock Text="INSTAGRAM" Foreground="#34D399" Opacity="0.8" FontSize="10" FontWeight="Bold"/>
+                                        <TextBox x:Name="InstagramTextBox" Text="saboreswanka" Background="#071411" BorderBrush="#173A30" Foreground="White" FontSize="13" CornerRadius="8" Padding="12,9"/>
+                                    </StackPanel>
+                                    <StackPanel Spacing="6" Grid.Column="1">
+                                        <TextBlock Text="EMAIL DE CONTACTO" Foreground="#34D399" Opacity="0.8" FontSize="10" FontWeight="Bold"/>
+                                        <TextBox x:Name="EmailTextBox" Text="contacto@saboreswanka.pe" Background="#071411" BorderBrush="#173A30" Foreground="White" FontSize="13" CornerRadius="8" Padding="12,9" InputScope="EmailSmtpAddress"/>
+                                    </StackPanel>
+                                    <StackPanel Spacing="6" Grid.Row="1" Grid.ColumnSpan="2">
+                                        <TextBlock Text="MENSAJE DE AGRADECIMIENTO (PIE DE IMPRESIÓN)" Foreground="#34D399" Opacity="0.8" FontSize="10" FontWeight="Bold"/>
+                                        <TextBox x:Name="MensajeTextBox" Text="¡Gracias por preferirnos! Te esperamos pronto." TextChanged="CampoNegocio_TextChanged" Background="#071411" BorderBrush="#173A30" Foreground="White" FontSize="13" CornerRadius="8" Padding="12,9"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Columna derecha: vista previa ticket -->
+                    <Border Background="#0B1814" BorderBrush="#16372D" BorderThickness="1" CornerRadius="16" Padding="24,20" Grid.Column="1">
+                        <StackPanel Spacing="12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE749;" FontSize="16" Foreground="#34D399" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Vista Previa en Vivo" Foreground="White" FontWeight="Bold" FontSize="15" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="0" Background="#06120E" CornerRadius="8" BorderBrush="#17382E" BorderThickness="1" Padding="4">
+                                    <Button x:Name="Formato80Button" Click="Formato80Button_Click" Content="80mm" FontSize="11" FontWeight="Bold" CornerRadius="6" Padding="10,5" MinWidth="0" MinHeight="0" BorderThickness="0"/>
+                                    <Button x:Name="Formato58Button" Click="Formato58Button_Click" Content="58mm" FontSize="11" CornerRadius="6" Padding="10,5" MinWidth="0" MinHeight="0" BorderThickness="0" Background="Transparent" Foreground="#34D399"/>
+                                </StackPanel>
+                            </Grid>
+                            <Border Background="#142F26" Height="1" HorizontalAlignment="Stretch" Opacity="0.6"/>
+                            <!-- Papel termico -->
+                            <Border Background="#07120F" BorderBrush="#142F26" BorderThickness="1" CornerRadius="12" Padding="20,16">
+                                <Border x:Name="TicketPaper" Background="#121C19" BorderBrush="#214339" BorderThickness="1" CornerRadius="6" Padding="18,14" MaxWidth="360" HorizontalAlignment="Center">
+                                    <StackPanel Spacing="8">
+                                        <StackPanel Spacing="2">
+                                            <TextBlock x:Name="PreviewNombre" Text="SABORES WANKA" Foreground="White" FontWeight="Bold" FontSize="14" FontFamily="Consolas" TextAlignment="Center"/>
+                                            <TextBlock Text="RESTAURANTE &amp; COMIDA TÍPICA WANKA" Foreground="#9CA3AF" FontSize="9" FontFamily="Consolas" TextAlignment="Center"/>
+                                            <TextBlock x:Name="PreviewRuc" Text="RUC: 101840998026" Foreground="#9CA3AF" FontSize="9" FontFamily="Consolas" TextAlignment="Center"/>
+                                            <TextBlock x:Name="PreviewDireccion" Text="Torre Tagle y Ciro 450" Foreground="#9CA3AF" FontSize="9" FontFamily="Consolas" TextAlignment="Center"/>
+                                            <TextBlock x:Name="PreviewTelefono" Text="Tel: +51 999 999 999" Foreground="#9CA3AF" FontSize="9" FontFamily="Consolas" TextAlignment="Center"/>
+                                        </StackPanel>
+                                        <Border Background="#244B3F" Height="1" HorizontalAlignment="Stretch" Opacity="0.7"/>
+                                        <Grid ColumnSpacing="8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="NOTA DE VENTA: T32026100600009" Foreground="#D1D5DB" FontSize="9" FontFamily="Consolas"/>
+                                            <TextBlock Text="Mar, 06/10/2026 07:24 p.m." Foreground="#9CA3AF" FontSize="9" FontFamily="Consolas" Grid.Column="1"/>
+                                        </Grid>
+                                        <Border Background="#244B3F" Height="1" HorizontalAlignment="Stretch" Opacity="0.7"/>
+                                        <StackPanel Spacing="4">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="24"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="52"/>
+                                                    <ColumnDefinition Width="52"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="C" Foreground="#E5E7EB" FontSize="9" FontWeight="Bold" FontFamily="Consolas"/>
+                                                <TextBlock Text="PRODUCTO" Foreground="#E5E7EB" FontSize="9" FontWeight="Bold" FontFamily="Consolas" Grid.Column="1"/>
+                                                <TextBlock Text="P.U." Foreground="#E5E7EB" FontSize="9" FontWeight="Bold" FontFamily="Consolas" Grid.Column="2" TextAlignment="Right"/>
+                                                <TextBlock Text="TOTAL" Foreground="#E5E7EB" FontSize="9" FontWeight="Bold" FontFamily="Consolas" Grid.Column="3" TextAlignment="Right"/>
+                                            </Grid>
+                                            <TextBlock Text="1  Pachamanca 2 Sabores ........ 32.00" Foreground="#D1D5DB" FontSize="9" FontFamily="Consolas"/>
+                                            <TextBlock Text="1  Papa a la Huancaína ......... 14.00" Foreground="#D1D5DB" FontSize="9" FontFamily="Consolas"/>
+                                            <TextBlock Text="1  Chicha de Jora 1L ........... 12.00" Foreground="#D1D5DB" FontSize="9" FontFamily="Consolas"/>
+                                            <TextBlock Text="1  Cancha Serrana ............... 4.00" Foreground="#D1D5DB" FontSize="9" FontFamily="Consolas"/>
+                                        </StackPanel>
+                                        <Border Background="#306454" BorderThickness="1" CornerRadius="8" Padding="12,8">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel>
+                                                    <TextBlock Text="TOTAL" Foreground="White" FontWeight="Black" FontSize="13" FontFamily="Consolas"/>
+                                                    <TextBlock Text="4 Productos" Foreground="#34D399" FontSize="9"/>
+                                                </StackPanel>
+                                                <TextBlock x:Name="PreviewTotal" Text="S/ 62.00" Foreground="White" FontWeight="Bold" FontSize="19" FontFamily="Consolas" Grid.Column="1" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                        <StackPanel Spacing="2">
+                                            <TextBlock Text="Representación impresa de Nota de Venta" Foreground="#9CA3AF" FontSize="8" FontFamily="Consolas" TextAlignment="Center"/>
+                                            <TextBlock x:Name="PreviewMensaje" Text="¡Gracias por preferirnos! Te esperamos pronto." Foreground="#6EE7B7" FontStyle="Italic" FontSize="10" TextAlignment="Center" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </Border>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                    <Ellipse Width="6" Height="6" Fill="#34D399" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Renderizado automático en vivo" Foreground="#34D399" Opacity="0.7" FontSize="10" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="Imprimir Ticket de Prueba" Click="ProbarImpresionButton_Click" Background="Transparent" BorderThickness="0" Foreground="#34D399" FontSize="11" Padding="4,0" MinWidth="0" MinHeight="0"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Vista IMPRESORAS: 3 tarjetas fijas del mock -->
+                <Border x:Name="ImpresorasPanel" Visibility="Collapsed" Background="#0B1814" BorderBrush="#16372D" BorderThickness="1" CornerRadius="16" Padding="24,20">
+                    <StackPanel Spacing="16">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="Gestión de Impresoras Térmicas" Foreground="White" FontWeight="Bold" FontSize="17"/>
+                                <TextBlock Text="Asigna y configura puertos USB, Red LAN o Bluetooth para comandas y facturación" Foreground="#34D399" Opacity="0.6" FontSize="11" Margin="0,2,0,0"/>
+                            </StackPanel>
+                            <Button Grid.Column="1" Click="AgregarImpresoraButton_Click" Background="#10B981" BorderThickness="0" CornerRadius="8" Padding="16,9" MinWidth="0" MinHeight="0">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE710;" FontSize="13" Foreground="Black"/>
+                                    <TextBlock Text="Agregar Impresora" Foreground="Black" FontSize="12" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                        <Border Background="#142F26" Height="1" HorizontalAlignment="Stretch" Opacity="0.6"/>
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Background="#071411" BorderBrush="#1B4337" BorderThickness="1" CornerRadius="12" Padding="16,14">
+                                <StackPanel Spacing="10">
+                                    <Grid>
+                                        <Border Background="#10B98133" BorderBrush="#10B9814D" BorderThickness="1" CornerRadius="4" Padding="8,3" HorizontalAlignment="Left">
+                                            <TextBlock Text="Caja / Boletas" Foreground="#6EE7B7" FontSize="10" FontWeight="Bold"/>
+                                        </Border>
+                                        <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                            <Ellipse Width="8" Height="8" Fill="#34D399" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Conectada" Foreground="#34D399" FontSize="11" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <StackPanel Spacing="2">
+                                        <TextBlock Text="Epson TM-T20III" Foreground="White" FontWeight="Bold" FontSize="13"/>
+                                        <TextBlock Text="Conexión: USB 2.0 (Puerto COM3)" Foreground="#9CA3AF" FontSize="11"/>
+                                        <TextBlock Text="Ancho de papel: 80mm" Foreground="#9CA3AF" FontSize="11"/>
+                                    </StackPanel>
+                                    <Grid BorderBrush="#133027" BorderThickness="0,1,0,0" Padding="0,10,0,0">
+                                        <Button Content="Probar Corte" Click="ProbarImpresionButton_Click" Background="Transparent" BorderThickness="0" Foreground="#34D399" FontSize="11" Padding="0" MinWidth="0" MinHeight="0" HorizontalAlignment="Left"/>
+                                        <Button Content="Configurar" Background="Transparent" BorderThickness="0" Foreground="#9CA3AF" FontSize="11" Padding="0" MinWidth="0" MinHeight="0" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="1" Background="#071411" BorderBrush="#1B4337" BorderThickness="1" CornerRadius="12" Padding="16,14">
+                                <StackPanel Spacing="10">
+                                    <Grid>
+                                        <Border Background="#EAB30833" BorderBrush="#EAB3084D" BorderThickness="1" CornerRadius="4" Padding="8,3" HorizontalAlignment="Left">
+                                            <TextBlock Text="Cocina / Comandas" Foreground="#F6D87C" FontSize="10" FontWeight="Bold"/>
+                                        </Border>
+                                        <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                            <Ellipse Width="8" Height="8" Fill="#34D399" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Conectada" Foreground="#34D399" FontSize="11" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <StackPanel Spacing="2">
+                                        <TextBlock Text="Bixolon SRP-330II" Foreground="White" FontWeight="Bold" FontSize="13"/>
+                                        <TextBlock Text="Conexión: LAN (192.168.1.150:9100)" Foreground="#9CA3AF" FontSize="11"/>
+                                        <TextBlock Text="Ancho de papel: 80mm" Foreground="#9CA3AF" FontSize="11"/>
+                                    </StackPanel>
+                                    <Grid BorderBrush="#133027" BorderThickness="0,1,0,0" Padding="0,10,0,0">
+                                        <Button Content="Probar Sonido" Click="ProbarImpresionButton_Click" Background="Transparent" BorderThickness="0" Foreground="#34D399" FontSize="11" Padding="0" MinWidth="0" MinHeight="0" HorizontalAlignment="Left"/>
+                                        <Button Content="Configurar" Background="Transparent" BorderThickness="0" Foreground="#9CA3AF" FontSize="11" Padding="0" MinWidth="0" MinHeight="0" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="2" Background="#071411" BorderBrush="#1B4337" BorderThickness="1" CornerRadius="12" Padding="16,14">
+                                <StackPanel Spacing="10">
+                                    <Grid>
+                                        <Border Background="#3B82F633" BorderBrush="#3B82F64D" BorderThickness="1" CornerRadius="4" Padding="8,3" HorizontalAlignment="Left">
+                                            <TextBlock Text="Barra &amp; Bebidas" Foreground="#93C5FD" FontSize="10" FontWeight="Bold"/>
+                                        </Border>
+                                        <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                            <Ellipse Width="8" Height="8" Fill="#34D399" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Conectada" Foreground="#34D399" FontSize="11" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <StackPanel Spacing="2">
+                                        <TextBlock Text="Xprinter XP-N160M" Foreground="White" FontWeight="Bold" FontSize="13"/>
+                                        <TextBlock Text="Conexión: Red Wi-Fi (192.168.1.155)" Foreground="#9CA3AF" FontSize="11"/>
+                                        <TextBlock Text="Ancho de papel: 58mm" Foreground="#9CA3AF" FontSize="11"/>
+                                    </StackPanel>
+                                    <Grid BorderBrush="#133027" BorderThickness="0,1,0,0" Padding="0,10,0,0">
+                                        <Button Content="Probar Ticket" Click="ProbarImpresionButton_Click" Background="Transparent" BorderThickness="0" Foreground="#34D399" FontSize="11" Padding="0" MinWidth="0" MinHeight="0" HorizontalAlignment="Left"/>
+                                        <Button Content="Configurar" Background="Transparent" BorderThickness="0" Foreground="#9CA3AF" FontSize="11" Padding="0" MinWidth="0" MinHeight="0" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Footer fijo: descartar / guardar -->
+                <Border Background="#050D0B" BorderBrush="#142E26" BorderThickness="0,1,0,0" Padding="0,16,0,4">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="#34D399" VerticalAlignment="Center"/>
+                            <TextBlock Text="Los cambios realizados se sincronizarán con los puntos de venta y comandas activas." Foreground="#34D399" Opacity="0.6" FontSize="11" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
+                            <Button x:Name="DescartarButton" Click="DescartarButton_Click" Content="Descartar" Background="#091512" BorderBrush="#1B3D33" BorderThickness="1" Foreground="#6EE7B7" FontSize="12" FontWeight="SemiBold" CornerRadius="12" Padding="20,10" MinWidth="0" MinHeight="0"/>
+                            <Button x:Name="GuardarButton" Click="GuardarButton_Click" Background="#10B981" BorderThickness="0" Foreground="Black" FontSize="12" FontWeight="Bold" CornerRadius="12" Padding="24,10" MinWidth="0" MinHeight="0">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE73E;" FontSize="13" Foreground="Black"/>
+                                    <TextBlock Text="Guardar Configuración" Foreground="Black" FontSize="12" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

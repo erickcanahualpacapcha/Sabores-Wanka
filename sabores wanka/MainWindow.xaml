@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="sabores_wanka.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:sabores_wanka"
+    xmlns:components="using:sabores_wanka.Views.Components"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="sabores wanka">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <Grid>
+        <!-- Contenido principal (debajo de la barra de titulo oscura) -->
+        <ContentControl x:Name="MainContent"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        Margin="0,32,0,0"
+                        Canvas.ZIndex="0" />
+
+        <!-- Banda oscura de barra de titulo estilo Tiendas Nachis -->
+        <Border x:Name="TitleBarDragHost"
+                Height="32"
+                Background="#1E2433"
+                BorderBrush="#22000000"
+                BorderThickness="0,0,0,1"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Top"
+                IsHitTestVisible="False"
+                Canvas.ZIndex="50" />
+
+        <!-- Píldora de mesa activa: centrada en la barra de título, siempre visible
+             en punto de venta. Es botón: abre el selector de mesas. -->
+        <Border x:Name="MesaTitlePill"
+                Height="24"
+                MinWidth="130"
+                CornerRadius="12"
+                Background="#141B28"
+                BorderBrush="#2A3648"
+                BorderThickness="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Margin="0,4,0,0"
+                Visibility="Collapsed"
+                Canvas.ZIndex="60">
+            <Button x:Name="MesaTitleButton" Click="MesaTitleButton_Click" Background="Transparent" BorderThickness="0" Padding="12,0" MinWidth="0" MinHeight="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                    <FontIcon x:Name="MesaTitleIcon" Glyph="&#xE8A9;" FontSize="12" Foreground="#64748B" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="MesaTitleText" Text="Sin mesa" Foreground="#64748B" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </Border>
+
+        <!-- Barra de navegación lateral izquierda -->
+        <components:BarraLateral x:Name="MainSidebar"
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Stretch"
+                                 Canvas.ZIndex="100"/>
+
+        <!-- Banner de actualización (GitHub Releases): oculto hasta que -->
+        <!-- ActualizacionService avise de una versión nueva disponible. -->
+        <components:ActualizacionBanner x:Name="UpdateBanner"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Bottom"
+                                        Margin="0,0,24,24"
+                                        Canvas.ZIndex="200"/>
+    </Grid>
+</Window>

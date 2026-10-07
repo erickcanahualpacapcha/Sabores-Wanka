@@ -1,0 +1,22 @@
+﻿# ============================================================
+#  .editorconfig - Sabores Wanka
+#  Regla de encoding: codigo y notas en UTF-8 CON BOM, CRLF,
+#  indent 4 espacios. Sin BOM los caracteres espanoles (n con
+#  tilde, acentos) se corrompen al guardar con codepage legacy.
+#  Excepcion: JSON/JSONC van sin BOM para no romper parsers.
+# ============================================================
+root = true
+
+[*]
+charset = utf-8-bom
+end_of_line = crlf
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = false
+
+[*.{json,jsonc}]
+charset = utf-8
+
+[*.{yml,yaml}]
+indent_size = 2

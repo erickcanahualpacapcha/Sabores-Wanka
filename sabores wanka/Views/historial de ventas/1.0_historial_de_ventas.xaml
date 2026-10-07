@@ -1,0 +1,548 @@
+﻿<UserControl
+    x:Class="sabores_wanka.Views.HistorialDeVentas.HistorialDeVentasView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:hist="using:sabores_wanka.Views.HistorialDeVentas"
+    mc:Ignorable="d">
+
+    <Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="#121619">
+        <StackPanel Spacing="24" Padding="24">
+
+            <!-- Header -->
+            <Border Background="#161b20" BorderBrush="#242b32" BorderThickness="0,0,0,1" CornerRadius="0" Padding="16,12" Margin="-24,-24,-24,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Border Width="44" Height="44" CornerRadius="12" Background="#EA580C" BorderBrush="#ea580c" BorderThickness="1">
+                            <TextBlock Text="SW" Foreground="White" FontWeight="Bold" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="Sabores Wanka" Foreground="White" FontWeight="Bold" FontSize="16"/>
+                                <TextBlock Text="|" Foreground="#6b7280"/>
+                                <TextBlock Text="Historial de Ventas" Foreground="#d1d5db" FontSize="14"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,2,0,0">
+                                <Ellipse Width="8" Height="8" Fill="#10b981"/>
+                                <TextBlock Text="Sistema en Línea" Foreground="#10b981" FontSize="11" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Border Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#1e252c" CornerRadius="12" BorderBrush="#2b353f" BorderThickness="1" Padding="4">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <Button x:Name="TopTransaccionesBtn" Tag="transacciones" Click="TopTab_Click" Background="#10b981" BorderThickness="0" CornerRadius="8" Padding="12,6" MinWidth="0" MinHeight="0"><StackPanel Orientation="Horizontal" Spacing="6"><FontIcon x:Name="TopTransaccionesIcon" Glyph="&#xE81C;" FontSize="12" Foreground="White"/><TextBlock x:Name="TopTransaccionesText" Text="Transacciones" Foreground="White" FontSize="11" FontWeight="SemiBold"/></StackPanel></Button>
+                            <Button x:Name="TopCierresBtn" Tag="cierres" Click="TopTab_Click" Background="Transparent" BorderThickness="0" CornerRadius="8" Padding="12,6" MinWidth="0" MinHeight="0"><StackPanel Orientation="Horizontal" Spacing="6"><FontIcon x:Name="TopCierresIcon" Glyph="&#xE8D7;" FontSize="12" Foreground="#9ca3af"/><TextBlock x:Name="TopCierresText" Text="Cierres de caja" Foreground="#9ca3af" FontSize="11"/></StackPanel></Button>
+                            <Button x:Name="TopCocinaBtn" Tag="cocina" Click="TopTab_Click" Background="Transparent" BorderThickness="0" CornerRadius="8" Padding="12,6" MinWidth="0" MinHeight="0"><StackPanel Orientation="Horizontal" Spacing="6"><FontIcon x:Name="TopCocinaIcon" Glyph="&#xE8A5;" FontSize="12" Foreground="#9ca3af"/><TextBlock x:Name="TopCocinaText" Text="Comandas / Cocina" Foreground="#9ca3af" FontSize="11"/></StackPanel></Button>
+                        </StackPanel>
+                    </Border>
+
+                    <Button x:Name="CajaButton" Grid.Column="2" Click="CajaButton_Click" Background="#059669" CornerRadius="8" Padding="16,10" BorderThickness="0" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE8D7;" FontSize="14" Foreground="White"/>
+                            <TextBlock x:Name="CajaButtonText" Text="CERRAR CAJA" Foreground="White" FontSize="11" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- KPI Cards -->
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Balance -->
+                <Border Background="#1b2228" BorderBrush="#27323b" BorderThickness="1" CornerRadius="16" Padding="14">
+                    <StackPanel Spacing="8">
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE8C7;" FontSize="13" Foreground="#38bdf8"/>
+                                <TextBlock Text="Balance del Día" Foreground="#9ca3af" FontSize="10" FontWeight="Bold"/>
+                            </StackPanel>
+                            <Border HorizontalAlignment="Right" Background="#0c4a6e" CornerRadius="6" Padding="6,2"><TextBlock Text="+18.4%" Foreground="#7dd3fc" FontSize="10" FontFamily="Consolas"/></Border>
+                        </Grid>
+                        <StackPanel>
+                            <TextBlock x:Name="BalanceText" Text="S/ 1,360.00" Foreground="White" FontSize="20" FontWeight="ExtraBold"/>
+                            <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,2,0,0">
+                                <TextBlock Text="Saldo acumulado:" Foreground="#9ca3af" FontSize="10"/>
+                                <TextBlock Text="S/ 3,920.50" Foreground="#7dd3fc" FontSize="10" FontFamily="Consolas"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <Border Height="5" Background="#27323b" CornerRadius="3"><Border Width="160" HorizontalAlignment="Left" Background="#0ea5e9" CornerRadius="3"/></Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Ventas -->
+                <Border Grid.Column="1" CornerRadius="16" Padding="14" BorderBrush="#10b981" BorderThickness="1">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#0c533c" Offset="0"/>
+                            <GradientStop Color="#083b2a" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <StackPanel Spacing="8">
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE9D1;" FontSize="13" Foreground="#6ee7b7"/>
+                                <TextBlock Text="Ventas Totales" Foreground="#a7f3d0" FontSize="10" FontWeight="Bold"/>
+                            </StackPanel>
+                            <Border HorizontalAlignment="Right" Background="#10b98133" CornerRadius="6" Padding="6,2" BorderBrush="#6ee7b733" BorderThickness="1"><TextBlock Text="En Vivo" Foreground="#a7f3d0" FontSize="10" FontWeight="Bold"/></Border>
+                        </Grid>
+                        <StackPanel>
+                            <TextBlock x:Name="VentasTotalesText" Text="S/ 1,480.00" Foreground="White" FontSize="20" FontWeight="ExtraBold"/>
+                            <TextBlock Text="INGRESOS BRUTOS HOY (SALÓN + LLEVAR)" Foreground="#6ee7b7" FontSize="8" Opacity="0.9" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <Grid BorderBrush="#10b98133" BorderThickness="0,1,0,0" Padding="0,6,0,0">
+                            <TextBlock Text="Meta del día: S/ 2,000.00" Foreground="#6ee7b7" FontSize="10" Opacity="0.7"/>
+                            <TextBlock Text="74%" Foreground="White" FontWeight="Bold" FontFamily="Consolas" HorizontalAlignment="Right"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Gastos -->
+                <Border Grid.Column="2" CornerRadius="16" Padding="14" BorderBrush="#e11d48" BorderThickness="1">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#5c1c1d" Offset="0"/>
+                            <GradientStop Color="#3f1314" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <StackPanel Spacing="8">
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE8C7;" FontSize="13" Foreground="#fda4af"/>
+                                <TextBlock Text="Gastos / Egresos" Foreground="#fecdd3" FontSize="10" FontWeight="Bold"/>
+                            </StackPanel>
+                            <TextBlock x:Name="GastosCountText" Text="2 compras" Foreground="#fda4af" FontSize="10" HorizontalAlignment="Right"/>
+                        </Grid>
+                        <StackPanel>
+                            <TextBlock x:Name="GastosTotalText" Text="S/ 120.00" Foreground="White" FontSize="20" FontWeight="ExtraBold"/>
+                            <TextBlock Text="PAGOS PROVEEDORES / CAJA CHICA" Foreground="#fecdd3" FontSize="8" Opacity="0.8" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <Grid BorderBrush="#e11d4840" BorderThickness="0,1,0,0" Padding="0,6,0,0">
+                            <TextBlock Text="Salida autorizada" Foreground="#fda4af" FontSize="10" Opacity="0.7"/>
+                            <FontIcon Glyph="&#xE73E;" FontSize="11" Foreground="#fda4af" HorizontalAlignment="Right"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Métricas -->
+                <Border Grid.Column="3" Background="#1b2228" BorderBrush="#27323b" BorderThickness="1" CornerRadius="16" Padding="8">
+                    <StackPanel Spacing="8">
+                        <Border Background="#151a1e" CornerRadius="12" Padding="10" BorderBrush="#252f38" BorderThickness="1">
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="N° TRANSACCIONES" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TransaccionesText" Text="38" Foreground="White" FontSize="18" FontWeight="Black" FontFamily="Consolas" Margin="0,2,0,0"/>
+                                </StackPanel>
+                                <Border Width="34" Height="34" CornerRadius="8" Background="#ea580c1a" BorderBrush="#ea580c4d" BorderThickness="1" HorizontalAlignment="Right">
+                                    <FontIcon Glyph="&#xE8F1;" FontSize="14" Foreground="#fb923c" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                        <Border Background="#151a1e" CornerRadius="12" Padding="10" BorderBrush="#252f38" BorderThickness="1">
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="TICKET PROMEDIO" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TicketPromedioText" Text="S/ 38.95" Foreground="White" FontSize="15" FontWeight="Bold" FontFamily="Consolas" Margin="0,2,0,0"/>
+                                </StackPanel>
+                                <Border Width="34" Height="34" CornerRadius="8" Background="#10b9811a" BorderBrush="#10b9814d" BorderThickness="1" HorizontalAlignment="Right">
+                                    <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="#34d399" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Pestañas — seleccionables -->
+            <Grid BorderBrush="#242c33" BorderThickness="0,0,0,1" Padding="0,0,0,8">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <!-- Ingresos -->
+                    <Button x:Name="TabIngresosBtn" Click="TabIngresos_Click" Background="Transparent" BorderThickness="0" Padding="0,0,0,6" Margin="0,0,8,0">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon x:Name="TabIngresosIcon" Glyph="&#xE8C7;" FontSize="12" Foreground="#10b981"/>
+                                <TextBlock x:Name="TabIngresosText" Text="Ingresos (Ventas)" Foreground="#10b981" FontSize="12" FontWeight="SemiBold"/>
+                                <Border x:Name="TabIngresosBadge" Background="#10b98133" CornerRadius="10" Padding="6,2"><TextBlock x:Name="TabIngresosBadgeText" Text="38" Foreground="#6ee7b7" FontSize="10" FontWeight="Bold"/></Border>
+                            </StackPanel>
+                            <Border x:Name="TabIngresosIndicator" Height="2" Background="#10b981" Margin="0,6,0,0"/>
+                        </StackPanel>
+                    </Button>
+                    <!-- Egresos -->
+                    <Button x:Name="TabEgresosBtn" Click="TabEgresos_Click" Background="Transparent" BorderThickness="0" Padding="0,0,0,6" Margin="0,0,8,0">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon x:Name="TabEgresosIcon" Glyph="&#xE8C7;" FontSize="12" Foreground="#9ca3af"/>
+                                <TextBlock x:Name="TabEgresosText" Text="Egresos" Foreground="#9ca3af" FontSize="12"/>
+                                <Border x:Name="TabEgresosBadge" Background="#242c33" CornerRadius="10" Padding="6,2"><TextBlock x:Name="TabEgresosBadgeText" Text="2" Foreground="#d1d5db" FontSize="10"/></Border>
+                            </StackPanel>
+                            <Border x:Name="TabEgresosIndicator" Height="2" Background="Transparent" Margin="0,6,0,0"/>
+                        </StackPanel>
+                    </Button>
+                    <!-- Por cobrar -->
+                    <Button x:Name="TabPorCobrarBtn" Click="TabPorCobrar_Click" Background="Transparent" BorderThickness="0" Padding="0,0,0,6">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon x:Name="TabPorCobrarIcon" Glyph="&#xE823;" FontSize="12" Foreground="#9ca3af"/>
+                                <TextBlock x:Name="TabPorCobrarText" Text="Por cobrar" Foreground="#9ca3af" FontSize="12"/>
+                                <Border x:Name="TabPorCobrarBadge" Background="#242c33" CornerRadius="10" Padding="6,2"><TextBlock x:Name="TabPorCobrarBadgeText" Text="1" Foreground="#7dd3fc" FontSize="10" FontWeight="Bold"/></Border>
+                            </StackPanel>
+                            <Border x:Name="TabPorCobrarIndicator" Height="2" Background="Transparent" Margin="0,6,0,0"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button x:Name="FunnelButton" Click="FunnelButton_Click" Background="#202931" BorderBrush="#2d3a46" BorderThickness="1" CornerRadius="8" Padding="10" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Limpiar filtros">
+                        <FontIcon Glyph="&#xE71C;" FontSize="13" Foreground="#9ca3af"/>
+                    </Button>
+                    <Button x:Name="ClienteFiltroButton" Click="ClienteFiltroButton_Click" Background="#202931" BorderBrush="#2d3a46" BorderThickness="1" CornerRadius="8" Padding="12,8" MinWidth="0" MinHeight="0">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock x:Name="ClienteFiltroText" Text="Todos los clientes / Mesas" Foreground="#e2e8f0" FontSize="11"/>
+                            <FontIcon Glyph="&#xE70D;" FontSize="10" Foreground="#64748b"/>
+                        </StackPanel>
+                    </Button>
+                    <ComboBox x:Name="PeriodoComboBox" SelectionChanged="PeriodoComboBox_SelectionChanged" SelectedIndex="0" Background="#202931" BorderBrush="#2d3a46" BorderThickness="1" CornerRadius="8" Padding="12,4" MinWidth="0" MinHeight="0" Foreground="#e2e8f0" FontSize="11" ToolTipService.ToolTip="Periodo del reporte">
+                        <ComboBoxItem Content="Diario"/>
+                        <ComboBoxItem Content="Semanal"/>
+                        <ComboBoxItem Content="Mensual"/>
+                        <ComboBoxItem Content="Anual"/>
+                    </ComboBox>
+                    <Border Background="#202931" CornerRadius="8" BorderBrush="#2d3a46" BorderThickness="1" Padding="12,4">
+                        <Button x:Name="FechaBoton" Background="Transparent" BorderThickness="0" Padding="0" MinWidth="0" MinHeight="0" VerticalAlignment="Center">
+                            <Button.Flyout>
+                                <Flyout x:Name="FechaFlyout" Placement="BottomEdgeAlignedRight">
+                                    <hist:CalendarioPeriodoControl x:Name="CalendarioPeriodo" DateSelected="CalendarioPeriodo_DateSelected"/>
+                                </Flyout>
+                            </Button.Flyout>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE787;" FontSize="12" Foreground="#10b981" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="FechaChipText" Text="Hoy" Foreground="#e2e8f0" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </Border>
+                    <Border Background="#14191d" CornerRadius="8" BorderBrush="#2b3540" BorderThickness="1" Width="260" Padding="12,6">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <FontIcon Glyph="&#xE721;" FontSize="12" Foreground="#64748b" VerticalAlignment="Center"/>
+                            <TextBox x:Name="BuscadorTextBox" Grid.Column="1" Margin="8,0,0,0" Background="Transparent" BorderThickness="0" Foreground="White" FontSize="11" PlaceholderText="Buscar ticket, cliente..." PlaceholderForeground="#64748b" VerticalAlignment="Center" TextChanged="BuscadorTextBox_TextChanged"/>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Grid>
+
+            <!-- Panel Ingresos -->
+            <Border x:Name="PanelIngresos" Background="#181f24" CornerRadius="16" BorderBrush="#242d35" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Background="#1b2329" Padding="16,12" CornerRadius="16,16,0,0" BorderBrush="#242d35" BorderThickness="0,0,0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Border Width="32" Height="32" CornerRadius="8" Background="#10b9811a" BorderBrush="#10b98133" BorderThickness="1">
+                                <FontIcon Glyph="&#xE7B8;" FontSize="14" Foreground="#10b981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Ventas del Periodo" Foreground="#e2e8f0" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE946;" FontSize="12" Foreground="#64748b"/>
+                            <TextBlock Text="Mostrando" Foreground="#9ca3af" FontSize="11"/>
+                            <TextBlock x:Name="MostrandoText" Text="6" Foreground="White" FontWeight="Bold" FontSize="11"/>
+                            <TextBlock Text="de" Foreground="#9ca3af" FontSize="11"/>
+                            <TextBlock x:Name="TotalVentasText" Text="38" Foreground="White" FontWeight="Bold" FontSize="11"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Header tabla -->
+                    <Grid x:Name="TablaVentas" Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Background="#14181c" Padding="16,10" BorderBrush="#242d35" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="TICKET / BOLETA #" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="1" Text="FECHA Y HORA" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="2" Text="MESA / CLIENTE" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="3" Text="MOZO" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="4" Text="TOTAL" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="5" Text="ESTADO" Foreground="#9ca3af" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="6" Text="ACCIONES" Foreground="#9ca3af" FontSize="9" FontWeight="Bold" HorizontalAlignment="Right"/>
+                        </Grid>
+
+                        <!-- Fila 1 -->
+                        <Grid Grid.Row="1" Padding="16,12" BorderBrush="#232b33" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" Spacing="6"><Ellipse Width="6" Height="6" Fill="#10b981"/><TextBlock Text="B001-0029841" Foreground="White" FontFamily="Consolas" FontSize="11" FontWeight="Bold"/></StackPanel>
+                            <TextBlock Grid.Column="1" Text="24/10/2024 14:42" Foreground="#d1d5db" FontFamily="Consolas" FontSize="11"/>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6"><Border Background="#ea580c26" CornerRadius="4" Padding="6,2" BorderBrush="#ea580c4d" BorderThickness="1"><TextBlock Text="MESA 04" Foreground="#fb923c" FontSize="9" FontWeight="Bold"/></Border><TextBlock Text="Familia Quispe" Foreground="White" FontSize="11" VerticalAlignment="Center"/></StackPanel>
+                            <TextBlock Grid.Column="3" Text="Luis Huamán" Foreground="#9ca3af" FontStyle="Italic" FontSize="11"/>
+                            <StackPanel Grid.Column="4"><TextBlock Text="S/ 85.00" Foreground="#10b981" FontWeight="Black" FontFamily="Consolas" FontSize="12"/><TextBlock Text="Yape / Plin" Foreground="#9ca3af" FontSize="9"/></StackPanel>
+                            <Border Grid.Column="5" Background="#10b98133" CornerRadius="12" Padding="8,4" BorderBrush="#10b98166" BorderThickness="1" HorizontalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="4"><FontIcon Glyph="&#xE73E;" FontSize="10" Foreground="#10b981"/><TextBlock Text="PAGADO" Foreground="#10b981" FontSize="9" FontWeight="Black"/></StackPanel></Border>
+                            <StackPanel Grid.Column="6" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Right"><Button Tag="B001-0029841" Click="AccionImprimir_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Imprimir"><FontIcon Glyph="&#xE74E;" FontSize="12" Foreground="#38bdf8"/></Button><Button Tag="B001-0029841" Click="AccionVer_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Ver detalle"><FontIcon Glyph="&#xE7B3;" FontSize="12" Foreground="#d1d5db"/></Button><Button Tag="B001-0029841" Click="AccionEditar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Editar"><FontIcon Glyph="&#xE70F;" FontSize="12" Foreground="#fb923c"/></Button><Button Tag="B001-0029841" Click="AccionCopiar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Copiar"><FontIcon Glyph="&#xE8C8;" FontSize="12" Foreground="#60a5fa"/></Button><Button Tag="B001-0029841" Click="AccionEliminar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Eliminar"><FontIcon Glyph="&#xE74D;" FontSize="12" Foreground="#f87171"/></Button></StackPanel>
+                        </Grid>
+                        <!-- Fila 2 -->
+                        <Grid Grid.Row="2" Padding="16,12" BorderBrush="#232b33" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" Spacing="6"><Ellipse Width="6" Height="6" Fill="#10b981"/><TextBlock Text="B001-0029840" Foreground="White" FontFamily="Consolas" FontSize="11" FontWeight="Bold"/></StackPanel>
+                            <TextBlock Grid.Column="1" Text="24/10/2024 14:28" Foreground="#d1d5db" FontFamily="Consolas" FontSize="11"/>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6"><Border Background="#0ea5e926" CornerRadius="4" Padding="6,2" BorderBrush="#0ea5e94d" BorderThickness="1"><TextBlock Text="MESA 02" Foreground="#7dd3fc" FontSize="9" FontWeight="Bold"/></Border><TextBlock Text="Ing. Marco Ramos" Foreground="White" FontSize="11" VerticalAlignment="Center"/></StackPanel>
+                            <TextBlock Grid.Column="3" Text="Rosa Cárdenas" Foreground="#9ca3af" FontStyle="Italic" FontSize="11"/>
+                            <StackPanel Grid.Column="4"><TextBlock Text="S/ 64.00" Foreground="#10b981" FontWeight="Black" FontFamily="Consolas" FontSize="12"/><TextBlock Text="Efectivo" Foreground="#9ca3af" FontSize="9"/></StackPanel>
+                            <Border Grid.Column="5" Background="#10b98133" CornerRadius="12" Padding="8,4" BorderBrush="#10b98166" BorderThickness="1" HorizontalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="4"><FontIcon Glyph="&#xE73E;" FontSize="10" Foreground="#10b981"/><TextBlock Text="PAGADO" Foreground="#10b981" FontSize="9" FontWeight="Black"/></StackPanel></Border>
+                            <StackPanel Grid.Column="6" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Right"><Button Tag="B001-0029840" Click="AccionImprimir_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Imprimir"><FontIcon Glyph="&#xE74E;" FontSize="12" Foreground="#38bdf8"/></Button><Button Tag="B001-0029840" Click="AccionVer_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Ver detalle"><FontIcon Glyph="&#xE7B3;" FontSize="12" Foreground="#d1d5db"/></Button><Button Tag="B001-0029840" Click="AccionEditar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Editar"><FontIcon Glyph="&#xE70F;" FontSize="12" Foreground="#fb923c"/></Button><Button Tag="B001-0029840" Click="AccionCopiar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Copiar"><FontIcon Glyph="&#xE8C8;" FontSize="12" Foreground="#60a5fa"/></Button><Button Tag="B001-0029840" Click="AccionEliminar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Eliminar"><FontIcon Glyph="&#xE74D;" FontSize="12" Foreground="#f87171"/></Button></StackPanel>
+                        </Grid>
+                        <!-- Fila 3 -->
+                        <Grid Grid.Row="3" Padding="16,12" BorderBrush="#232b33" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" Spacing="6"><Ellipse Width="6" Height="6" Fill="#38bdf8"/><TextBlock Text="T002-0004128" Foreground="White" FontFamily="Consolas" FontSize="11" FontWeight="Bold"/></StackPanel>
+                            <TextBlock Grid.Column="1" Text="24/10/2024 14:15" Foreground="#d1d5db" FontFamily="Consolas" FontSize="11"/>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6"><Border Background="#a855f726" CornerRadius="4" Padding="6,2" BorderBrush="#a855f74d" BorderThickness="1"><TextBlock Text="MESA 08" Foreground="#d8b4fe" FontSize="9" FontWeight="Bold"/></Border><TextBlock Text="Cliente Ocasional" Foreground="White" FontSize="11" VerticalAlignment="Center"/></StackPanel>
+                            <TextBlock Grid.Column="3" Text="Carlos Meléndez" Foreground="#9ca3af" FontStyle="Italic" FontSize="11"/>
+                            <StackPanel Grid.Column="4"><TextBlock Text="S/ 28.00" Foreground="#38bdf8" FontWeight="Black" FontFamily="Consolas" FontSize="12"/><TextBlock Text="Tarjeta VISA" Foreground="#9ca3af" FontSize="9"/></StackPanel>
+                            <Border Grid.Column="5" Background="#38bdf833" CornerRadius="12" Padding="8,4" BorderBrush="#38bdf866" BorderThickness="1" HorizontalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="4"><FontIcon Glyph="&#xE823;" FontSize="10" Foreground="#7dd3fc"/><TextBlock Text="EN MESA" Foreground="#7dd3fc" FontSize="9" FontWeight="Black"/></StackPanel></Border>
+                            <StackPanel Grid.Column="6" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Right"><Button Tag="T002-0004128" Click="AccionImprimir_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Imprimir"><FontIcon Glyph="&#xE74E;" FontSize="12" Foreground="#38bdf8"/></Button><Button Tag="T002-0004128" Click="AccionVer_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Ver detalle"><FontIcon Glyph="&#xE7B3;" FontSize="12" Foreground="#d1d5db"/></Button><Button Tag="T002-0004128" Click="AccionVer_Click" Background="#10b98133" CornerRadius="6" Padding="8,4" BorderThickness="0" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Ir a la mesa"><TextBlock Text="Ir" Foreground="#10b981" FontSize="9"/></Button></StackPanel>
+                        </Grid>
+                        <!-- Fila 4 -->
+                        <Grid Grid.Row="4" Padding="16,12" BorderBrush="#232b33" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" Spacing="6"><Ellipse Width="6" Height="6" Fill="#10b981"/><TextBlock Text="B001-0029839" Foreground="White" FontFamily="Consolas" FontSize="11" FontWeight="Bold"/></StackPanel>
+                            <TextBlock Grid.Column="1" Text="24/10/2024 13:50" Foreground="#d1d5db" FontFamily="Consolas" FontSize="11"/>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6"><Border Background="#10b98126" CornerRadius="4" Padding="6,2" BorderBrush="#10b9814d" BorderThickness="1"><TextBlock Text="LLEVAR #12" Foreground="#6ee7b7" FontSize="9" FontWeight="Bold"/></Border><TextBlock Text="Sonia Baldeón" Foreground="White" FontSize="11" VerticalAlignment="Center"/></StackPanel>
+                            <TextBlock Grid.Column="3" Text="Caja Mostrador" Foreground="#9ca3af" FontStyle="Italic" FontSize="11"/>
+                            <StackPanel Grid.Column="4"><TextBlock Text="S/ 42.00" Foreground="#10b981" FontWeight="Black" FontFamily="Consolas" FontSize="12"/><TextBlock Text="Efectivo" Foreground="#9ca3af" FontSize="9"/></StackPanel>
+                            <Border Grid.Column="5" Background="#10b98133" CornerRadius="12" Padding="8,4" BorderBrush="#10b98166" BorderThickness="1" HorizontalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="4"><FontIcon Glyph="&#xE73E;" FontSize="10" Foreground="#10b981"/><TextBlock Text="PAGADO" Foreground="#10b981" FontSize="9" FontWeight="Black"/></StackPanel></Border>
+                            <StackPanel Grid.Column="6" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Right"><Button Tag="B001-0029839" Click="AccionImprimir_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Imprimir"><FontIcon Glyph="&#xE74E;" FontSize="12" Foreground="#38bdf8"/></Button><Button Tag="B001-0029839" Click="AccionVer_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Ver detalle"><FontIcon Glyph="&#xE7B3;" FontSize="12" Foreground="#d1d5db"/></Button><Button Tag="B001-0029839" Click="AccionEditar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Editar"><FontIcon Glyph="&#xE70F;" FontSize="12" Foreground="#fb923c"/></Button></StackPanel>
+                        </Grid>
+                        <!-- Fila 5 -->
+                        <Grid Grid.Row="5" Padding="16,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" Spacing="6"><Ellipse Width="6" Height="6" Fill="#10b981"/><TextBlock Text="B001-0029838" Foreground="White" FontFamily="Consolas" FontSize="11" FontWeight="Bold"/></StackPanel>
+                            <TextBlock Grid.Column="1" Text="24/10/2024 13:20" Foreground="#d1d5db" FontFamily="Consolas" FontSize="11"/>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6"><Border Background="#ea580c26" CornerRadius="4" Padding="6,2" BorderBrush="#ea580c4d" BorderThickness="1"><TextBlock Text="MESA 09" Foreground="#fb923c" FontSize="9" FontWeight="Bold"/></Border><TextBlock Text="Lic. David Tovar" Foreground="White" FontSize="11" VerticalAlignment="Center"/></StackPanel>
+                            <TextBlock Grid.Column="3" Text="Luis Mesa" Foreground="#9ca3af" FontStyle="Italic" FontSize="11"/>
+                            <StackPanel Grid.Column="4"><TextBlock Text="S/ 96.00" Foreground="#10b981" FontWeight="Black" FontFamily="Consolas" FontSize="12"/><TextBlock Text="Tarjeta Mastercard" Foreground="#9ca3af" FontSize="9"/></StackPanel>
+                            <Border Grid.Column="5" Background="#10b98133" CornerRadius="12" Padding="8,4" BorderBrush="#10b98166" BorderThickness="1" HorizontalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="4"><FontIcon Glyph="&#xE73E;" FontSize="10" Foreground="#10b981"/><TextBlock Text="PAGADO" Foreground="#10b981" FontSize="9" FontWeight="Black"/></StackPanel></Border>
+                            <StackPanel Grid.Column="6" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Right"><Button Tag="B001-0029838" Click="AccionImprimir_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Imprimir"><FontIcon Glyph="&#xE74E;" FontSize="12" Foreground="#38bdf8"/></Button><Button Tag="B001-0029838" Click="AccionVer_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Ver detalle"><FontIcon Glyph="&#xE7B3;" FontSize="12" Foreground="#d1d5db"/></Button><Button Tag="B001-0029838" Click="AccionEditar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Editar"><FontIcon Glyph="&#xE70F;" FontSize="12" Foreground="#fb923c"/></Button></StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- Panel Egresos -->
+            <Border x:Name="PanelEgresos" Visibility="Collapsed" Background="#181f24" CornerRadius="16" BorderBrush="#242d35" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Background="#1b2329" Padding="16,12" CornerRadius="16,16,0,0" BorderBrush="#242d35" BorderThickness="0,0,0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Border Width="32" Height="32" CornerRadius="8" Background="#e11d481a" BorderBrush="#e11d4833" BorderThickness="1">
+                                <FontIcon Glyph="&#xE8C7;" FontSize="14" Foreground="#f43f5e" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Egresos del Periodo" Foreground="#e2e8f0" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <Button x:Name="AgregarGastoButton" Click="AgregarGastoButton_Click" Background="#e11d48" BorderThickness="0" CornerRadius="8" Padding="12,6" MinWidth="0" MinHeight="0" VerticalAlignment="Center" ToolTipService.ToolTip="Registrar un gasto nuevo">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE710;" FontSize="11" Foreground="White"/>
+                                    <TextBlock Text="Agregar gasto" Foreground="White" FontSize="11" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE946;" FontSize="12" Foreground="#64748b"/>
+                            <TextBlock Text="Mostrando" Foreground="#9ca3af" FontSize="11"/>
+                            <TextBlock x:Name="MostrandoEgresosText" Text="2" Foreground="White" FontWeight="Bold" FontSize="11"/>
+                            <TextBlock Text="de" Foreground="#9ca3af" FontSize="11"/>
+                            <TextBlock x:Name="TotalEgresosText" Text="2" Foreground="White" FontWeight="Bold" FontSize="11"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid x:Name="TablaEgresos" Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid Background="#14181c" Padding="16,10" BorderBrush="#242d35" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="COMPROBANTE #" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="1" Text="FECHA Y HORA" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="2" Text="CONCEPTO / PROVEEDOR" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="3" Text="AUTORIZÓ" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="4" Text="MONTO" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="5" Text="ESTADO" Foreground="#9ca3af" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="6" Text="ACCIONES" Foreground="#9ca3af" FontSize="9" FontWeight="Bold" HorizontalAlignment="Right"/>
+                        </Grid>
+                        <Grid Grid.Row="1" Padding="16,12" BorderBrush="#232b33" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" Spacing="6"><Ellipse Width="6" Height="6" Fill="#f43f5e"/><TextBlock Text="EG-000021" Foreground="White" FontFamily="Consolas" FontSize="11" FontWeight="Bold"/></StackPanel>
+                            <TextBlock Grid.Column="1" Text="24/10/2024 09:15" Foreground="#d1d5db" FontFamily="Consolas" FontSize="11"/>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6"><Border Background="#e11d4826" CornerRadius="4" Padding="6,2" BorderBrush="#e11d484d" BorderThickness="1"><TextBlock Text="COMPRA" Foreground="#fda4af" FontSize="9" FontWeight="Bold"/></Border><TextBlock Text="Mercado Mayorista — Verduras" Foreground="White" FontSize="11" VerticalAlignment="Center"/></StackPanel>
+                            <TextBlock Grid.Column="3" Text="Carlos M." Foreground="#9ca3af" FontStyle="Italic" FontSize="11"/>
+                            <StackPanel Grid.Column="4"><TextBlock Text="S/ 75.00" Foreground="#f43f5e" FontWeight="Black" FontFamily="Consolas" FontSize="12"/><TextBlock Text="Efectivo / Caja chica" Foreground="#9ca3af" FontSize="9"/></StackPanel>
+                            <Border Grid.Column="5" Background="#f43f5e26" CornerRadius="12" Padding="8,4" BorderBrush="#f43f5e66" BorderThickness="1" HorizontalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="4"><FontIcon Glyph="&#xE73E;" FontSize="10" Foreground="#f43f5e"/><TextBlock Text="EGRESO" Foreground="#fda4af" FontSize="9" FontWeight="Black"/></StackPanel></Border>
+                            <StackPanel Grid.Column="6" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Right"><Button Tag="EG-000021" Click="AccionImprimir_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Imprimir"><FontIcon Glyph="&#xE74E;" FontSize="12" Foreground="#38bdf8"/></Button><Button Tag="EG-000021" Click="AccionVer_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Ver detalle"><FontIcon Glyph="&#xE7B3;" FontSize="12" Foreground="#d1d5db"/></Button><Button Tag="EG-000021" Click="AccionEliminar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Eliminar"><FontIcon Glyph="&#xE74D;" FontSize="12" Foreground="#f87171"/></Button></StackPanel>
+                        </Grid>
+                        <Grid Grid.Row="2" Padding="16,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" Spacing="6"><Ellipse Width="6" Height="6" Fill="#f43f5e"/><TextBlock Text="EG-000022" Foreground="White" FontFamily="Consolas" FontSize="11" FontWeight="Bold"/></StackPanel>
+                            <TextBlock Grid.Column="1" Text="24/10/2024 10:40" Foreground="#d1d5db" FontFamily="Consolas" FontSize="11"/>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6"><Border Background="#e11d4826" CornerRadius="4" Padding="6,2" BorderBrush="#e11d484d" BorderThickness="1"><TextBlock Text="SERVICIO" Foreground="#fda4af" FontSize="9" FontWeight="Bold"/></Border><TextBlock Text="Gas — Recarga balón" Foreground="White" FontSize="11" VerticalAlignment="Center"/></StackPanel>
+                            <TextBlock Grid.Column="3" Text="Carlos M." Foreground="#9ca3af" FontStyle="Italic" FontSize="11"/>
+                            <StackPanel Grid.Column="4"><TextBlock Text="S/ 45.00" Foreground="#f43f5e" FontWeight="Black" FontFamily="Consolas" FontSize="12"/><TextBlock Text="Yape" Foreground="#9ca3af" FontSize="9"/></StackPanel>
+                            <Border Grid.Column="5" Background="#f43f5e26" CornerRadius="12" Padding="8,4" BorderBrush="#f43f5e66" BorderThickness="1" HorizontalAlignment="Center"><StackPanel Orientation="Horizontal" Spacing="4"><FontIcon Glyph="&#xE73E;" FontSize="10" Foreground="#f43f5e"/><TextBlock Text="EGRESO" Foreground="#fda4af" FontSize="9" FontWeight="Black"/></StackPanel></Border>
+                            <StackPanel Grid.Column="6" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Right"><Button Tag="EG-000022" Click="AccionImprimir_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Imprimir"><FontIcon Glyph="&#xE74E;" FontSize="12" Foreground="#38bdf8"/></Button><Button Tag="EG-000022" Click="AccionVer_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Ver detalle"><FontIcon Glyph="&#xE7B3;" FontSize="12" Foreground="#d1d5db"/></Button><Button Tag="EG-000022" Click="AccionEliminar_Click" Background="Transparent" BorderThickness="0" Padding="6,2" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Eliminar"><FontIcon Glyph="&#xE74D;" FontSize="12" Foreground="#f87171"/></Button></StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- Panel Por cobrar -->
+            <Border x:Name="PanelPorCobrar" Visibility="Collapsed" Background="#181f24" CornerRadius="16" BorderBrush="#242d35" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Background="#1b2329" Padding="16,12" CornerRadius="16,16,0,0" BorderBrush="#242d35" BorderThickness="0,0,0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Border Width="32" Height="32" CornerRadius="8" Background="#38bdf81a" BorderBrush="#38bdf833" BorderThickness="1">
+                                <FontIcon Glyph="&#xE823;" FontSize="14" Foreground="#38bdf8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Por Cobrar — Cuentas abiertas" Foreground="#e2e8f0" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE946;" FontSize="12" Foreground="#64748b"/>
+                            <TextBlock Text="Mostrando" Foreground="#9ca3af" FontSize="11"/>
+                            <TextBlock x:Name="MostrandoPorCobrarText" Text="0" Foreground="White" FontWeight="Bold" FontSize="11"/>
+                            <TextBlock Text="de" Foreground="#9ca3af" FontSize="11"/>
+                            <TextBlock x:Name="TotalPorCobrarText" Text="0" Foreground="White" FontWeight="Bold" FontSize="11"/>
+                            <TextBlock x:Name="PorCobrarTotalText" Text="S/ 0.00" Foreground="#fb923c" FontSize="11" FontWeight="Bold" Margin="12,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid x:Name="TablaPorCobrar" Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid Background="#14181c" Padding="16,10" BorderBrush="#242d35" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="TICKET / BOLETA #" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="1" Text="FECHA Y HORA" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="2" Text="MESA / CLIENTE" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="3" Text="MOZO" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="4" Text="TOTAL" Foreground="#9ca3af" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="5" Text="ESTADO" Foreground="#9ca3af" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="6" Text="ACCIONES" Foreground="#9ca3af" FontSize="9" FontWeight="Bold" HorizontalAlignment="Right"/>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <TextBlock Text="Acciones y buscador activos sobre datos de muestra — sin backend todavía" Foreground="#475569" FontSize="10" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+        </StackPanel>
+    </ScrollViewer>
+    <!-- Overlay flotante de nuevo gasto: oscurece el historial y centra el formulario. -->
+    <ContentControl x:Name="GastoOverlayHost" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+    </Grid>
+</UserControl>

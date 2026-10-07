@@ -1,0 +1,128 @@
+﻿<UserControl
+    x:Class="sabores_wanka.Views.HistorialDeVentas.GastoCreacionView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <!-- Nuevo gasto: replica de Historial/gastos (nombre, valor, método, nota). -->
+    <!-- Guarda en el JSON local y vuelve a la pestaña Egresos ya recargada. -->
+    <Grid Background="#99000000">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
+        <Grid x:Name="ModalRaiz" MaxWidth="1048" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid.RenderTransform>
+                <TranslateTransform x:Name="ModalDesplazar"/>
+            </Grid.RenderTransform>
+        <StackPanel Spacing="16" Padding="24">
+
+            <!-- Tarjeta principal -->
+            <Border Background="#181f24" BorderBrush="#242d35" BorderThickness="1" CornerRadius="16">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Header: título + pagada + fecha (arrastrar desde aquí mueve la ventana) -->
+                    <Grid x:Name="ModalMover" Padding="20,16" Background="Transparent" BorderBrush="#242d35" BorderThickness="0,0,0,1" PointerPressed="ModalMover_PointerPressed" PointerMoved="ModalMover_PointerMoved" PointerReleased="ModalMover_PointerReleased" PointerCanceled="ModalMover_PointerReleased" PointerCaptureLost="ModalMover_PointerReleased">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="34" Height="34" CornerRadius="10" Background="#f59e0b1a" BorderBrush="#f59e0b4d" BorderThickness="1">
+                                <FontIcon Glyph="&#xE8C7;" FontSize="15" Foreground="#fbbf24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Nuevo Gasto" Foreground="White" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <Border Background="#f59e0b" CornerRadius="8" Padding="12,5">
+                                <TextBlock Text="Pagada" Foreground="#1c1005" FontSize="11" FontWeight="Bold"/>
+                            </Border>
+                        </StackPanel>
+                        <Border HorizontalAlignment="Right" VerticalAlignment="Center" Background="#f59e0b14" CornerRadius="10" BorderBrush="#f59e0b33" BorderThickness="1" Padding="12,6">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE787;" FontSize="12" Foreground="#fbbf24"/>
+                                <TextBlock x:Name="FechaBadgeText" Text="Hoy" Foreground="#fbbf24" FontSize="11" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Cuerpo en 2 columnas -->
+                    <Grid Grid.Row="1" Padding="20,16" ColumnSpacing="20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Izquierda: datos -->
+                        <StackPanel Spacing="12">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="NOMBRE DEL GASTO" Foreground="#9ca3af" FontSize="10" FontWeight="Bold"/>
+                                <TextBox x:Name="NombreTextBox" Foreground="White" FontSize="12" Background="#14181c" BorderBrush="#2b3540" BorderThickness="1" CornerRadius="8" Padding="12,9" PlaceholderText="Ej. Compra de suministros oficina"/>
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="TIPO DE GASTO" Foreground="#9ca3af" FontSize="10" FontWeight="Bold"/>
+                                <ComboBox x:Name="TipoComboBox" Background="#14181c" BorderBrush="#2b3540" BorderThickness="1" CornerRadius="8" Padding="8,4" HorizontalAlignment="Stretch" SelectedIndex="0">
+                                    <ComboBoxItem Content="Compra"/>
+                                    <ComboBoxItem Content="Servicio"/>
+                                    <ComboBoxItem Content="Planilla"/>
+                                    <ComboBoxItem Content="Alquiler"/>
+                                    <ComboBoxItem Content="Otros"/>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="TRABAJADOR / RESPONSABLE" Foreground="#9ca3af" FontSize="10" FontWeight="Bold"/>
+                                <ComboBox x:Name="ResponsableComboBox" Background="#14181c" BorderBrush="#2b3540" BorderThickness="1" CornerRadius="8" Padding="8,4" HorizontalAlignment="Stretch" SelectedIndex="0">
+                                    <ComboBoxItem Content="(Sin responsable)"/>
+                                    <ComboBoxItem Content="Carlos Morales"/>
+                                    <ComboBoxItem Content="Ana Mendoza"/>
+                                    <ComboBoxItem Content="Caja Mostrador"/>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="NOTA DEL GASTO" Foreground="#9ca3af" FontSize="10" FontWeight="Bold"/>
+                                <TextBox x:Name="NotaTextBox" Foreground="White" FontSize="12" Background="#14181c" BorderBrush="#2b3540" BorderThickness="1" CornerRadius="8" Padding="12,9" PlaceholderText="Detalles adicionales sobre esta transacción..." TextWrapping="Wrap" AcceptsReturn="True" MinHeight="80"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Derecha: valor + método -->
+                        <StackPanel Spacing="12" Grid.Column="1">
+                            <Border Background="#1b2329" BorderBrush="#2b3540" BorderThickness="1" CornerRadius="12" Padding="16">
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="VALOR" Foreground="#9ca3af" FontSize="10" FontWeight="Bold"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="S/" Foreground="#fbbf24" FontSize="28" FontWeight="ExtraBold" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <TextBox x:Name="MontoTextBox" Grid.Column="1" Text="0.00" Foreground="White" FontSize="32" FontWeight="ExtraBold" FontFamily="Consolas" Background="Transparent" BorderThickness="0" Padding="0" InputScope="Number" PlaceholderText="0.00"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="MÉTODO DE PAGO" Foreground="#9ca3af" FontSize="10" FontWeight="Bold"/>
+                                <StackPanel x:Name="MetodoPanel" Orientation="Horizontal" Spacing="8">
+                                    <Button Tag="efectivo" Click="MetodoButton_Click" Background="#10b98126" BorderBrush="#10b981" BorderThickness="1" CornerRadius="10" Padding="16,10" MinWidth="0" MinHeight="0"><TextBlock Text="Efectivo" Foreground="#6ee7b7" FontSize="12" FontWeight="Bold"/></Button>
+                                    <Button Tag="yape" Click="MetodoButton_Click" Background="#1b2329" BorderBrush="#2b3540" BorderThickness="1" CornerRadius="10" Padding="16,10" MinWidth="0" MinHeight="0"><TextBlock Text="Yape" Foreground="#9ca3af" FontSize="12"/></Button>
+                                    <Button Tag="otros" Click="MetodoButton_Click" Background="#1b2329" BorderBrush="#2b3540" BorderThickness="1" CornerRadius="10" Padding="16,10" MinWidth="0" MinHeight="0"><TextBlock Text="Otra" Foreground="#9ca3af" FontSize="12"/></Button>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Footer -->
+                    <Grid Grid.Row="2" Padding="20,14" BorderBrush="#242d35" BorderThickness="0,1,0,0">
+                        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+                            <Button Click="DescartarButton_Click" Background="Transparent" BorderThickness="0" CornerRadius="8" Padding="14,7" MinWidth="0" MinHeight="0">
+                                <TextBlock Text="Descartar" Foreground="#9ca3af" FontSize="12" FontWeight="SemiBold"/>
+                            </Button>
+                            <Button Click="CrearGastoButton_Click" Background="#f59e0b" BorderThickness="0" CornerRadius="8" Padding="16,7" MinWidth="0" MinHeight="0">
+                                <TextBlock Text="Crear Gasto" Foreground="#1c1005" FontSize="12" FontWeight="Bold"/>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </StackPanel>
+        </Grid>
+    </ScrollViewer>
+    </Grid>
+</UserControl>

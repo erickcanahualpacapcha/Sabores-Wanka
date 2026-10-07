@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "sabores wanka (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "sabores wanka (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
