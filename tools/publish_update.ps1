@@ -69,6 +69,8 @@ if ($LASTEXITCODE -ne 0) { throw "dotnet publish fallo." }
 $exe = Get-ChildItem $appDir -Filter "*.exe" | Select-Object -First 1
 if ($null -eq $exe) { throw "El publish no genero exe en $appDir." }
 
+# --- Limpieza: sin simbolos de debug en el ZIP ---
+Get-ChildItem $appDir -Filter "*.pdb" | Remove-Item -Force
 # --- Inyecta la config de update (con la llave de LECTURA) junto al exe ---
 @{ owner = $owner; repo = $repo; token = $ReadToken; enabled = $true } |
   ConvertTo-Json | Set-Content (Join-Path $appDir "github_update.json") -Encoding utf8NoBOM
