@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -91,7 +90,9 @@ namespace sabores_wanka.Services
                 using var memoria = new MemoryStream();
                 bmp.Save(memoria, System.Drawing.Imaging.ImageFormat.Png);
                 var flujo = new InMemoryRandomAccessStream();
-                await flujo.WriteAsync(memoria.GetBuffer().AsBuffer(0, (int)memoria.Length));
+                var escritor = new DataWriter(flujo);
+                escritor.WriteBytes(memoria.ToArray());
+                await escritor.StoreAsync();
                 await flujo.FlushAsync();
                 flujo.Seek(0);
                 var imagen = new BitmapImage();
