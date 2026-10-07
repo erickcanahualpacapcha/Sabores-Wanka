@@ -25,6 +25,11 @@ namespace sabores_wanka.Services
     public static class ImpresionTickets
     {
         private const int AnchoTicket = 40;
+        // Capacidad real por tamano (Courier fijo): titulo 14pt = 23 col,
+        // total 11pt = 29 col. Sin esto las letras grandes se cortan a la
+        // derecha (asi se perdia el TOTAL en el papel).
+        private const int CapTitulo = 23;
+        private const int CapTotal = 29;
         private const string ClaveImpresora = "Impresora.Nombre";
 
         // Impresoras instaladas en Windows + cual es la predeterminada.
@@ -110,8 +115,8 @@ namespace sabores_wanka.Services
                 try
                 {
                     if (e.Graphics == null) return;
-                    using var normal = FuenteMono(9, false);
-                    using var negrita = FuenteMono(9, true);
+                    using var normal = FuenteMono(8, false);
+                    using var negrita = FuenteMono(8, true);
                     using var titulo = FuenteMono(14, true);
                     using var total = FuenteMono(11, true);
                     float y = 5;
@@ -219,7 +224,7 @@ namespace sabores_wanka.Services
             var (nombre, ruc, telefono, direccion, mensaje) = DatosNegocio();
             var t = new List<LineaTicket>
             {
-                L(nombre.ToUpperInvariant(), EstiloTicket.Titulo),
+                L(Centrar(nombre.ToUpperInvariant(), CapTitulo), EstiloTicket.Titulo),
                 L("RUC: " + ruc),
                 L(direccion),
                 L("Tel: " + telefono),
@@ -233,10 +238,10 @@ namespace sabores_wanka.Services
                 L(Fila("1", "Chicha de Jora 1L", "12.00", "12.00")),
                 L(Fila("1", "Cancha Serrana", "4.00", "4.00")),
                 L(new string('-', AnchoTicket)),
-                L("TOTAL:" + "S/ 62.00".PadLeft(AnchoTicket - 6), EstiloTicket.Total),
+                L(TotalLinea("S/ 62.00"), EstiloTicket.Total),
                 L(new string('-', AnchoTicket)),
             };
-            if (QrTicket.LeerWeb().Length > 0)
+            if (QrTicket.HayQr())
                 t.Add(L(Centrar("Escanea el QR para visitarnos"), EstiloTicket.Negrita));
             t.Add(L(Centrar(mensaje), EstiloTicket.Negrita));
             t.Add(L(""));
@@ -249,7 +254,7 @@ namespace sabores_wanka.Services
             var (nombre, ruc, telefono, direccion, mensaje) = DatosNegocio();
             var t = new List<LineaTicket>
             {
-                L(nombre.ToUpperInvariant(), EstiloTicket.Titulo),
+                L(Centrar(nombre.ToUpperInvariant(), CapTitulo), EstiloTicket.Titulo),
                 L("RUC: " + ruc),
                 L(direccion),
                 L("Tel: " + telefono),
@@ -265,10 +270,10 @@ namespace sabores_wanka.Services
                 t.Add(L(Fila(it.Cantidad.ToString(), prod, it.Precio.ToString("0.00"), (it.Precio * it.Cantidad).ToString("0.00"))));
             }
             t.Add(L(new string('-', AnchoTicket)));
-            t.Add(L("TOTAL:" + $"S/ {v.Total:0.00}".PadLeft(AnchoTicket - 6), EstiloTicket.Total));
+            t.Add(L(TotalLinea($"S/ {v.Total:0.00}"), EstiloTicket.Total));
             t.Add(L($"Pago: {v.MetodoPago} | {v.Estado}", EstiloTicket.Negrita));
             t.Add(L(new string('-', AnchoTicket)));
-            if (QrTicket.LeerWeb().Length > 0)
+            if (QrTicket.HayQr())
                 t.Add(L(Centrar("Escanea el QR para visitarnos"), EstiloTicket.Negrita));
             t.Add(L(Centrar(mensaje), EstiloTicket.Negrita));
             t.Add(L(""));
@@ -299,11 +304,17 @@ namespace sabores_wanka.Services
                 Leer("Negocio.Mensaje", "Gracias por su visita."));
         }
 
-        private static string Centrar(string texto)
+        // Total alineado a la derecha dentro de su capacidad (29 col a 11pt).
+        private static string TotalLinea(string monto) =>
+            "TOTAL:" + monto.PadLeft(CapTotal - 6);
+
+        private static string Centrar(string texto) => Centrar(texto, AnchoTicket);
+
+        private static string Centrar(string texto, int capacidad)
         {
             texto = (texto ?? "").Trim();
-            if (texto.Length >= AnchoTicket) return texto.Substring(0, AnchoTicket);
-            int izq = (AnchoTicket - texto.Length) / 2;
+            if (texto.Length >= capacidad) return texto.Substring(0, capacidad);
+            int izq = (capacidad - texto.Length) / 2;
             return new string(' ', izq) + texto;
         }
 

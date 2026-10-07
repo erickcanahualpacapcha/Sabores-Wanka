@@ -74,6 +74,7 @@ namespace sabores_wanka.Views.InformacionNegocio
                 if (local.Values["Negocio.Email"] is string em && EmailTextBox != null) EmailTextBox.Text = em;
                 if (local.Values["Negocio.Mensaje"] is string m && MensajeTextBox != null) MensajeTextBox.Text = m;
                 if (local.Values["Negocio.Web"] is string w && WebTextBox != null) WebTextBox.Text = w;
+                if (QrSwitch != null) QrSwitch.IsOn = Services.QrTicket.QrActivo();
                 if (local.Values["Negocio.MonedaIdx"] is int idx && MonedaComboBox != null && idx >= 0 && idx < MonedaComboBox.Items.Count)
                     MonedaComboBox.SelectedIndex = idx;
             }
@@ -94,6 +95,7 @@ namespace sabores_wanka.Views.InformacionNegocio
                 local.Values["Negocio.Email"] = EmailTextBox?.Text ?? "";
                 local.Values["Negocio.Mensaje"] = MensajeTextBox?.Text ?? "";
                 Services.QrTicket.GuardarWeb(WebTextBox?.Text ?? "");
+                if (QrSwitch != null) Services.QrTicket.GuardarActivo(QrSwitch.IsOn);
                 local.Values["Negocio.MonedaIdx"] = MonedaComboBox?.SelectedIndex ?? 0;
                 await MostrarDialogoAsync("Configuración guardada", "Los datos del negocio se aplicarán en boletas y tickets.", "Entendido");
             }
@@ -120,11 +122,20 @@ namespace sabores_wanka.Views.InformacionNegocio
             _ = ActualizarQrAsync();
         }
 
-        // QR del papel con la URL escrita (oculto si esta vacio).
+        // Switch QR: guarda al momento y refresca el papel.
+        private void QrSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (QrSwitch == null) return;
+            Services.QrTicket.GuardarActivo(QrSwitch.IsOn);
+            _ = ActualizarQrAsync();
+        }
+
+        // QR del papel con la URL escrita (oculto si esta apagado o vacio).
         private async System.Threading.Tasks.Task ActualizarQrAsync()
         {
-            string url = Services.QrTicket.Normalizar(WebTextBox?.Text ?? "");
-            var bmp = await Services.QrTicket.GenerarParaPreviewAsync(url);
+            bool prendido = QrSwitch?.IsOn ?? Services.QrTicket.QrActivo();
+            string url = prendido ? Services.QrTicket.Normalizar(WebTextBox?.Text ?? "") : "";
+            var bmp = prendido ? await Services.QrTicket.GenerarParaPreviewAsync(url) : null;
             // Si cambio el texto mientras generaba, regenera (evita QR viejo).
             if (!string.Equals(url, Services.QrTicket.Normalizar(WebTextBox?.Text ?? ""), StringComparison.OrdinalIgnoreCase))
             {

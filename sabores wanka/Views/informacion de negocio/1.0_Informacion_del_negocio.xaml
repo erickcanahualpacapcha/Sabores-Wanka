@@ -197,7 +197,10 @@
                                         <TextBox x:Name="EmailTextBox" Text="contacto@saboreswanka.pe" Background="#071411" BorderBrush="#173A30" Foreground="White" FontSize="13" CornerRadius="8" Padding="12,9" InputScope="EmailSmtpAddress"/>
                                     </StackPanel>
                                     <StackPanel Spacing="6" Grid.Row="1" Grid.ColumnSpan="2">
-                                        <TextBlock Text="PÁGINA WEB (QR DEL TICKET)" Foreground="#34D399" Opacity="0.8" FontSize="10" FontWeight="Bold"/>
+                                        <Grid>
+                                            <TextBlock Text="PÁGINA WEB (QR DEL TICKET)" Foreground="#34D399" Opacity="0.8" FontSize="10" FontWeight="Bold" VerticalAlignment="Center"/>
+                                            <ToggleSwitch x:Name="QrSwitch" Toggled="QrSwitch_Toggled" OnContent="QR en ticket" OffContent="QR apagado" Foreground="#9CA3AF" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center" MinWidth="0"/>
+                                        </Grid>
                                         <TextBox x:Name="WebTextBox" Text="" TextChanged="CampoNegocio_TextChanged" PlaceholderText="www.tu-pagina.pe (vacío = sin QR)" Background="#071411" BorderBrush="#173A30" Foreground="White" FontSize="13" CornerRadius="8" Padding="12,9" InputScope="Url"/>
                                     </StackPanel>
                                     <StackPanel Spacing="6" Grid.Row="2" Grid.ColumnSpan="2">

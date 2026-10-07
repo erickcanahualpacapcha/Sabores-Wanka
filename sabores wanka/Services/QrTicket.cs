@@ -14,6 +14,28 @@ namespace sabores_wanka.Services
     public static class QrTicket
     {
         private const string Clave = "Negocio.Web";
+        private const string ClaveActivo = "Negocio.Qr";
+
+        // Switch del formulario: false apaga el QR aunque haya URL.
+        public static bool QrActivo()
+        {
+            try
+            {
+                if (ApplicationData.Current.LocalSettings.Values[ClaveActivo] is bool b)
+                    return b;
+            }
+            catch { }
+            return true;
+        }
+
+        public static void GuardarActivo(bool activo)
+        {
+            try { ApplicationData.Current.LocalSettings.Values[ClaveActivo] = activo; }
+            catch { }
+        }
+
+        // Hay QR para mostrar/imprimir: switch prendido + URL guardada.
+        public static bool HayQr() => QrActivo() && LeerWeb().Length > 0;
 
         // URL guardada, normalizada con https:// ("" si no hay).
         public static string LeerWeb()
@@ -41,11 +63,12 @@ namespace sabores_wanka.Services
             return url;
         }
 
-        // Bitmap para la impresora termica (null si no hay URL; nunca lanza).
+        // Bitmap para la impresora termica (null si apagado o sin URL).
         public static System.Drawing.Bitmap? GenerarBitmap(string? url = null)
         {
             try
             {
+                if (!QrActivo()) return null;
                 string destino = Normalizar(url ?? LeerWeb());
                 if (destino.Length == 0) return null;
                 using var generador = new QRCodeGenerator();
