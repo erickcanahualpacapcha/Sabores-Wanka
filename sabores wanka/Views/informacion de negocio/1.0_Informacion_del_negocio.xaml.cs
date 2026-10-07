@@ -39,6 +39,7 @@ namespace sabores_wanka.Views.InformacionNegocio
             MostrarTabNegocio(true);
             ActualizarPreview();
             _ = ActualizarLogoAsync();
+            _ = ActualizarQrAsync();
         }
 
         // Pinta el logo guardado en el picker y en el papel (oculto si no hay).
@@ -72,6 +73,7 @@ namespace sabores_wanka.Views.InformacionNegocio
                 if (local.Values["Negocio.Instagram"] is string ig && InstagramTextBox != null) InstagramTextBox.Text = ig;
                 if (local.Values["Negocio.Email"] is string em && EmailTextBox != null) EmailTextBox.Text = em;
                 if (local.Values["Negocio.Mensaje"] is string m && MensajeTextBox != null) MensajeTextBox.Text = m;
+                if (local.Values["Negocio.Web"] is string w && WebTextBox != null) WebTextBox.Text = w;
                 if (local.Values["Negocio.MonedaIdx"] is int idx && MonedaComboBox != null && idx >= 0 && idx < MonedaComboBox.Items.Count)
                     MonedaComboBox.SelectedIndex = idx;
             }
@@ -91,6 +93,7 @@ namespace sabores_wanka.Views.InformacionNegocio
                 local.Values["Negocio.Instagram"] = InstagramTextBox?.Text ?? "";
                 local.Values["Negocio.Email"] = EmailTextBox?.Text ?? "";
                 local.Values["Negocio.Mensaje"] = MensajeTextBox?.Text ?? "";
+                Services.QrTicket.GuardarWeb(WebTextBox?.Text ?? "");
                 local.Values["Negocio.MonedaIdx"] = MonedaComboBox?.SelectedIndex ?? 0;
                 await MostrarDialogoAsync("Configuración guardada", "Los datos del negocio se aplicarán en boletas y tickets.", "Entendido");
             }
@@ -106,10 +109,39 @@ namespace sabores_wanka.Views.InformacionNegocio
             CargarGuardado();
             ActualizarPreview();
             _ = ActualizarLogoAsync();
+            _ = ActualizarQrAsync();
         }
 
         // Cualquier campo fiscal re-pinta el ticket en vivo (patron del mock HTML).
-        private void CampoNegocio_TextChanged(object sender, TextChangedEventArgs e) => ActualizarPreview();
+        // El QR se regenera aparte (async) con lo que esta escrito, sin guardar.
+        private void CampoNegocio_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ActualizarPreview();
+            _ = ActualizarQrAsync();
+        }
+
+        // QR del papel con la URL escrita (oculto si esta vacio).
+        private async System.Threading.Tasks.Task ActualizarQrAsync()
+        {
+            string url = Services.QrTicket.Normalizar(WebTextBox?.Text ?? "");
+            var bmp = await Services.QrTicket.GenerarParaPreviewAsync(url);
+            // Si cambio el texto mientras generaba, regenera (evita QR viejo).
+            if (!string.Equals(url, Services.QrTicket.Normalizar(WebTextBox?.Text ?? ""), StringComparison.OrdinalIgnoreCase))
+            {
+                await ActualizarQrAsync();
+                return;
+            }
+            if (PreviewQr != null)
+            {
+                PreviewQr.Source = bmp;
+                PreviewQr.Visibility = bmp != null ? Visibility.Visible : Visibility.Collapsed;
+            }
+            if (PreviewWeb != null)
+            {
+                PreviewWeb.Text = url;
+                PreviewWeb.Visibility = url.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
 
         // La moneda solo cambia el simbolo del total (el demo suma S/ 62.00).
         private void MonedaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => ActualizarPreview();

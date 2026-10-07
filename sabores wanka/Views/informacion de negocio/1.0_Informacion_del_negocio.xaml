@@ -182,6 +182,7 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -196,6 +197,10 @@
                                         <TextBox x:Name="EmailTextBox" Text="contacto@saboreswanka.pe" Background="#071411" BorderBrush="#173A30" Foreground="White" FontSize="13" CornerRadius="8" Padding="12,9" InputScope="EmailSmtpAddress"/>
                                     </StackPanel>
                                     <StackPanel Spacing="6" Grid.Row="1" Grid.ColumnSpan="2">
+                                        <TextBlock Text="PÁGINA WEB (QR DEL TICKET)" Foreground="#34D399" Opacity="0.8" FontSize="10" FontWeight="Bold"/>
+                                        <TextBox x:Name="WebTextBox" Text="" TextChanged="CampoNegocio_TextChanged" PlaceholderText="www.tu-pagina.pe (vacío = sin QR)" Background="#071411" BorderBrush="#173A30" Foreground="White" FontSize="13" CornerRadius="8" Padding="12,9" InputScope="Url"/>
+                                    </StackPanel>
+                                    <StackPanel Spacing="6" Grid.Row="2" Grid.ColumnSpan="2">
                                         <TextBlock Text="MENSAJE DE AGRADECIMIENTO (PIE DE IMPRESIÓN)" Foreground="#34D399" Opacity="0.8" FontSize="10" FontWeight="Bold"/>
                                         <TextBox x:Name="MensajeTextBox" Text="¡Gracias por preferirnos! Te esperamos pronto." TextChanged="CampoNegocio_TextChanged" Background="#071411" BorderBrush="#173A30" Foreground="White" FontSize="13" CornerRadius="8" Padding="12,9"/>
                                     </StackPanel>
@@ -277,6 +282,8 @@
                                         </Border>
                                         <StackPanel Spacing="2">
                                             <TextBlock Text="Representación impresa de Nota de Venta" Foreground="#9CA3AF" FontSize="8" FontFamily="Consolas" TextAlignment="Center"/>
+                                            <Image x:Name="PreviewQr" Width="110" Stretch="Uniform" HorizontalAlignment="Center" Visibility="Collapsed"/>
+                                            <TextBlock x:Name="PreviewWeb" Text="" Foreground="#9CA3AF" FontSize="8" FontFamily="Consolas" TextAlignment="Center" Visibility="Collapsed"/>
                                             <TextBlock x:Name="PreviewMensaje" Text="¡Gracias por preferirnos! Te esperamos pronto." Foreground="#6EE7B7" FontStyle="Italic" FontSize="10" TextAlignment="Center" TextWrapping="Wrap"/>
                                         </StackPanel>
                                     </StackPanel>

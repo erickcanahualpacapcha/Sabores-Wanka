@@ -90,6 +90,10 @@ namespace sabores_wanka.Services
 
             // Logo del negocio (si hay): se dibuja arriba en escala de grises.
             System.Drawing.Image? logo = CargarLogoGris(out float logoAncho, out float logoAlto);
+            // QR a la web (si hay): se dibuja al final, centrado y con su
+            // zona blanca; minimo ~38mm para que el celular lo lea.
+            System.Drawing.Bitmap? qr = QrTicket.GenerarBitmap();
+            const float QrLado = 150;
 
             doc.PrintPage += (_, e) =>
             {
@@ -112,6 +116,14 @@ namespace sabores_wanka.Services
                         e.Graphics.DrawString(recorte, fuente, System.Drawing.Brushes.Black, 5, y);
                         y += alto;
                     }
+                    if (qr != null)
+                    {
+                        float qx = (280 - QrLado) / 2;
+                        if (qx < 5) qx = 5;
+                        e.Graphics.FillRectangle(System.Drawing.Brushes.White, qx - 4, y, QrLado + 8, QrLado + 8);
+                        e.Graphics.DrawImage(qr, qx, y + 4, QrLado, QrLado);
+                        y += QrLado + 12;
+                    }
                     e.HasMorePages = false;
                 }
                 catch (Exception ex) { conError = true; excepcion = ex; }
@@ -132,6 +144,7 @@ namespace sabores_wanka.Services
             while (!terminado && !conError && DateTime.Now < limite)
                 await Task.Delay(100);
             try { logo?.Dispose(); } catch { }
+            try { qr?.Dispose(); } catch { }
 
             if (excepcion != null) return (false, $"Error al imprimir en '{destino}': {excepcion.Message}");
             if (!terminado || conError) return (false, $"La impresora '{destino}' no respondió. Revisa papel, conexión y que no esté en pausa.");
@@ -203,6 +216,8 @@ namespace sabores_wanka.Services
                 Centrar(mensaje),
                 "",
             };
+            if (QrTicket.LeerWeb().Length > 0)
+                t.Insert(t.Count - 2, Centrar("Escanea el QR para visitarnos"));
             return string.Join("\n", t);
         }
 
@@ -231,6 +246,8 @@ namespace sabores_wanka.Services
             t.Add($"TOTAL:                S/ {v.Total:0.00}");
             t.Add($"Pago: {v.MetodoPago} | {v.Estado}");
             t.Add(new string('-', AnchoTicket));
+            if (QrTicket.LeerWeb().Length > 0)
+                t.Add(Centrar("Escanea el QR para visitarnos"));
             t.Add(Centrar(mensaje));
             t.Add("");
             return string.Join("\n", t);
