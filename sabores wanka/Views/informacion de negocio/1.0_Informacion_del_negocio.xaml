@@ -226,6 +226,7 @@
                             <Border Background="#07120F" BorderBrush="#142F26" BorderThickness="1" CornerRadius="12" Padding="20,16">
                                 <Border x:Name="TicketPaper" Background="#121C19" BorderBrush="#214339" BorderThickness="1" CornerRadius="6" Padding="18,14" MaxWidth="360" HorizontalAlignment="Center">
                                     <StackPanel Spacing="8">
+                                        <Image x:Name="PreviewLogo" Width="120" Stretch="Uniform" HorizontalAlignment="Center" Visibility="Collapsed"/>
                                         <StackPanel Spacing="2">
                                             <TextBlock x:Name="PreviewNombre" Text="SABORES WANKA" Foreground="White" FontWeight="Bold" FontSize="14" FontFamily="Consolas" TextAlignment="Center"/>
                                             <TextBlock Text="RESTAURANTE &amp; COMIDA TÍPICA WANKA" Foreground="#9CA3AF" FontSize="9" FontFamily="Consolas" TextAlignment="Center"/>

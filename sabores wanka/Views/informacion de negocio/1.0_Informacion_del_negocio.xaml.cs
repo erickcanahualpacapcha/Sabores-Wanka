@@ -32,12 +32,31 @@ namespace sabores_wanka.Views.InformacionNegocio
             this.Loaded += InformacionNegocioView_Loaded;
         }
 
-        // Al mostrarse: restaura lo guardado y pinta la tab de negocio.
+        // Al mostrarse: restaura lo guardado (incluye logo) y pinta la tab de negocio.
         private void InformacionNegocioView_Loaded(object sender, RoutedEventArgs e)
         {
             CargarGuardado();
             MostrarTabNegocio(true);
             ActualizarPreview();
+            _ = ActualizarLogoAsync();
+        }
+
+        // Pinta el logo guardado en el picker y en el papel (oculto si no hay).
+        private async System.Threading.Tasks.Task ActualizarLogoAsync()
+        {
+            var bmp = await Services.LogoTicket.CargarAsync();
+            if (LogoPreview != null)
+            {
+                LogoPreview.Source = bmp;
+                LogoPreview.Visibility = bmp != null ? Visibility.Visible : Visibility.Collapsed;
+            }
+            if (LogoPlaceholderIcon != null)
+                LogoPlaceholderIcon.Visibility = bmp != null ? Visibility.Collapsed : Visibility.Visible;
+            if (PreviewLogo != null)
+            {
+                PreviewLogo.Source = bmp;
+                PreviewLogo.Visibility = bmp != null ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
         // Lee LocalSettings (si no hay nada deja los valores del XAML).
@@ -86,6 +105,7 @@ namespace sabores_wanka.Views.InformacionNegocio
         {
             CargarGuardado();
             ActualizarPreview();
+            _ = ActualizarLogoAsync();
         }
 
         // Cualquier campo fiscal re-pinta el ticket en vivo (patron del mock HTML).
@@ -157,7 +177,8 @@ namespace sabores_wanka.Views.InformacionNegocio
             }
         }
 
-        // Logo: picker del sistema + preview (no se copia a disco todavia).
+        // Logo: picker del sistema, se guarda en disco y se previsualiza
+        // en el picker y en el papel. Asi sale tambien en la impresion.
         private async void LogoButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -170,15 +191,12 @@ namespace sabores_wanka.Views.InformacionNegocio
                 WinRT.Interop.InitializeWithWindow.Initialize(picker, GetActiveWindow());
                 var archivo = await picker.PickSingleFileAsync();
                 if (archivo == null) return;
-                using var stream = await archivo.OpenReadAsync();
-                var bmp = new BitmapImage();
-                await bmp.SetSourceAsync(stream);
-                if (LogoPreview != null)
-                {
-                    LogoPreview.Source = bmp;
-                    LogoPreview.Visibility = Visibility.Visible;
-                }
-                if (LogoPlaceholderIcon != null) LogoPlaceholderIcon.Visibility = Visibility.Collapsed;
+                await Services.LogoTicket.GuardarAsync(archivo.Path);
+                await ActualizarLogoAsync();
+            }
+            catch (InvalidOperationException ex)
+            {
+                await MostrarDialogoAsync("Logo no válido", ex.Message, "Entendido");
             }
             catch
             {

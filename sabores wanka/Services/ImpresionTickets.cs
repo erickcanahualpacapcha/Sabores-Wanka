@@ -88,6 +88,9 @@ namespace sabores_wanka.Services
             doc.PrinterSettings.PrinterName = destino;
             doc.DefaultPageSettings.Margins = new Margins(5, 5, 5, 5);
 
+            // Logo del negocio (si hay): se dibuja arriba en escala de grises.
+            System.Drawing.Image? logo = CargarLogoGris(out float logoAncho, out float logoAlto);
+
             doc.PrintPage += (_, e) =>
             {
                 try
@@ -95,6 +98,13 @@ namespace sabores_wanka.Services
                     if (e.Graphics == null) return;
                     using var fuente = FuenteMono(7);
                     float y = 5;
+                    if (logo != null)
+                    {
+                        float x = (280 - logoAncho) / 2;
+                        if (x < 5) x = 5;
+                        e.Graphics.DrawImage(logo, x, y, logoAncho, logoAlto);
+                        y += logoAlto + 6;
+                    }
                     float alto = fuente.GetHeight(e.Graphics);
                     foreach (string linea in (texto ?? "").Replace("\r", "").Split('\n'))
                     {
@@ -121,10 +131,45 @@ namespace sabores_wanka.Services
             var limite = DateTime.Now.AddSeconds(15);
             while (!terminado && !conError && DateTime.Now < limite)
                 await Task.Delay(100);
+            try { logo?.Dispose(); } catch { }
 
             if (excepcion != null) return (false, $"Error al imprimir en '{destino}': {excepcion.Message}");
             if (!terminado || conError) return (false, $"La impresora '{destino}' no respondió. Revisa papel, conexión y que no esté en pausa.");
             return (true, "");
+        }
+
+        // Logo a gris termico: max 200 de ancho (~50mm), alto proporcional.
+        private static System.Drawing.Image? CargarLogoGris(out float ancho, out float alto)
+        {
+            ancho = 0; alto = 0;
+            try
+            {
+                string ruta = LogoTicket.RutaActual();
+                if (ruta.Length == 0) return null;
+                using var original = System.Drawing.Image.FromFile(ruta);
+                float escala = original.Width > 200 ? 200f / original.Width : 1f;
+                ancho = original.Width * escala;
+                alto = original.Height * escala;
+                if (alto > 90) { escala = 90f / alto; ancho *= escala; alto = 90; }
+                var gris = new System.Drawing.Bitmap((int)ancho, (int)alto);
+                using (var g = System.Drawing.Graphics.FromImage(gris))
+                {
+                    var matriz = new System.Drawing.Imaging.ColorMatrix(new float[][]
+                    {
+                        new float[] { 0.3f, 0.3f, 0.3f, 0, 0 },
+                        new float[] { 0.59f, 0.59f, 0.59f, 0, 0 },
+                        new float[] { 0.11f, 0.11f, 0.11f, 0, 0 },
+                        new float[] { 0, 0, 0, 1, 0 },
+                        new float[] { 0, 0, 0, 0, 1 },
+                    });
+                    using var atributos = new System.Drawing.Imaging.ImageAttributes();
+                    atributos.SetColorMatrix(matriz);
+                    g.DrawImage(original, new System.Drawing.Rectangle(0, 0, gris.Width, gris.Height),
+                        0, 0, original.Width, original.Height, System.Drawing.GraphicsUnit.Pixel, atributos);
+                }
+                return gris;
+            }
+            catch { return null; }
         }
 
         private static System.Drawing.Font FuenteMono(float tamano)
