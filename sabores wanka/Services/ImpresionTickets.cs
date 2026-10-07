@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
 using System.Linq;
@@ -9,12 +9,22 @@ using sabores_wanka.Models;
 
 namespace sabores_wanka.Services
 {
+    // Linea del ticket con estilo propio (la termica solo imprime negro,
+    // asi que el enfasis se logra con tamano + negrita, no con color).
+    public enum EstiloTicket { Normal, Negrita, Titulo, Total }
+
+    public sealed class LineaTicket
+    {
+        public string Texto { get; set; } = "";
+        public EstiloTicket Estilo { get; set; } = EstiloTicket.Normal;
+    }
+
     // Impresion termica por driver Windows (patron Nachis PrinterService):
-    // texto plano 80mm (43 columnas, Courier 7) a la impresora guardada
-    // o a la predeterminada. Sin dialogos del sistema: directo al driver.
+    // texto 80mm a la impresora guardada o a la predeterminada.
+    // Cuerpo en Courier 9, titulos y totales en grande + negrita.
     public static class ImpresionTickets
     {
-        private const int AnchoTicket = 43;
+        private const int AnchoTicket = 40;
         private const string ClaveImpresora = "Impresora.Nombre";
 
         // Impresoras instaladas en Windows + cual es la predeterminada.
@@ -69,8 +79,8 @@ namespace sabores_wanka.Services
             catch { return false; }
         }
 
-        // Imprime texto plano; devuelve (ok, error legible para el dialogo).
-        public static async Task<(bool ok, string error)> ImprimirTextoAsync(string texto, string? impresora = null)
+        // Imprime las lineas; devuelve (ok, error legible para el dialogo).
+        public static async Task<(bool ok, string error)> ImprimirTextoAsync(List<LineaTicket> lineas, string? impresora = null)
         {
             string destino = string.IsNullOrWhiteSpace(impresora) ? ResolverImpresora() : impresora.Trim();
             if (destino.Length == 0)
@@ -100,21 +110,31 @@ namespace sabores_wanka.Services
                 try
                 {
                     if (e.Graphics == null) return;
-                    using var fuente = FuenteMono(7);
+                    using var normal = FuenteMono(9, false);
+                    using var negrita = FuenteMono(9, true);
+                    using var titulo = FuenteMono(14, true);
+                    using var total = FuenteMono(11, true);
                     float y = 5;
                     if (logo != null)
                     {
                         float x = (280 - logoAncho) / 2;
                         if (x < 5) x = 5;
                         e.Graphics.DrawImage(logo, x, y, logoAncho, logoAlto);
-                        y += logoAlto + 6;
+                        y += logoAlto + 8;
                     }
-                    float alto = fuente.GetHeight(e.Graphics);
-                    foreach (string linea in (texto ?? "").Replace("\r", "").Split('\n'))
+                    foreach (var linea in lineas ?? new List<LineaTicket>())
                     {
-                        string recorte = linea.Length > AnchoTicket ? linea.Substring(0, AnchoTicket) : linea;
+                        var fuente = linea.Estilo switch
+                        {
+                            EstiloTicket.Titulo => titulo,
+                            EstiloTicket.Total => total,
+                            EstiloTicket.Negrita => negrita,
+                            _ => normal,
+                        };
+                        string recorte = (linea.Texto ?? "").Replace("\r", "");
+                        if (recorte.Length > AnchoTicket) recorte = recorte.Substring(0, AnchoTicket);
                         e.Graphics.DrawString(recorte, fuente, System.Drawing.Brushes.Black, 5, y);
-                        y += alto;
+                        y += fuente.GetHeight(e.Graphics) + 1;
                     }
                     if (qr != null)
                     {
@@ -151,7 +171,14 @@ namespace sabores_wanka.Services
             return (true, "");
         }
 
-        // Logo a gris termico: max 200 de ancho (~50mm), alto proporcional.
+        private static System.Drawing.Font FuenteMono(float tamano, bool negrita)
+        {
+            var estilo = negrita ? System.Drawing.FontStyle.Bold : System.Drawing.FontStyle.Regular;
+            try { return new System.Drawing.Font("Courier New", tamano, estilo); }
+            catch { return new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace, tamano, estilo); }
+        }
+
+        // Logo a gris termico: max 240 de ancho (~60mm), alto proporcional.
         private static System.Drawing.Image? CargarLogoGris(out float ancho, out float alto)
         {
             ancho = 0; alto = 0;
@@ -160,10 +187,10 @@ namespace sabores_wanka.Services
                 string ruta = LogoTicket.RutaActual();
                 if (ruta.Length == 0) return null;
                 using var original = System.Drawing.Image.FromFile(ruta);
-                float escala = original.Width > 200 ? 200f / original.Width : 1f;
+                float escala = original.Width > 240 ? 240f / original.Width : 1f;
                 ancho = original.Width * escala;
                 alto = original.Height * escala;
-                if (alto > 90) { escala = 90f / alto; ancho *= escala; alto = 90; }
+                if (alto > 110) { escala = 110f / alto; ancho *= escala; alto = 110; }
                 var gris = new System.Drawing.Bitmap((int)ancho, (int)alto);
                 using (var g = System.Drawing.Graphics.FromImage(gris))
                 {
@@ -185,73 +212,70 @@ namespace sabores_wanka.Services
             catch { return null; }
         }
 
-        private static System.Drawing.Font FuenteMono(float tamano)
-        {
-            try { return new System.Drawing.Font("Courier New", tamano); }
-            catch { return new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace, tamano); }
-        }
-
         // Ticket de prueba 80mm con los datos del negocio (misma demo del preview).
-        public static string TextoPrueba()
+        public static List<LineaTicket> TextoPrueba()
         {
             var (nombre, ruc, telefono, direccion, mensaje) = DatosNegocio();
-            var t = new List<string>
+            var t = new List<LineaTicket>
             {
-                Centrar(nombre.ToUpperInvariant()),
-                Centrar("RUC: " + ruc),
-                Centrar(direccion),
-                Centrar("Tel: " + telefono),
-                new string('-', AnchoTicket),
-                Centrar("TICKET DE PRUEBA"),
-                Centrar(DateTime.Now.ToString("dd/MM/yyyy HH:mm")),
-                new string('-', AnchoTicket),
-                Fila("C", "PRODUCTO", "P.U.", "TOTAL"),
-                Fila("1", "Pachamanca 2 Sabores", "32.00", "32.00"),
-                Fila("1", "Papa a la Huancaina", "14.00", "14.00"),
-                Fila("1", "Chicha de Jora 1L", "12.00", "12.00"),
-                Fila("1", "Cancha Serrana", "4.00", "4.00"),
-                new string('-', AnchoTicket),
-                $"TOTAL:                     S/ 62.00",
-                new string('-', AnchoTicket),
-                Centrar(mensaje),
-                "",
+                L(nombre.ToUpperInvariant(), EstiloTicket.Titulo),
+                L("RUC: " + ruc),
+                L(direccion),
+                L("Tel: " + telefono),
+                L(new string('-', AnchoTicket)),
+                L("TICKET DE PRUEBA", EstiloTicket.Negrita),
+                L(DateTime.Now.ToString("dd/MM/yyyy HH:mm")),
+                L(new string('-', AnchoTicket)),
+                L(Fila("C", "PRODUCTO", "P.U.", "TOTAL"), EstiloTicket.Negrita),
+                L(Fila("1", "Pachamanca 2 Sabores", "32.00", "32.00")),
+                L(Fila("1", "Papa a la Huancaina", "14.00", "14.00")),
+                L(Fila("1", "Chicha de Jora 1L", "12.00", "12.00")),
+                L(Fila("1", "Cancha Serrana", "4.00", "4.00")),
+                L(new string('-', AnchoTicket)),
+                L("TOTAL:" + "S/ 62.00".PadLeft(AnchoTicket - 6), EstiloTicket.Total),
+                L(new string('-', AnchoTicket)),
             };
             if (QrTicket.LeerWeb().Length > 0)
-                t.Insert(t.Count - 2, Centrar("Escanea el QR para visitarnos"));
-            return string.Join("\n", t);
+                t.Add(L(Centrar("Escanea el QR para visitarnos"), EstiloTicket.Negrita));
+            t.Add(L(Centrar(mensaje), EstiloTicket.Negrita));
+            t.Add(L(""));
+            return t;
         }
 
         // Ticket de una venta real del historial (pagada o por cobrar).
-        public static string TextoVenta(Venta v)
+        public static List<LineaTicket> TextoVenta(Venta v)
         {
             var (nombre, ruc, telefono, direccion, mensaje) = DatosNegocio();
-            var t = new List<string>
+            var t = new List<LineaTicket>
             {
-                Centrar(nombre.ToUpperInvariant()),
-                Centrar("RUC: " + ruc),
-                Centrar(direccion),
-                Centrar("Tel: " + telefono),
-                new string('-', AnchoTicket),
-                Centrar($"{v.Comprobante.ToUpperInvariant()} {v.Ticket}"),
-                Centrar(v.FechaHora.ToString("dd/MM/yyyy HH:mm")),
-                Centrar($"{v.MesaEtiqueta} | {v.Cliente}"),
-                new string('-', AnchoTicket),
+                L(nombre.ToUpperInvariant(), EstiloTicket.Titulo),
+                L("RUC: " + ruc),
+                L(direccion),
+                L("Tel: " + telefono),
+                L(new string('-', AnchoTicket)),
+                L($"{v.Comprobante.ToUpperInvariant()} {v.Ticket}", EstiloTicket.Negrita),
+                L(v.FechaHora.ToString("dd/MM/yyyy HH:mm")),
+                L($"{v.MesaEtiqueta} | {v.Cliente}"),
+                L(new string('-', AnchoTicket)),
             };
             foreach (var it in v.Items ?? new List<ItemVenta>())
             {
-                string prod = it.Nombre.Length > 22 ? it.Nombre.Substring(0, 22) : it.Nombre;
-                t.Add(Fila(it.Cantidad.ToString(), prod, it.Precio.ToString("0.00"), (it.Precio * it.Cantidad).ToString("0.00")));
+                string prod = it.Nombre.Length > 20 ? it.Nombre.Substring(0, 20) : it.Nombre;
+                t.Add(L(Fila(it.Cantidad.ToString(), prod, it.Precio.ToString("0.00"), (it.Precio * it.Cantidad).ToString("0.00"))));
             }
-            t.Add(new string('-', AnchoTicket));
-            t.Add($"TOTAL:                S/ {v.Total:0.00}");
-            t.Add($"Pago: {v.MetodoPago} | {v.Estado}");
-            t.Add(new string('-', AnchoTicket));
+            t.Add(L(new string('-', AnchoTicket)));
+            t.Add(L("TOTAL:" + $"S/ {v.Total:0.00}".PadLeft(AnchoTicket - 6), EstiloTicket.Total));
+            t.Add(L($"Pago: {v.MetodoPago} | {v.Estado}", EstiloTicket.Negrita));
+            t.Add(L(new string('-', AnchoTicket)));
             if (QrTicket.LeerWeb().Length > 0)
-                t.Add(Centrar("Escanea el QR para visitarnos"));
-            t.Add(Centrar(mensaje));
-            t.Add("");
-            return string.Join("\n", t);
+                t.Add(L(Centrar("Escanea el QR para visitarnos"), EstiloTicket.Negrita));
+            t.Add(L(Centrar(mensaje), EstiloTicket.Negrita));
+            t.Add(L(""));
+            return t;
         }
+
+        private static LineaTicket L(string texto, EstiloTicket estilo = EstiloTicket.Normal) =>
+            new() { Texto = texto ?? "", Estilo = estilo };
 
         // Lee los mismos LocalSettings que la vista de negocio (una sola fuente).
         private static (string nombre, string ruc, string telefono, string direccion, string mensaje) DatosNegocio()
@@ -284,10 +308,10 @@ namespace sabores_wanka.Services
 
         private static string Fila(string cant, string producto, string pu, string total)
         {
-            // C(2) + producto(22) + P.U.(8) + total(8) = 43 columnas.
+            // C(2) + producto(20) + P.U.(7) + total(8) = 40 columnas.
             return Recorte(cant.PadRight(2), 2) + " "
-                + Recorte(producto.PadRight(22), 22) + " "
-                + Recorte(pu.PadLeft(8), 8) + " "
+                + Recorte(producto.PadRight(20), 20) + " "
+                + Recorte(pu.PadLeft(7), 7) + " "
                 + Recorte(total.PadLeft(8), 8);
         }
 
