@@ -17,8 +17,14 @@ namespace sabores_wanka.Views.InformacionNegocio
         [DllImport("user32.dll")]
         private static extern IntPtr GetActiveWindow();
 
+        // Suprime eventos mientras se restaura lo guardado (evita cascadas).
+        private bool _cargando;
+        // Version del ultimo pedido de QR: solo el mas reciente pinta.
+        private int _qrPedido;
+
         // Avisa al shell para volver al POS (boton "Volver al POS").
         public event EventHandler? VolverPosSolicitado;
+        private int _qrPedido;
 
         private static readonly SolidColorBrush TabActivoFondo = new(Microsoft.UI.ColorHelper.FromArgb(0xFF, 0xDD, 0xB1, 0x59));
         private static readonly SolidColorBrush TabActivoTexto = new(Microsoft.UI.ColorHelper.FromArgb(0xFF, 0x12, 0x1F, 0x1A));
@@ -61,8 +67,10 @@ namespace sabores_wanka.Views.InformacionNegocio
         }
 
         // Lee LocalSettings (si no hay nada deja los valores del XAML).
+        // Con _cargando los TextChanged/Toggled no disparan trabajo repetido.
         private void CargarGuardado()
         {
+            _cargando = true;
             try
             {
                 var local = ApplicationData.Current.LocalSettings;
@@ -79,6 +87,7 @@ namespace sabores_wanka.Views.InformacionNegocio
                     MonedaComboBox.SelectedIndex = idx;
             }
             catch { }
+            finally { _cargando = false; }
         }
 
         // Guarda los campos en LocalSettings (el ticket lee de aqui).
@@ -118,6 +127,7 @@ namespace sabores_wanka.Views.InformacionNegocio
         // El QR se regenera aparte (async) con lo que esta escrito, sin guardar.
         private void CampoNegocio_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (_cargando) return;
             ActualizarPreview();
             _ = ActualizarQrAsync();
         }
@@ -125,23 +135,20 @@ namespace sabores_wanka.Views.InformacionNegocio
         // Switch QR: guarda al momento y refresca el papel.
         private void QrSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            if (QrSwitch == null) return;
+            if (_cargando || QrSwitch == null) return;
             Services.QrTicket.GuardarActivo(QrSwitch.IsOn);
             _ = ActualizarQrAsync();
         }
 
         // QR del papel con la URL escrita (oculto si esta apagado o vacio).
+        // Sin recursion: cada pedido lleva numero y solo el ultimo pinta.
         private async System.Threading.Tasks.Task ActualizarQrAsync()
         {
+            int pedido = ++_qrPedido;
             bool prendido = QrSwitch?.IsOn ?? Services.QrTicket.QrActivo();
             string url = prendido ? Services.QrTicket.Normalizar(WebTextBox?.Text ?? "") : "";
             var bmp = prendido ? await Services.QrTicket.GenerarParaPreviewAsync(url) : null;
-            // Si cambio el texto mientras generaba, regenera (evita QR viejo).
-            if (!string.Equals(url, Services.QrTicket.Normalizar(WebTextBox?.Text ?? ""), StringComparison.OrdinalIgnoreCase))
-            {
-                await ActualizarQrAsync();
-                return;
-            }
+            if (pedido != _qrPedido) return;
             if (PreviewQr != null)
             {
                 PreviewQr.Source = bmp;

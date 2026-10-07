@@ -80,6 +80,7 @@ namespace sabores_wanka.Services
         }
 
         // Imagen para el preview XAML (null si no hay URL; nunca lanza).
+        // El stream queda retenido por la imagen (no se libera aqui).
         public static async Task<BitmapImage?> GenerarParaPreviewAsync(string? url = null)
         {
             try
@@ -88,9 +89,11 @@ namespace sabores_wanka.Services
                 if (bmp == null) return null;
                 using var memoria = new MemoryStream();
                 bmp.Save(memoria, System.Drawing.Imaging.ImageFormat.Png);
-                memoria.Position = 0;
+                var flujo = new InMemoryRandomAccessStream();
+                await flujo.WriteAsync(memoria.GetBuffer().AsBuffer(0, (int)memoria.Length));
+                await flujo.FlushAsync();
+                flujo.Seek(0);
                 var imagen = new BitmapImage();
-                using var flujo = memoria.AsRandomAccessStream();
                 await imagen.SetSourceAsync(flujo);
                 return imagen;
             }

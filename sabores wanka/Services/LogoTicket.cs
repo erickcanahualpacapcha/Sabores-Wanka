@@ -58,6 +58,7 @@ namespace sabores_wanka.Services
         }
 
         // Bitmap para el preview XAML (null si no hay; nunca lanza).
+        // El stream queda retenido por la imagen (no se libera aqui).
         public static async Task<BitmapImage?> CargarAsync()
         {
             try
@@ -65,8 +66,11 @@ namespace sabores_wanka.Services
                 string ruta = RutaActual();
                 if (ruta.Length == 0) return null;
                 StorageFile archivo = await StorageFile.GetFileFromPathAsync(ruta);
+                using var neto = await archivo.OpenReadAsync();
+                var flujo = new Windows.Storage.Streams.InMemoryRandomAccessStream();
+                await Windows.Storage.Streams.RandomAccessStream.CopyAsync(neto, flujo);
+                flujo.Seek(0);
                 var bmp = new BitmapImage();
-                using var flujo = await archivo.OpenReadAsync();
                 await bmp.SetSourceAsync(flujo);
                 return bmp;
             }
