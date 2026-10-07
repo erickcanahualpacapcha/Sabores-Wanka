@@ -726,10 +726,11 @@ namespace sabores_wanka.Views.PuntoDeVenta
             if (seleccionados.Count == 0) return;
             double total = seleccionados.Sum(i => i.Precio * i.Cantidad);
             string ticket;
+            Venta venta;
             try
             {
                 ticket = await VentasStore.SiguienteTicketAsync();
-                await VentasStore.RegistrarAsync(new Venta
+                venta = new Venta
                 {
                     Ticket = ticket,
                     FechaHora = DateTime.Now,
@@ -746,7 +747,8 @@ namespace sabores_wanka.Views.PuntoDeVenta
                     MesaBadgeBg = BadgeFondoDe(_mesaActual),
                     MesaBadgeBorde = BadgeBordeDe(_mesaActual),
                     MesaBadgeFg = BadgeLetraDe(_mesaActual),
-                });
+                };
+                await VentasStore.RegistrarAsync(venta);
             }
             catch (InvalidOperationException)
             {
@@ -763,6 +765,46 @@ namespace sabores_wanka.Views.PuntoDeVenta
             FacturaTotalText.Text = $"{total:0.00}";
             FacturaNumeroText.Text = $"{ticket}  •  CONFIRMAR";
             FacturaDialog.Visibility = Visibility.Visible;
+            // Impresion automatica al confirmar (solo si el switch esta prendido).
+            if (ImprimirTicketSwitch?.IsOn == true)
+                _ = ImprimirCierreAsync(venta);
+        }
+
+        // Imprime la boleta recien cerrada sin bloquear; avisa con el toast.
+        private async System.Threading.Tasks.Task ImprimirCierreAsync(Venta venta)
+        {
+            try
+            {
+                var (ok, error) = await Services.ImpresionTickets.ImprimirTextoAsync(Services.ImpresionTickets.TextoVenta(venta));
+                DispatcherQueue.TryEnqueue(() => ShowMesaToast(ok ? $"Ticket {venta.Ticket} impreso" : $"No se pudo imprimir: {error}"));
+            }
+            catch { }
+        }
+
+        // Switch de impresion: se recuerda entre turnos (LocalSettings).
+        private void ImprimirTicketSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (ImprimirTicketSwitch == null) return;
+            bool prendido = ImprimirTicketSwitch.IsOn;
+            try { Windows.Storage.ApplicationData.Current.LocalSettings.Values["Pos.ImprimirAlConfirmar"] = prendido; }
+            catch { }
+            if (ImprimirTicketSubText != null)
+                ImprimirTicketSubText.Text = prendido ? "Sale en papel al confirmar" : "No se imprimirá";
+        }
+
+        // Restaura el switch (por defecto prendido).
+        private void RestaurarSwitchImpresion()
+        {
+            try
+            {
+                if (ImprimirTicketSwitch != null && Windows.Storage.ApplicationData.Current.LocalSettings.Values["Pos.ImprimirAlConfirmar"] is bool b)
+                {
+                    ImprimirTicketSwitch.IsOn = b;
+                    if (ImprimirTicketSubText != null)
+                        ImprimirTicketSubText.Text = b ? "Sale en papel al confirmar" : "No se imprimirá";
+                }
+            }
+            catch { }
         }
 
         // Descuenta del JSON lo cobrado por nombre y refresca la tarjeta en memoria.
@@ -1235,6 +1277,7 @@ namespace sabores_wanka.Views.PuntoDeVenta
             catch { }
             try { await AgregarPlatosDelCatalogoAsync(); }
             catch { }
+            RestaurarSwitchImpresion();
             ActualizarCartUI();
             ActualizarEstadoCatalogo();
         }
