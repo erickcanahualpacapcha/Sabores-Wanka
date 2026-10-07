@@ -24,7 +24,6 @@ namespace sabores_wanka.Views.InformacionNegocio
 
         // Avisa al shell para volver al POS (boton "Volver al POS").
         public event EventHandler? VolverPosSolicitado;
-        private int _qrPedido;
 
         private static readonly SolidColorBrush TabActivoFondo = new(Microsoft.UI.ColorHelper.FromArgb(0xFF, 0xDD, 0xB1, 0x59));
         private static readonly SolidColorBrush TabActivoTexto = new(Microsoft.UI.ColorHelper.FromArgb(0xFF, 0x12, 0x1F, 0x1A));
