@@ -53,6 +53,7 @@ namespace sabores_wanka.Views.Productos
                 }
                 if (!string.IsNullOrWhiteSpace(_categoriaPendiente))
                     SeleccionarCategoria(_categoriaPendiente);
+                RefrescarMenusCategoria();
             }
             catch { }
         }
@@ -72,8 +73,69 @@ namespace sabores_wanka.Views.Productos
                 }
             }
             var nuevo = new ComboBoxItem { Content = nombre };
+            AplicarMenuCategoria(nuevo);
             CategoriaComboBox.Items.Add(nuevo);
             CategoriaComboBox.SelectedItem = nuevo;
+        }
+
+        // Clic derecho en una personalizada = Eliminar; las base no llevan menu.
+        private void AplicarMenuCategoria(ComboBoxItem item)
+        {
+            string nombre = (item.Content?.ToString() ?? "").Trim();
+            if (CategoriasStore.EsBase(nombre))
+            {
+                item.ContextFlyout = null;
+                return;
+            }
+            var eliminar = new MenuFlyoutItem { Text = $"Eliminar «{nombre}»", Tag = nombre };
+            eliminar.Click += EliminarCategoriaMenu_Click;
+            var menu = new MenuFlyout();
+            menu.Items.Add(eliminar);
+            item.ContextFlyout = menu;
+        }
+
+        // Repasa el combo tras cargar (las del XAML nacen sin menu).
+        private void RefrescarMenusCategoria()
+        {
+            if (CategoriaComboBox == null) return;
+            foreach (var item in CategoriaComboBox.Items.OfType<ComboBoxItem>())
+                AplicarMenuCategoria(item);
+        }
+
+        // Eliminar con confirmacion; si era la elegida vuelve a la primera.
+        private async void EliminarCategoriaMenu_Click(object? sender, RoutedEventArgs e)
+        {
+            if (sender is not MenuFlyoutItem mi || mi.Tag is not string nombre) return;
+            var confirmar = new ContentDialog
+            {
+                Title = $"Eliminar «{nombre}»",
+                Content = new TextBlock { Text = "La categoría saldrá de la lista. Los productos que la usen deben cambiarse primero.", TextWrapping = TextWrapping.Wrap },
+                PrimaryButtonText = "Eliminar",
+                CloseButtonText = "Cancelar",
+                XamlRoot = this.XamlRoot
+            };
+            if (await confirmar.ShowAsync() != ContentDialogResult.Primary) return;
+            try
+            {
+                await CategoriasStore.EliminarAsync(nombre);
+            }
+            catch (InvalidOperationException ex)
+            {
+                await MostrarDialogoAsync("No se pudo eliminar", ex.Message, "Entendido");
+                return;
+            }
+            if (CategoriaComboBox != null)
+            {
+                var quitar = CategoriaComboBox.Items.OfType<ComboBoxItem>()
+                    .FirstOrDefault(i => string.Equals(i.Content?.ToString(), nombre, StringComparison.OrdinalIgnoreCase));
+                if (quitar != null)
+                {
+                    bool eraElegida = Equals(CategoriaComboBox.SelectedItem, quitar);
+                    CategoriaComboBox.Items.Remove(quitar);
+                    if (eraElegida && CategoriaComboBox.Items.Count > 0)
+                        CategoriaComboBox.SelectedIndex = 0;
+                }
+            }
         }
 
         // Modo edición: precarga el formulario y cambia los textos de acción.

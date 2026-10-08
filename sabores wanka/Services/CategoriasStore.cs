@@ -43,6 +43,10 @@ namespace sabores_wanka.Services
             return lista;
         }
 
+        // true si es una de las 9 base (esas no se pueden eliminar).
+        public static bool EsBase(string? nombre) =>
+            Base.Any(x => string.Equals(x, (nombre ?? "").Trim(), StringComparison.OrdinalIgnoreCase));
+
         // Agrega una personalizada; devuelve el nombre guardado.
         public static async Task<string> AgregarAsync(string nombre)
         {
@@ -59,6 +63,30 @@ namespace sabores_wanka.Services
                 propias.Add(limpio);
                 await File.WriteAllTextAsync(RutaArchivo(), JsonSerializer.Serialize(propias, _json));
                 return limpio;
+            }
+            finally { _candado.Release(); }
+        }
+
+        // Elimina una personalizada (las base lanzan). Si un producto la usa,
+        // se bloquea para no dejar platos sin categoria valida.
+        public static async Task EliminarAsync(string nombre)
+        {
+            string limpio = (nombre ?? "").Trim();
+            if (EsBase(limpio))
+                throw new InvalidOperationException($"«{limpio}» es categoría base del sistema y no se puede eliminar.");
+            // Fuera del candado: otro semaforo (PlatosStore) sin anidar cerrojos.
+            int usos = (await PlatosStore.ListarAsync())
+                .Count(p => string.Equals((p.Categoria ?? "").Trim(), limpio, StringComparison.OrdinalIgnoreCase));
+            if (usos > 0)
+                throw new InvalidOperationException($"«{limpio}» está en uso por {usos} producto(s). Cambia su categoría primero.");
+            await _candado.WaitAsync();
+            try
+            {
+                var propias = await LeerPropiasSinCandadoAsync();
+                int quitados = propias.RemoveAll(x => string.Equals(x, limpio, StringComparison.OrdinalIgnoreCase));
+                if (quitados == 0)
+                    throw new InvalidOperationException($"La categoría «{limpio}» ya no existe.");
+                await File.WriteAllTextAsync(RutaArchivo(), JsonSerializer.Serialize(propias, _json));
             }
             finally { _candado.Release(); }
         }

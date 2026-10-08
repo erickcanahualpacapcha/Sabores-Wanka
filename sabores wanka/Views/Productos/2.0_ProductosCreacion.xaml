@@ -102,7 +102,7 @@
                                             </StackPanel>
                                         </Button>
                                     </Grid>
-                                    <ComboBox x:Name="CategoriaComboBox" Background="#191c22" BorderBrush="#404752" BorderThickness="1" CornerRadius="8" Padding="8,4" HorizontalAlignment="Stretch" SelectedIndex="0">
+                                    <ComboBox x:Name="CategoriaComboBox" Background="#191c22" BorderBrush="#404752" BorderThickness="1" CornerRadius="8" Padding="8,4" HorizontalAlignment="Stretch" SelectedIndex="0" ToolTipService.ToolTip="Clic derecho en una categoría creada por ti para eliminarla">
                                         <ComboBoxItem Content="Carnes &amp; Parrillas"/>
                                         <ComboBoxItem Content="Entradas"/>
                                         <ComboBoxItem Content="Platos de Fondo"/>
