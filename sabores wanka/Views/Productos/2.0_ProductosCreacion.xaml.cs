@@ -18,6 +18,13 @@ namespace sabores_wanka.Views.Productos
         // Estacion activa del grupo single-select (Tag del boton elegido).
         private string _estacionActiva = "caliente";
 
+        // Estacion del plato en edicion (se aplica al cargar las listas).
+        private string? _estacionPendiente;
+
+        // Gestor de areas: refs del dialogo abierto (un ContentDialog a la vez).
+        private ContentDialog? _gestorEstDialogo;
+        private StackPanel? _gestorEstLista;
+
         // PLU en edición (null = alta nueva). El PLU no se cambia al editar.
         private string? _pluEnEdicion;
 
@@ -38,6 +45,7 @@ namespace sabores_wanka.Views.Productos
             PrecioTextBox.TextChanged += (_, _) => ActualizarMargen();
             CostoTextBox.TextChanged += (_, _) => ActualizarMargen();
             _ = CargarCategoriasAsync();
+            _ = CargarEstacionesAsync();
         }
 
         // Llena el combo con base + personalizadas (sin duplicar las del XAML).
@@ -270,7 +278,7 @@ namespace sabores_wanka.Views.Productos
             PorcionesTextBox.Text = plato.Porciones.ToString();
             _categoriaPendiente = plato.Categoria;
             SeleccionarCategoria(_categoriaPendiente);
-            SeleccionarEstacion(string.IsNullOrWhiteSpace(plato.EstacionTag) ? "caliente" : plato.EstacionTag);
+            SeleccionarEstacion(_estacionPendiente = string.IsNullOrWhiteSpace(plato.EstacionTag) ? "caliente" : plato.EstacionTag);
             if (RutaActualText != null) RutaActualText.Text = "Editar Producto";
             if (AccionPrincipalText != null) AccionPrincipalText.Text = "Guardar cambios";
             if (EliminarProductoButton != null) EliminarProductoButton.Visibility = Visibility.Visible;
@@ -302,6 +310,52 @@ namespace sabores_wanka.Views.Productos
                     tb.FontWeight = activo ? Microsoft.UI.Text.FontWeights.SemiBold : Microsoft.UI.Text.FontWeights.Normal;
                 }
             }
+        }
+
+        // Pills desde el store (base + personalizadas); si la activa no existe
+        // (dato viejo) se agrega temporal con su tag para no perderla al editar.
+        private async System.Threading.Tasks.Task CargarEstacionesAsync()
+        {
+            await RecargarEstacionesAsync();
+            if (!string.IsNullOrWhiteSpace(_estacionPendiente))
+                SeleccionarEstacion(_estacionPendiente);
+        }
+
+        private async System.Threading.Tasks.Task RecargarEstacionesAsync()
+        {
+            try
+            {
+                if (EstacionesPanel == null) return;
+                List<Services.Estacion> todas;
+                try { todas = await Services.EstacionesStore.ListarAsync(); }
+                catch { return; }
+                EstacionesPanel.Children.Clear();
+                foreach (var e in todas)
+                    EstacionesPanel.Children.Add(BotonEstacion(e.Tag, e.Nombre));
+                if (!todas.Any(x => string.Equals(x.Tag, _estacionActiva, StringComparison.OrdinalIgnoreCase))
+                    && !string.IsNullOrWhiteSpace(_estacionActiva))
+                    EstacionesPanel.Children.Add(BotonEstacion(_estacionActiva, _estacionActiva));
+                SeleccionarEstacion(_estacionActiva);
+            }
+            catch { }
+        }
+
+        // Pildora con la misma pinta de las fijas del XAML anterior.
+        private Button BotonEstacion(string tag, string nombre)
+        {
+            var b = new Button
+            {
+                Tag = tag,
+                Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x27, 0x2A, 0x31)),
+                BorderThickness = new Thickness(0),
+                CornerRadius = new CornerRadius(8),
+                Padding = new Thickness(12, 6, 12, 6),
+                MinWidth = 0,
+                MinHeight = 0,
+            };
+            b.Content = new TextBlock { Text = nombre, Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0xC0, 0xC7, 0xD4)), FontSize = 11 };
+            b.Click += EstacionButton_Click;
+            return b;
         }
 
         // Tipo visible <-> unidad de stock ("Plato" <-> "platos", "Vaso" <-> "vasos"...).
@@ -399,8 +453,196 @@ namespace sabores_wanka.Views.Productos
             }
         }
 
-        // Boton + Nueva: mini dialogo para crear la categoria sin salir del
-        // formulario; al agregarla queda seleccionada en el combo.
+        // Boton + Nueva (areas): mini dialogo sin salir del formulario.
+        private async void AgregarEstacionButton_Click(object sender, RoutedEventArgs e)
+        {
+            var campo = new TextBox
+            {
+                PlaceholderText = "Ej. Parrilla 2",
+                MaxLength = 40,
+                Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x19, 0x1C, 0x22)),
+                BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x40, 0x47, 0x52)),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(8),
+                Padding = new Thickness(12, 8, 12, 8),
+            };
+            var dialogo = new ContentDialog
+            {
+                Title = "Nueva área",
+                Content = campo,
+                PrimaryButtonText = "Agregar",
+                CloseButtonText = "Cancelar",
+                XamlRoot = this.XamlRoot
+            };
+            if (await dialogo.ShowAsync() != ContentDialogResult.Primary) return;
+            string nombre = (campo.Text ?? "").Trim();
+            if (nombre.Length == 0)
+            {
+                await MostrarDialogoAsync("Falta el nombre", "Escribe el nombre del área.", "Entendido");
+                return;
+            }
+            try
+            {
+                var nueva = await Services.EstacionesStore.AgregarAsync(nombre);
+                _estacionActiva = nueva.Tag;
+                _estacionPendiente = nueva.Tag;
+                await RecargarEstacionesAsync();
+            }
+            catch (InvalidOperationException ex)
+            {
+                await MostrarDialogoAsync("No se pudo agregar", ex.Message, "Entendido");
+            }
+        }
+
+        // Lapiz (areas): gestor con renombrar + eliminar personalizadas.
+        private async void GestionarEstacionesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var lista = new StackPanel { Spacing = 6 };
+            await RefrescarGestorEstacionesAsync(lista);
+            var dialogo = new ContentDialog
+            {
+                Title = "Editar áreas",
+                Content = new ScrollViewer { Content = lista, MaxHeight = 380, VerticalScrollBarVisibility = ScrollBarVisibility.Auto },
+                CloseButtonText = "Cerrar",
+                XamlRoot = this.XamlRoot
+            };
+            _gestorEstDialogo = dialogo;
+            _gestorEstLista = lista;
+            try { await dialogo.ShowAsync(); }
+            finally
+            {
+                if (_gestorEstDialogo == dialogo) _gestorEstDialogo = null;
+                if (_gestorEstLista == lista) _gestorEstLista = null;
+            }
+            await RecargarEstacionesAsync();
+        }
+
+        // Mismo patron que categorias: nunca dos ContentDialog a la vez.
+        private async System.Threading.Tasks.Task ConGestorEstOcultoAsync(Func<System.Threading.Tasks.Task<bool>> accion)
+        {
+            var gestor = _gestorEstDialogo;
+            var lista = _gestorEstLista;
+            if (gestor != null) gestor.Hide();
+            try { await accion(); }
+            catch { }
+            if (lista != null) await RefrescarGestorEstacionesAsync(lista);
+            if (gestor != null && Equals(_gestorEstDialogo, gestor))
+            {
+                try { await gestor.ShowAsync(); }
+                catch { }
+            }
+        }
+
+        // Filas del gestor: base con candado, personalizadas con lapiz + papelera.
+        private async System.Threading.Tasks.Task RefrescarGestorEstacionesAsync(StackPanel lista)
+        {
+            lista.Children.Clear();
+            List<Services.Estacion> todas;
+            try { todas = await Services.EstacionesStore.ListarAsync(); }
+            catch { return; }
+            foreach (var est in todas)
+            {
+                bool esBase = Services.EstacionesStore.EsBase(est.Tag);
+                var fila = new Grid { ColumnSpacing = 8 };
+                fila.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                fila.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                fila.Children.Add(new TextBlock { Text = est.Nombre, Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF)), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, TextWrapping = TextWrapping.Wrap });
+                if (esBase)
+                {
+                    var candado = new FontIcon { Glyph = "\uE72E", FontSize = 11, Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x9C, 0xA3, 0xAF)), VerticalAlignment = VerticalAlignment.Center };
+                    Grid.SetColumn(candado, 1);
+                    fila.Children.Add(candado);
+                    Microsoft.UI.Xaml.Controls.ToolTipService.SetToolTip(fila, "Área base del sistema");
+                }
+                else
+                {
+                    var acciones = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4, VerticalAlignment = VerticalAlignment.Center };
+                    Grid.SetColumn(acciones, 1);
+                    var renombrar = new Button { Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0x00, 0x00, 0x00, 0x00)), BorderThickness = new Thickness(0), Padding = new Thickness(8, 4, 8, 4), MinWidth = 0, MinHeight = 0 };
+                    renombrar.Content = new FontIcon { Glyph = "\uE70F", FontSize = 11, Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0xC0, 0xC7, 0xD4)) };
+                    Microsoft.UI.Xaml.Controls.ToolTipService.SetToolTip(renombrar, $"Renombrar «{est.Nombre}»");
+                    renombrar.Click += async (_, _) => await ConGestorEstOcultoAsync(() => RenombrarEstacionAsync(est.Tag, est.Nombre));
+                    var borrar = new Button { Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0x00, 0x00, 0x00, 0x00)), BorderThickness = new Thickness(0), Padding = new Thickness(8, 4, 8, 4), MinWidth = 0, MinHeight = 0 };
+                    borrar.Content = new FontIcon { Glyph = "\uE74D", FontSize = 11, Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0xF8, 0x71, 0x71)) };
+                    Microsoft.UI.Xaml.Controls.ToolTipService.SetToolTip(borrar, $"Eliminar «{est.Nombre}»");
+                    borrar.Click += async (_, _) => await ConGestorEstOcultoAsync(() => EliminarEstacionAsync(est.Tag, est.Nombre));
+                    acciones.Children.Add(renombrar);
+                    acciones.Children.Add(borrar);
+                    fila.Children.Add(acciones);
+                }
+                lista.Children.Add(fila);
+            }
+        }
+
+        // Renombrar area (el Tag no cambia: los platos siguen apuntando solos).
+        private async System.Threading.Tasks.Task<bool> RenombrarEstacionAsync(string tag, string anterior)
+        {
+            var campo = new TextBox
+            {
+                Text = anterior,
+                MaxLength = 40,
+                Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x19, 0x1C, 0x22)),
+                BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x40, 0x47, 0x52)),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(8),
+                Padding = new Thickness(12, 8, 12, 8),
+            };
+            var dialogo = new ContentDialog
+            {
+                Title = $"Renombrar «{anterior}»",
+                Content = campo,
+                PrimaryButtonText = "Guardar",
+                CloseButtonText = "Cancelar",
+                XamlRoot = this.XamlRoot
+            };
+            if (await dialogo.ShowAsync() != ContentDialogResult.Primary) return false;
+            string nuevo = (campo.Text ?? "").Trim();
+            if (nuevo.Length == 0)
+            {
+                await MostrarDialogoAsync("Falta el nombre", "Escribe el nuevo nombre.", "Entendido");
+                return false;
+            }
+            try
+            {
+                int enUso = await Services.EstacionesStore.RenombrarAsync(tag, nuevo);
+                if (enUso > 0)
+                    await MostrarDialogoAsync("Área actualizada", $"«{nuevo}» aplicada a {enUso} producto(s).", "Entendido");
+                return true;
+            }
+            catch (InvalidOperationException ex)
+            {
+                await MostrarDialogoAsync("No se pudo renombrar", ex.Message, "Entendido");
+                return false;
+            }
+        }
+
+        // Eliminar area con confirmacion (bloquea si esta en uso).
+        private async System.Threading.Tasks.Task<bool> EliminarEstacionAsync(string tag, string nombre)
+        {
+            var confirmar = new ContentDialog
+            {
+                Title = $"Eliminar «{nombre}»",
+                Content = new TextBlock { Text = "El área saldrá de la lista. Los productos que la usen deben cambiarse primero.", TextWrapping = TextWrapping.Wrap },
+                PrimaryButtonText = "Eliminar",
+                CloseButtonText = "Cancelar",
+                XamlRoot = this.XamlRoot
+            };
+            if (await confirmar.ShowAsync() != ContentDialogResult.Primary) return false;
+            try
+            {
+                await Services.EstacionesStore.EliminarAsync(tag);
+                // Si era la elegida, se vuelve a la base para que Recargar no
+                // la resucite como temporal (eso es solo para datos viejos).
+                if (string.Equals(_estacionActiva, tag, StringComparison.OrdinalIgnoreCase))
+                    _estacionActiva = "caliente";
+                return true;
+            }
+            catch (InvalidOperationException ex)
+            {
+                await MostrarDialogoAsync("No se pudo eliminar", ex.Message, "Entendido");
+                return false;
+            }
+        }
         private async void AgregarCategoriaButton_Click(object sender, RoutedEventArgs e)
         {
             var campo = new TextBox
