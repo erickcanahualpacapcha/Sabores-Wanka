@@ -13,7 +13,7 @@ using Microsoft.UI.Xaml;
 namespace sabores_wanka.Services
 {
     // Auto-update desde GitHub Releases (patron Nachis, sin nube ni terminales):
-    // al iniciar compara la version instalada con el latest del repo privado
+    // al iniciar compara la version instalada con el latest del repo
     // (token de lectura) y aplica el ZIP al reiniciar. Solo perfil Unpackaged:
     // el paquete MSIX se actualiza por la tienda, no por este servicio.
     public sealed class ActualizacionService
@@ -158,13 +158,20 @@ namespace sabores_wanka.Services
         }
 
         // Reemplaza los archivos con PowerShell y relanza (la app debe salir).
+        // Tambien limpia la carpeta temporal (el proceso muere antes de
+        // hacerlo por si mismo, asi que lo hace el script elevado).
         private static void AplicarSwap(string origen, string baseDir)
         {
             string exeNombre = (Assembly.GetExecutingAssembly().GetName().Name ?? "sabores wanka") + ".exe";
             string marcador = Path.Combine(baseDir, Marcador);
+            string? tempPadre = null;
+            try { tempPadre = Directory.GetParent(origen.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))?.FullName; }
+            catch { }
             string cmd = $"Start-Sleep 2; Copy-Item '{origen}\\*' '{baseDir}' -Recurse -Force; " +
                          $"Remove-Item '{marcador}' -Force -ErrorAction SilentlyContinue; " +
                          $"Start-Process '{Path.Combine(baseDir, exeNombre)}'";
+            if (!string.IsNullOrWhiteSpace(tempPadre))
+                cmd += $" ; Start-Sleep 3; Remove-Item '{tempPadre}' -Recurse -Force -ErrorAction SilentlyContinue;";
             try
             {
                 Process.Start(new ProcessStartInfo
