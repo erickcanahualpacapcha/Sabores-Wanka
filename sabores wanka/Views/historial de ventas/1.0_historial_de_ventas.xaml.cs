@@ -326,7 +326,7 @@ namespace sabores_wanka.Views.HistorialDeVentas
             fila.Children.Add(mozo);
 
             var totalCol = new StackPanel();
-            totalCol.Children.Add(new TextBlock { Text = $"S/ {v.Total:0.00}", Foreground = PincelCss(acento), FontWeight = Microsoft.UI.Text.FontWeights.Black, FontFamily = new FontFamily("Consolas"), FontSize = 12 });
+            totalCol.Children.Add(new TextBlock { Text = Services.Moneda.Texto(v.Total), Foreground = PincelCss(acento), FontWeight = Microsoft.UI.Text.FontWeights.Black, FontFamily = new FontFamily("Consolas"), FontSize = 12 });
             totalCol.Children.Add(new TextBlock { Text = v.MetodoPago, Foreground = PincelCss("#9ca3af"), FontSize = 9 });
             Grid.SetColumn(totalCol, 4);
             fila.Children.Add(totalCol);
@@ -392,7 +392,7 @@ namespace sabores_wanka.Views.HistorialDeVentas
             fila.Children.Add(mozo);
 
             var totalCol = new StackPanel();
-            totalCol.Children.Add(new TextBlock { Text = $"S/ {v.Total:0.00}", Foreground = PincelCss(acento), FontWeight = Microsoft.UI.Text.FontWeights.Black, FontFamily = new FontFamily("Consolas"), FontSize = 12 });
+            totalCol.Children.Add(new TextBlock { Text = Services.Moneda.Texto(v.Total), Foreground = PincelCss(acento), FontWeight = Microsoft.UI.Text.FontWeights.Black, FontFamily = new FontFamily("Consolas"), FontSize = 12 });
             totalCol.Children.Add(new TextBlock { Text = v.MetodoPago, Foreground = PincelCss("#9ca3af"), FontSize = 9 });
             Grid.SetColumn(totalCol, 4);
             fila.Children.Add(totalCol);

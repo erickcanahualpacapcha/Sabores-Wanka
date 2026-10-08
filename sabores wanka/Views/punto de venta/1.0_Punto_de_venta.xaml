@@ -397,7 +397,7 @@
                         <TextBlock Text="ATENDIÓ" Foreground="#64748B" FontSize="9" FontWeight="Bold"/>
                         <Button x:Name="VendedorSelectorButton" Click="VendedorSelectorButton_Click" Background="#151923" BorderBrush="#263044" BorderThickness="1" CornerRadius="8" Padding="8,8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                             <Grid>
-                                <TextBlock x:Name="VendedorNombreText" Text="erick canah..." Foreground="#E2E8F0" FontSize="11" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="VendedorNombreText" Text="Mostrador" Foreground="#E2E8F0" FontSize="11" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                 <FontIcon Glyph="&#xE711;" FontSize="10" Foreground="#64748B" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             </Grid>
                         </Button>
@@ -413,7 +413,9 @@
                     <Grid>
                         <StackPanel>
                             <TextBlock Text="Total estimado" Foreground="#64748B" FontSize="11" FontWeight="SemiBold"/>
-                            <TextBlock Text="LIMPIAR" Foreground="#F43F5E" FontSize="11" FontWeight="Bold" Margin="0,2,0,0"/>
+                            <Button Click="LimpiarCarritoButton_Click" Background="Transparent" BorderThickness="0" Padding="0" MinWidth="0" MinHeight="0" HorizontalAlignment="Left" ToolTipService.ToolTip="Vaciar el carrito de la mesa">
+                                <TextBlock Text="LIMPIAR" Foreground="#F43F5E" FontSize="11" FontWeight="Bold" Margin="0,2,0,0"/>
+                            </Button>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="4">
                             <TextBlock Text="S/" Foreground="#64748B" FontSize="16" FontWeight="Bold" VerticalAlignment="Bottom" Margin="0,0,0,4"/>

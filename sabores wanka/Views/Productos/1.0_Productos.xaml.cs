@@ -155,11 +155,11 @@ namespace sabores_wanka.Views.Productos
             Grid.SetColumn(estPill, 3);
             fila.Children.Add(estPill);
 
-            var costo = new TextBlock { Text = $"S/ {p.Costo:0.00}", Foreground = Pincel("#9ca3af"), FontFamily = new FontFamily("Consolas"), FontSize = 11, HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center };
+            var costo = new TextBlock { Text = Services.Moneda.Texto(p.Costo), Foreground = Pincel("#9ca3af"), FontFamily = new FontFamily("Consolas"), FontSize = 11, HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center };
             Grid.SetColumn(costo, 4);
             fila.Children.Add(costo);
 
-            var precio = new TextBlock { Text = $"S/ {p.Precio:0.00}", Foreground = Pincel(p.Pausado ? "#6b7280" : "#FFFFFF"), FontFamily = new FontFamily("Consolas"), FontSize = 11, FontWeight = Microsoft.UI.Text.FontWeights.Bold, HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center };
+            var precio = new TextBlock { Text = Services.Moneda.Texto(p.Precio), Foreground = Pincel(p.Pausado ? "#6b7280" : "#FFFFFF"), FontFamily = new FontFamily("Consolas"), FontSize = 11, FontWeight = Microsoft.UI.Text.FontWeights.Bold, HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center };
             Grid.SetColumn(precio, 5);
             fila.Children.Add(precio);
 

@@ -21,7 +21,7 @@ namespace sabores_wanka.Views.PuntoDeVenta
 
         public string Nombre { get; }
         public double Precio { get; }
-        public string PrecioTexto => $"S/ {Precio:0.00}";
+        public string PrecioTexto => Services.Moneda.Texto(Precio);
         public string Categoria { get; }
         public SolidColorBrush CategoriaBrush { get; }
         public SolidColorBrush CategoriaLetra { get; }
@@ -266,7 +266,7 @@ namespace sabores_wanka.Views.PuntoDeVenta
                 total += item.Precio * item.Cantidad;
             }
             CartCountText.Text = $"{orden.Count} producto{(orden.Count == 1 ? "" : "s")}";
-            CartTotalText.Text = $"{total:0.00}";
+            CartTotalText.Text = Services.Moneda.Numero(total);
             // Si no hay productos, mostrar vacio
             if (orden.Count == 0)
             {
@@ -421,7 +421,7 @@ namespace sabores_wanka.Views.PuntoDeVenta
             var sp = new StackPanel { Margin = new Thickness(10, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center, Spacing = 2 };
             sp.Children.Add(new TextBlock { Text = item.Nombre, Foreground = new SolidColorBrush(Colors.White), FontSize = 12, FontWeight = Microsoft.UI.Text.FontWeights.Bold });
             var precioPanel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4 };
-            var precioText = new TextBlock { Text = $"S/ {item.Precio:0.00}", Foreground = new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x22, 0xD3, 0xEE)), FontSize = 11, FontWeight = Microsoft.UI.Text.FontWeights.SemiBold, Tag = item.Id };
+            var precioText = new TextBlock { Text = Services.Moneda.Texto(item.Precio), Foreground = new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x22, 0xD3, 0xEE)), FontSize = 11, FontWeight = Microsoft.UI.Text.FontWeights.SemiBold, Tag = item.Id };
             precioText.Tapped += PrecioCart_Tapped;
             precioPanel.Children.Add(precioText);
             precioPanel.Children.Add(new FontIcon { Glyph = "\uE70F", FontSize = 10, Foreground = new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x5A, 0x6B, 0x7A)), VerticalAlignment = VerticalAlignment.Center });
@@ -444,7 +444,7 @@ namespace sabores_wanka.Views.PuntoDeVenta
             var btnEliminar = new Button { Content = new TextBlock { Text = "✕", Foreground = new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0xF4, 0x3F, 0x5E)), FontSize = 10, FontWeight = Microsoft.UI.Text.FontWeights.Bold }, Background = new SolidColorBrush(Colors.Transparent), BorderThickness = new Thickness(0), Padding = new Thickness(6), Tag = item.Id, HorizontalAlignment = HorizontalAlignment.Right, MinWidth = 0, MinHeight = 0 };
             btnEliminar.Click += CartEliminar_Click;
             rightSp.Children.Add(btnEliminar);
-            var totalText = new TextBlock { Text = $"S/ {item.Precio * item.Cantidad:0.00}", Foreground = new SolidColorBrush(Colors.White), FontSize = 13, FontWeight = Microsoft.UI.Text.FontWeights.Bold, HorizontalAlignment = HorizontalAlignment.Right };
+            var totalText = new TextBlock { Text = Services.Moneda.Texto(item.Precio * item.Cantidad), Foreground = new SolidColorBrush(Colors.White), FontSize = 13, FontWeight = Microsoft.UI.Text.FontWeights.Bold, HorizontalAlignment = HorizontalAlignment.Right };
             totalText.Tag = item.Id;
             totalText.Tapped += PrecioCart_Tapped;
             rightSp.Children.Add(totalText);
@@ -621,6 +621,18 @@ namespace sabores_wanka.Views.PuntoDeVenta
             ConfirmarCierreParcial();
         }
 
+        // LIMPIAR: vacia todo el carrito de la mesa actual (items + seleccion).
+        private void LimpiarCarritoButton_Click(object sender, RoutedEventArgs e)
+        {
+            var orden = ObtenerOrden(_mesaActual);
+            if (orden.Count == 0) return;
+            orden.Clear();
+            _cierreSeleccionIds.Clear();
+            ActualizarCartUI();
+            ActualizarCierreTotales();
+            ShowMesaToast("Carrito vaciado");
+        }
+
         private void EntrarModoCierre()
         {
             _enModoCierre = true;
@@ -672,7 +684,7 @@ namespace sabores_wanka.Views.PuntoDeVenta
             grid.Children.Add(iconBorder);
             var sp = new StackPanel { Margin = new Thickness(10, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
             sp.Children.Add(new TextBlock { Text = item.Nombre.ToUpper(), Foreground = new SolidColorBrush(Colors.White), FontSize = 11, FontWeight = Microsoft.UI.Text.FontWeights.Bold });
-            sp.Children.Add(new TextBlock { Text = $"$ {item.Precio:0.00}", Foreground = new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x94, 0xA3, 0xB8)), FontSize = 11 });
+            sp.Children.Add(new TextBlock { Text = Services.Moneda.Texto(item.Precio), Foreground = new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x94, 0xA3, 0xB8)), FontSize = 11 });
             Grid.SetColumn(sp, 1);
             grid.Children.Add(sp);
             var cb = new CheckBox { IsChecked = true, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, Tag = item.Id, MinWidth = 0 };
@@ -708,8 +720,8 @@ namespace sabores_wanka.Views.PuntoDeVenta
             }
             else
             {
-                PagoSeleccionInfoText.Text = $"{count} producto{(count == 1 ? "" : "s")} seleccionado{(count == 1 ? "" : "s")} · S/ {total:0.00}";
-                CerrarMesaButtonText.Text = $"Confirmar cierre   S/ {total:0.00}";
+                PagoSeleccionInfoText.Text = $"{count} producto{(count == 1 ? "" : "s")} seleccionado{(count == 1 ? "" : "s")} · {Services.Moneda.Texto(total)}";
+                CerrarMesaButtonText.Text = $"Confirmar cierre   {Services.Moneda.Texto(total)}";
             }
             // Actualizar total del carrito visible (opcional)
             // CartTotalText muestra el total de la mesa; en modo cierre mostramos el seleccionado en el boton
@@ -761,7 +773,7 @@ namespace sabores_wanka.Views.PuntoDeVenta
             // Remover los seleccionados de la orden
             foreach (var it in seleccionados) orden.Remove(it);
             // Mostrar factura para este parcial
-            FacturaTotalText.Text = $"{total:0.00}";
+            FacturaTotalText.Text = Services.Moneda.Numero(total);
             FacturaNumeroText.Text = $"{ticket}  •  CONFIRMAR";
             FacturaDialog.Visibility = Visibility.Visible;
             // Impresion automatica al confirmar (solo si el switch esta prendido).
