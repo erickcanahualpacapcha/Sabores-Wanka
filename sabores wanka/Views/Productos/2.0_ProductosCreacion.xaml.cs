@@ -53,7 +53,6 @@ namespace sabores_wanka.Views.Productos
                 }
                 if (!string.IsNullOrWhiteSpace(_categoriaPendiente))
                     SeleccionarCategoria(_categoriaPendiente);
-                RefrescarMenusCategoria();
             }
             catch { }
         }
@@ -73,39 +72,23 @@ namespace sabores_wanka.Views.Productos
                 }
             }
             var nuevo = new ComboBoxItem { Content = nombre };
-            AplicarMenuCategoria(nuevo);
             CategoriaComboBox.Items.Add(nuevo);
             CategoriaComboBox.SelectedItem = nuevo;
         }
 
-        // Clic derecho en una personalizada = Eliminar; las base no llevan menu.
-        private void AplicarMenuCategoria(ComboBoxItem item)
+        // Papelera: elimina la categoria SELECCIONADA (solo personalizadas).
+        // El clic derecho dentro del desplegable no sirve en WinUI (el popup
+        // se cierra antes de mostrar el menu), por eso es un boton directo.
+        private async void EliminarCategoriaButton_Click(object sender, RoutedEventArgs e)
         {
-            string nombre = (item.Content?.ToString() ?? "").Trim();
+            string? nombre = (CategoriaComboBox?.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            if (string.IsNullOrWhiteSpace(nombre)) return;
+            nombre = nombre.Trim();
             if (CategoriasStore.EsBase(nombre))
             {
-                item.ContextFlyout = null;
+                await MostrarDialogoAsync("No se puede eliminar", $"«{nombre}» es categoría base del sistema.", "Entendido");
                 return;
             }
-            var eliminar = new MenuFlyoutItem { Text = $"Eliminar «{nombre}»", Tag = nombre };
-            eliminar.Click += EliminarCategoriaMenu_Click;
-            var menu = new MenuFlyout();
-            menu.Items.Add(eliminar);
-            item.ContextFlyout = menu;
-        }
-
-        // Repasa el combo tras cargar (las del XAML nacen sin menu).
-        private void RefrescarMenusCategoria()
-        {
-            if (CategoriaComboBox == null) return;
-            foreach (var item in CategoriaComboBox.Items.OfType<ComboBoxItem>())
-                AplicarMenuCategoria(item);
-        }
-
-        // Eliminar con confirmacion; si era la elegida vuelve a la primera.
-        private async void EliminarCategoriaMenu_Click(object? sender, RoutedEventArgs e)
-        {
-            if (sender is not MenuFlyoutItem mi || mi.Tag is not string nombre) return;
             var confirmar = new ContentDialog
             {
                 Title = $"Eliminar «{nombre}»",

@@ -95,14 +95,19 @@
                                 <StackPanel Spacing="4" Grid.Column="1">
                                     <Grid>
                                         <TextBlock Text="Categoría Culinaria" Foreground="#c0c7d4" FontSize="12" VerticalAlignment="Center"/>
-                                        <Button Click="AgregarCategoriaButton_Click" Background="#0078d4" BorderThickness="0" CornerRadius="6" Padding="8,3" MinWidth="0" MinHeight="0" HorizontalAlignment="Right" ToolTipService.ToolTip="Crear categoría">
-                                            <StackPanel Orientation="Horizontal" Spacing="4">
-                                                <FontIcon Glyph="&#xE710;" FontSize="10" Foreground="White"/>
-                                                <TextBlock Text="Nueva" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
-                                            </StackPanel>
-                                        </Button>
+                                        <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
+                                            <Button Click="EliminarCategoriaButton_Click" Background="Transparent" BorderThickness="1" BorderBrush="#5a2a2a" CornerRadius="6" Padding="8,3" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Eliminar la categoría seleccionada (solo creadas por ti)">
+                                                <FontIcon Glyph="&#xE74D;" FontSize="10" Foreground="#f87171"/>
+                                            </Button>
+                                            <Button Click="AgregarCategoriaButton_Click" Background="#0078d4" BorderThickness="0" CornerRadius="6" Padding="8,3" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Crear categoría">
+                                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                                    <FontIcon Glyph="&#xE710;" FontSize="10" Foreground="White"/>
+                                                    <TextBlock Text="Nueva" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
+                                                </StackPanel>
+                                            </Button>
+                                        </StackPanel>
                                     </Grid>
-                                    <ComboBox x:Name="CategoriaComboBox" Background="#191c22" BorderBrush="#404752" BorderThickness="1" CornerRadius="8" Padding="8,4" HorizontalAlignment="Stretch" SelectedIndex="0" ToolTipService.ToolTip="Clic derecho en una categoría creada por ti para eliminarla">
+                                    <ComboBox x:Name="CategoriaComboBox" Background="#191c22" BorderBrush="#404752" BorderThickness="1" CornerRadius="8" Padding="8,4" HorizontalAlignment="Stretch" SelectedIndex="0">
                                         <ComboBoxItem Content="Carnes &amp; Parrillas"/>
                                         <ComboBoxItem Content="Entradas"/>
                                         <ComboBoxItem Content="Platos de Fondo"/>
