@@ -168,9 +168,9 @@ namespace sabores_wanka.Views.InformacionNegocio
         {
             if (PreviewNombre == null) return;
             PreviewNombre.Text = string.IsNullOrWhiteSpace(NombreTextBox?.Text) ? "NOMBRE COMERCIAL" : NombreTextBox.Text.ToUpperInvariant();
-            if (PreviewRuc != null) PreviewRuc.Text = "RUC: " + (string.IsNullOrWhiteSpace(RucTextBox?.Text) ? "----------" : RucTextBox.Text.Trim());
-            if (PreviewDireccion != null) PreviewDireccion.Text = string.IsNullOrWhiteSpace(DireccionTextBox?.Text) ? "Dirección fiscal" : DireccionTextBox.Text.Trim();
-            if (PreviewTelefono != null) PreviewTelefono.Text = "Tel: " + (string.IsNullOrWhiteSpace(TelefonoTextBox?.Text) ? "-" : TelefonoTextBox.Text.Trim());
+            if (PreviewRuc != null) PreviewRuc.Text = string.IsNullOrWhiteSpace(RucTextBox?.Text) ? "" : "RUC: " + RucTextBox.Text.Trim();
+            if (PreviewDireccion != null) PreviewDireccion.Text = (DireccionTextBox?.Text ?? "").Trim();
+            if (PreviewTelefono != null) PreviewTelefono.Text = string.IsNullOrWhiteSpace(TelefonoTextBox?.Text) ? "" : "Tel: " + TelefonoTextBox.Text.Trim();
             if (PreviewMensaje != null) PreviewMensaje.Text = MensajeTextBox?.Text ?? "";
             if (PreviewTotal != null) PreviewTotal.Text = SimboloMoneda() + " 62.00";
         }

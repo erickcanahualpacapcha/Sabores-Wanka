@@ -163,7 +163,7 @@
                                         </StackPanel>
                                         <StackPanel Spacing="6" Grid.Row="2" Grid.ColumnSpan="2">
                                             <TextBlock Text="DIRECCIÓN FISCAL" Foreground="#34D399" Opacity="0.8" FontSize="10" FontWeight="Bold"/>
-                                            <TextBox x:Name="DireccionTextBox" Text="Torre Tagle y Ciro 450 - Huancayo" TextChanged="CampoNegocio_TextChanged" Background="#071411" BorderBrush="#173A30" Foreground="White" FontSize="13" CornerRadius="8" Padding="12,9"/>
+                                            <TextBox x:Name="DireccionTextBox" Text="" TextChanged="CampoNegocio_TextChanged" PlaceholderText="Ej. Av. Principal 123 - Huancayo (vacío = no sale)" Background="#071411" BorderBrush="#173A30" Foreground="White" FontSize="13" CornerRadius="8" Padding="12,9"/>
                                         </StackPanel>
                                     </Grid>
                                 </Grid>

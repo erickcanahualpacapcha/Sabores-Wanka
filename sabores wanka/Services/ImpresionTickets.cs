@@ -266,31 +266,30 @@ namespace sabores_wanka.Services
         }
 
         // Ticket de prueba 80mm con los datos del negocio (misma demo del preview).
+        // Lineas vacias (direccion, etc.) se omiten en vez de salir en blanco.
         public static List<LineaTicket> TextoPrueba()
         {
             var (nombre, ruc, telefono, direccion, mensaje) = DatosNegocio();
-            var t = new List<LineaTicket>
-            {
-                L(Centrar(nombre.ToUpperInvariant(), CapTitulo), EstiloTicket.Titulo),
-                L("RUC: " + ruc),
-                L(direccion),
-                L("Tel: " + telefono),
-                L(new string('-', AnchoTicket)),
-                L("TICKET DE PRUEBA", EstiloTicket.Negrita),
-                L(DateTime.Now.ToString("dd/MM/yyyy HH:mm")),
-                L(new string('-', AnchoTicket)),
-                L(Fila("C", "PRODUCTO", "P.U.", "TOTAL"), EstiloTicket.Negrita),
-                L(Fila("1", "Pachamanca 2 Sabores", "32.00", "32.00")),
-                L(Fila("1", "Papa a la Huancaina", "14.00", "14.00")),
-                L(Fila("1", "Chicha de Jora 1L", "12.00", "12.00")),
-                L(Fila("1", "Cancha Serrana", "4.00", "4.00")),
-                L(new string('-', AnchoTicket)),
-                L(TotalLinea("S/ 62.00"), EstiloTicket.Total),
-                L(new string('-', AnchoTicket)),
-            };
+            var t = new List<LineaTicket>();
+            t.AddRange(Centradas(nombre.ToUpperInvariant(), CapTitulo, EstiloTicket.Titulo));
+            if (ruc.Length > 0) t.Add(L(Centrar("RUC: " + ruc)));
+            if (direccion.Length > 0) t.Add(L(Centrar(direccion)));
+            if (telefono.Length > 0) t.Add(L(Centrar("Tel: " + telefono)));
+            t.Add(L(new string('-', AnchoTicket)));
+            t.Add(L("TICKET DE PRUEBA", EstiloTicket.Negrita));
+            t.Add(L(DateTime.Now.ToString("dd/MM/yyyy HH:mm")));
+            t.Add(L(new string('-', AnchoTicket)));
+            t.Add(L(Fila("C", "PRODUCTO", "P.U.", "TOTAL"), EstiloTicket.Negrita));
+            t.Add(L(Fila("1", "Pachamanca 2 Sabores", "32.00", "32.00")));
+            t.Add(L(Fila("1", "Papa a la Huancaina", "14.00", "14.00")));
+            t.Add(L(Fila("1", "Chicha de Jora 1L", "12.00", "12.00")));
+            t.Add(L(Fila("1", "Cancha Serrana", "4.00", "4.00")));
+            t.Add(L(new string('-', AnchoTicket)));
+            t.Add(L(TotalLinea("S/ 62.00"), EstiloTicket.Total));
+            t.Add(L(new string('-', AnchoTicket)));
             if (QrTicket.HayQr())
                 t.Add(L(Centrar("Escanea el QR para visitarnos"), EstiloTicket.Negrita));
-            t.Add(L(Centrar(mensaje), EstiloTicket.Negrita));
+            t.AddRange(Centradas(mensaje, AnchoTicket, EstiloTicket.Negrita));
             t.Add(L(""));
             return t;
         }
@@ -299,18 +298,16 @@ namespace sabores_wanka.Services
         public static List<LineaTicket> TextoVenta(Venta v)
         {
             var (nombre, ruc, telefono, direccion, mensaje) = DatosNegocio();
-            var t = new List<LineaTicket>
-            {
-                L(Centrar(nombre.ToUpperInvariant(), CapTitulo), EstiloTicket.Titulo),
-                L("RUC: " + ruc),
-                L(direccion),
-                L("Tel: " + telefono),
-                L(new string('-', AnchoTicket)),
-                L($"{v.Comprobante.ToUpperInvariant()} {v.Ticket}", EstiloTicket.Negrita),
-                L(v.FechaHora.ToString("dd/MM/yyyy HH:mm")),
-                L($"{v.MesaEtiqueta} | {v.Cliente}"),
-                L(new string('-', AnchoTicket)),
-            };
+            var t = new List<LineaTicket>();
+            t.AddRange(Centradas(nombre.ToUpperInvariant(), CapTitulo, EstiloTicket.Titulo));
+            if (ruc.Length > 0) t.Add(L(Centrar("RUC: " + ruc)));
+            if (direccion.Length > 0) t.Add(L(Centrar(direccion)));
+            if (telefono.Length > 0) t.Add(L(Centrar("Tel: " + telefono)));
+            t.Add(L(new string('-', AnchoTicket)));
+            t.Add(L($"{v.Comprobante.ToUpperInvariant()} {v.Ticket}", EstiloTicket.Negrita));
+            t.Add(L(v.FechaHora.ToString("dd/MM/yyyy HH:mm")));
+            t.Add(L($"{v.MesaEtiqueta} | {v.Cliente}"));
+            t.Add(L(new string('-', AnchoTicket)));
             foreach (var it in v.Items ?? new List<ItemVenta>())
             {
                 string prod = it.Nombre.Length > 20 ? it.Nombre.Substring(0, 20) : it.Nombre;
@@ -322,9 +319,36 @@ namespace sabores_wanka.Services
             t.Add(L(new string('-', AnchoTicket)));
             if (QrTicket.HayQr())
                 t.Add(L(Centrar("Escanea el QR para visitarnos"), EstiloTicket.Negrita));
-            t.Add(L(Centrar(mensaje), EstiloTicket.Negrita));
+            t.AddRange(Centradas(mensaje, AnchoTicket, EstiloTicket.Negrita));
             t.Add(L(""));
             return t;
+        }
+
+        // Envuelve un texto largo en varias lineas centradas (nada se corta).
+        private static IEnumerable<LineaTicket> Centradas(string texto, int capacidad, EstiloTicket estilo)
+        {
+            foreach (string parte in Envolver(texto ?? "", capacidad))
+                yield return L(Centrar(parte, capacidad), estilo);
+        }
+
+        private static List<string> Envolver(string texto, int capacidad)
+        {
+            var lineas = new List<string>();
+            foreach (string palabra in texto.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (palabra.Length > capacidad)
+                {
+                    // Palabra mas larga que la linea: se parte en trozos.
+                    for (int i = 0; i < palabra.Length; i += capacidad)
+                        lineas.Add(palabra.Substring(i, Math.Min(capacidad, palabra.Length - i)));
+                }
+                else if (lineas.Count == 0 || (lineas[^1] + " " + palabra).Length > capacidad)
+                    lineas.Add(palabra);
+                else
+                    lineas[^1] += " " + palabra;
+            }
+            if (lineas.Count == 0) lineas.Add("");
+            return lineas;
         }
 
         private static LineaTicket L(string texto, EstiloTicket estilo = EstiloTicket.Normal) =>
@@ -345,9 +369,9 @@ namespace sabores_wanka.Services
             }
             return (
                 Leer("Negocio.Nombre", "SABORES WANKA"),
-                Leer("Negocio.Ruc", "----------"),
-                Leer("Negocio.Telefono", "-"),
-                Leer("Negocio.Direccion", "Huancayo"),
+                Leer("Negocio.Ruc", ""),
+                Leer("Negocio.Telefono", ""),
+                Leer("Negocio.Direccion", ""),
                 Leer("Negocio.Mensaje", "Gracias por su visita."));
         }
 
