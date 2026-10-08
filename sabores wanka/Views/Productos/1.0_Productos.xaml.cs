@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -34,7 +35,70 @@ namespace sabores_wanka.Views.Productos
         {
             var platos = await PlatosStore.ListarAsync();
             ReconstruirTabla(platos);
+            await ReconstruirPillsAsync(platos);
+            ActualizarKpis(platos);
             AplicarFiltros();
+        }
+
+        // KPIs reales del catalogo (cero si esta vacio, sin numeros fijos).
+        private void ActualizarKpis(System.Collections.Generic.List<Plato> platos)
+        {
+            int total = platos.Count;
+            int activos = platos.Count(p => !p.Pausado && p.Porciones > 0);
+            int criticos = platos.Count(p => !p.Pausado && p.Porciones <= 5);
+            double valorizado = platos.Sum(p => p.Precio * p.Porciones);
+            int categorias = platos.Select(p => (p.Categoria ?? "").Trim()).Where(c => c.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase).Count();
+            int estaciones = platos.Select(p => (p.EstacionTag ?? "").Trim()).Where(e => e.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase).Count();
+            if (ValorizacionText != null) ValorizacionText.Text = $"S/ {valorizado:N2}";
+            if (TotalCatalogoText != null) TotalCatalogoText.Text = total.ToString();
+            if (ActivosText != null) ActivosText.Text = $"Activos en Carta: {activos}";
+            if (CriticosText != null) CriticosText.Text = $"Críticos: {criticos}";
+            if (CategoriasKpiText != null) CategoriasKpiText.Text = $"{categorias} Categoría{(categorias == 1 ? "" : "s")}";
+            if (EstacionesKpiText != null) EstacionesKpiText.Text = estaciones == 0 ? "Sin estaciones" : $"{estaciones} Estación{(estaciones == 1 ? "" : "es")}";
+            if (InsumosCriticosText != null) InsumosCriticosText.Text = $"{criticos} Insumo{(criticos == 1 ? "" : "s")}";
+            if (InsumosSubText != null) InsumosSubText.Text = criticos == 0 ? "Stock al día" : "Requieren reposición inmediata";
+            if (TotalFooterText != null) TotalFooterText.Text = $"de {total} plato{(total == 1 ? "" : "s")} y productos";
+        }
+
+        // Pills desde las categorias con productos (Todos + las que haya).
+        private async System.Threading.Tasks.Task ReconstruirPillsAsync(System.Collections.Generic.List<Plato> platos)
+        {
+            if (PillsPanel == null) return;
+            PillsPanel.Children.Clear();
+            PillsPanel.Children.Add(PildoraCategoria("todos", $"Todos los Platos ({platos.Count})", true));
+            List<string> categorias;
+            try { categorias = await CategoriasStore.ListarAsync(); }
+            catch { categorias = new System.Collections.Generic.List<string>(); }
+            foreach (string cat in categorias)
+            {
+                int n = platos.Count(p => string.Equals((p.Categoria ?? "").Trim(), cat, StringComparison.OrdinalIgnoreCase));
+                if (n == 0) continue;
+                PillsPanel.Children.Add(PildoraCategoria(cat, $"{cat} ({n})", false));
+            }
+            _categoriaActiva = "todos";
+        }
+
+        // Pildora con la misma pinta de las fijas anteriores.
+        private Button PildoraCategoria(string tag, string texto, bool activa)
+        {
+            var b = new Button
+            {
+                Tag = tag,
+                Background = new SolidColorBrush(activa ? Windows.UI.Color.FromArgb(0xFF, 0x00, 0x78, 0xD4) : Windows.UI.Color.FromArgb(0xFF, 0x23, 0x27, 0x31)),
+                BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x2E, 0x34, 0x42)),
+                BorderThickness = activa ? new Thickness(0) : new Thickness(1),
+                CornerRadius = new CornerRadius(14),
+                Padding = new Thickness(14, 6, 14, 6),
+            };
+            b.Content = new TextBlock
+            {
+                Text = texto,
+                Foreground = new SolidColorBrush(activa ? Windows.UI.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) : Windows.UI.Color.FromArgb(0xFF, 0x9C, 0xA3, 0xAF)),
+                FontSize = 11,
+                FontWeight = activa ? Microsoft.UI.Text.FontWeights.SemiBold : Microsoft.UI.Text.FontWeights.Normal,
+            };
+            b.Click += CategoriaPill_Click;
+            return b;
         }
 
         // Reconstruye TablaProductos fila por fila (9 columnas como el XAML fijo).

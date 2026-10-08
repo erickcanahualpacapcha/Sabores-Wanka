@@ -81,14 +81,6 @@
                 </Grid>
                 <ScrollViewer Grid.Column="1" Margin="12,0,0,0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" HorizontalScrollMode="Auto" VerticalAlignment="Center">
                     <StackPanel x:Name="CategoriaPillsPanel" Orientation="Horizontal" Spacing="8">
-                        <Button Tag="todos" Click="CategoriaPosPill_Click" Content="TODOS" Background="#0084ff" Foreground="White" CornerRadius="16" Padding="20,8" FontSize="11" FontWeight="SemiBold" BorderThickness="0"/>
-                        <Button Tag="CALDO" Click="CategoriaPosPill_Click" Content="CALDOS" Background="#161c28" Foreground="#CBD5E1" BorderBrush="#232c3f" CornerRadius="16" Padding="16,8" FontSize="11" BorderThickness="1"/>
-                        <Button Tag="ENTRADA" Click="CategoriaPosPill_Click" Content="ENTRADAS" Background="#161c28" Foreground="#CBD5E1" BorderBrush="#232c3f" CornerRadius="16" Padding="16,8" FontSize="11" BorderThickness="1"/>
-                        <Button Tag="PLATO" Click="CategoriaPosPill_Click" Content="PLATOS PRINCIPALES" Background="#161c28" Foreground="#CBD5E1" BorderBrush="#232c3f" CornerRadius="16" Padding="16,8" FontSize="11" BorderThickness="1"/>
-                        <Button Tag="PLATO" Click="CategoriaPosPill_Click" Content="ESPECIALIDADES WANKA" Background="#161c28" Foreground="#CBD5E1" BorderBrush="#232c3f" CornerRadius="16" Padding="16,8" FontSize="11" BorderThickness="1"/>
-                        <Button Tag="PLATO" Click="CategoriaPosPill_Click" Content="PACHAMANCA" Background="#161c28" Foreground="#CBD5E1" BorderBrush="#232c3f" CornerRadius="16" Padding="16,8" FontSize="11" BorderThickness="1"/>
-                        <Button Tag="BEBIDA" Click="CategoriaPosPill_Click" Content="BEBIDAS FRÍAS" Background="#161c28" Foreground="#CBD5E1" BorderBrush="#232c3f" CornerRadius="16" Padding="16,8" FontSize="11" BorderThickness="1"/>
-                        <Button Tag="BEBIDA" Click="CategoriaPosPill_Click" Content="BEBIDAS CALIENTES" Background="#161c28" Foreground="#CBD5E1" BorderBrush="#232c3f" CornerRadius="16" Padding="16,8" FontSize="11" BorderThickness="1"/>
                     </StackPanel>
                 </ScrollViewer>
             </Grid>

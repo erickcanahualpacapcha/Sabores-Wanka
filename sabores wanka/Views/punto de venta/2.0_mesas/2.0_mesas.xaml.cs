@@ -11,8 +11,9 @@ using System.ComponentModel;
 
 namespace sabores_wanka.Views.PuntoDeVenta
 {
-    // Mesa del plano (solo UI en memoria, igual que antes). Es el modelo del GridView
-    // estilo Nachis: el x:Bind repinta solo al cambiar props, sin VisualTreeHelper.
+    // Mesa del plano: persiste en MesasStore (nombre/sala/capacidad).
+    // Es el modelo del GridView estilo Nachis: el x:Bind repinta solo al
+    // cambiar props, sin VisualTreeHelper. El estado es solo del turno.
     public sealed class MesaItem : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -141,24 +142,13 @@ namespace sabores_wanka.Views.PuntoDeVenta
         private int _abrirMesaPersonas = 1;
         private bool _abrirMesaOtro = false;
 
-        private string _selectedMesa = "Mesa 08";
-        private string _selectedSala = "Salón Principal";
+        private string _selectedMesa = "";
+        private string _selectedSala = "";
         // Fuente de mesas del GridView. El filtro por salon reconstruye el ItemsSource;
         // el filtro NUNCA deja huecos (el ItemsWrapGrid fluye solo, sin reflow manual).
         private readonly System.Collections.Generic.List<MesaItem> _mesas = new();
-        private readonly System.Collections.Generic.Dictionary<string, string> _mesaSalaMap = new()
-        {
-            ["Mesa 01"] = "Salón Principal",
-            ["Mesa 02"] = "Salón Principal",
-            ["Mesa 03"] = "Salón Principal",
-            ["Mesa 04"] = "Salón Principal",
-            ["Mesa 05"] = "Salón Principal",
-            ["Mesa 06"] = "Terraza",
-            ["Mesa 07"] = "Terraza",
-            ["Mesa 08"] = "Salón Principal",
-            ["Barra 01"] = "Barra",
-            ["Barra 02"] = "Barra",
-        };
+        // Salones del plano guardado (MesasStore, sin demo: arranca vacio).
+        private readonly System.Collections.Generic.List<string> _salones = new();
 
         public MesasView()
         {
@@ -166,42 +156,129 @@ namespace sabores_wanka.Views.PuntoDeVenta
             this.Loaded += MesasView_Loaded;
         }
 
-        private void MesasView_Loaded(object sender, RoutedEventArgs e)
+        private async void MesasView_Loaded(object sender, RoutedEventArgs e)
         {
             long t0 = MesasDiag.Stamp();
-            InicializarMesas();
+            await CargarPlanoAsync();
             AplicarFiltroSala(_selectedSala);
             ActualizarMarcaSeleccion();
             UpdateIrButtonText();
             MesasDiag.Log($"MesasView_Loaded total {MesasDiag.Since(t0):0.00} ms (mesas={_mesas.Count})");
         }
 
-        // Crea las 10 mesas del mock (mismos nombres, salas y capacidades del XAML anterior).
-        private void InicializarMesas()
+        // Lee el plano guardado (salones + mesas) y arma pills y combos.
+        // Sin demo: si no hay nada, queda vacio para crear desde cero.
+        private async System.Threading.Tasks.Task CargarPlanoAsync()
         {
-            if (_mesas.Count > 0 || MesaGrid == null) return;
-            _mesas.Add(new MesaItem("Mesa 01", "Salón Principal", "2 Personas"));
-            _mesas.Add(new MesaItem("Mesa 02", "Salón Principal", "4 Personas"));
-            _mesas.Add(new MesaItem("Mesa 03", "Salón Principal", "6 Personas"));
-            _mesas.Add(new MesaItem("Mesa 04", "Salón Principal", "4 Personas"));
-            _mesas.Add(new MesaItem("Mesa 05", "Salón Principal", "2 Personas"));
-            _mesas.Add(new MesaItem("Mesa 06", "Terraza", "4 Personas"));
-            _mesas.Add(new MesaItem("Mesa 07", "Terraza", "4 Personas"));
-            _mesas.Add(new MesaItem("Mesa 08", "Salón Principal", "4 Personas"));
-            _mesas.Add(new MesaItem("Barra 01", "Barra", "2 Bancas"));
-            _mesas.Add(new MesaItem("Barra 02", "Barra", "2 Bancas"));
-            foreach (var m in _mesas)
+            try
             {
-                if (_mesaSalaMap.TryGetValue(m.Nombre, out var sala)) m.Sala = sala;
-                else _mesaSalaMap[m.Nombre] = m.Sala;
-                m.ConfigVisible = _configMode;
+                var plano = await Services.MesasStore.CargarAsync();
+                _salones.Clear();
+                _salones.AddRange(plano.Salones ?? new System.Collections.Generic.List<string>());
+                _mesas.Clear();
+                foreach (var m in plano.Mesas ?? new System.Collections.Generic.List<Services.MesaDato>())
+                {
+                    if (string.IsNullOrWhiteSpace(m.Nombre)) continue;
+                    _mesas.Add(new MesaItem(m.Nombre.Trim(), m.Sala ?? "", string.IsNullOrWhiteSpace(m.Capacidad) ? "2 Personas" : m.Capacidad)
+                    {
+                        ConfigVisible = _configMode,
+                    });
+                }
+                if (!string.IsNullOrEmpty(_selectedSala) && !_salones.Contains(_selectedSala))
+                    _selectedSala = "";
+                if (string.IsNullOrEmpty(_selectedSala) && _salones.Count > 0)
+                    _selectedSala = _salones[0];
+                if (!string.IsNullOrEmpty(_selectedMesa) && !_mesas.Any(m => m.Nombre == _selectedMesa))
+                    _selectedMesa = "";
+                ReconstruirSalones();
+                PoblarCombosSalones();
+            }
+            catch { }
+        }
+
+        // Guarda salones + mesas tras cada alta/baja/cambio.
+        private async System.Threading.Tasks.Task PersistirPlanoAsync()
+        {
+            try
+            {
+                await Services.MesasStore.GuardarAsync(
+                    new System.Collections.Generic.List<string>(_salones),
+                    _mesas.Select(m => new Services.MesaDato { Nombre = m.Nombre, Sala = m.Sala, Capacidad = m.CapacidadTexto }).ToList());
+            }
+            catch { }
+        }
+
+        // Pills de salon con conteo; la activa en celeste, resto neutro.
+        private void ReconstruirSalones()
+        {
+            if (SalonesPanel == null) return;
+            SalonesPanel.Children.Clear();
+            foreach (string sala in _salones)
+            {
+                int n = _mesas.Count(m => m.Sala == sala);
+                var b = new Button
+                {
+                    Tag = sala,
+                    Background = new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x16, 0x1C, 0x28)),
+                    BorderBrush = new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x23, 0x2C, 0x3F)),
+                    BorderThickness = new Thickness(1),
+                    CornerRadius = new CornerRadius(12),
+                    Padding = new Thickness(14, 6, 14, 6),
+                };
+                b.Content = new TextBlock { Text = $"{sala} ({n})", Foreground = new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0xCB, 0xD5, 0xE1)), FontSize = 11 };
+                b.Click += SalonButton_Click;
+                SalonesPanel.Children.Add(b);
+            }
+            PintarSalonActivo();
+        }
+
+        // Pinta la pill del salon activo (misma pinta de las fijas anteriores).
+        private void PintarSalonActivo()
+        {
+            if (SalonesPanel == null) return;
+            foreach (var child in SalonesPanel.Children)
+            {
+                if (child is not Button btn || btn.Tag is not string sala) continue;
+                bool activo = sala == _selectedSala;
+                btn.Background = activo
+                    ? new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x00, 0xA8, 0xE8))
+                    : new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x16, 0x1C, 0x28));
+                btn.BorderBrush = activo
+                    ? new SolidColorBrush(Colors.Transparent)
+                    : new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x23, 0x2C, 0x3F));
+                btn.BorderThickness = activo ? new Thickness(0) : new Thickness(1);
+                if (btn.Content is TextBlock tb)
+                {
+                    tb.Foreground = activo
+                        ? new SolidColorBrush(Colors.Black)
+                        : new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0xCB, 0xD5, 0xE1));
+                    tb.FontWeight = activo ? Microsoft.UI.Text.FontWeights.Bold : Microsoft.UI.Text.FontWeights.Normal;
+                }
+            }
+        }
+
+        // Combos de sala de los dialogos (nueva / editar mesa).
+        private void PoblarCombosSalones()
+        {
+            foreach (var combo in new[] { SalaComboBox, EditarSalaComboBox })
+            {
+                if (combo == null) continue;
+                combo.Items.Clear();
+                foreach (string sala in _salones)
+                    combo.Items.Add(new ComboBoxItem { Content = sala });
             }
         }
 
         // El boton dice ABRIR si la mesa elegida esta LIBRE; IR A LA si esta ocupada/reservada.
+        // Sin mesas elegidas pide elegir (no dispara seleccion vacia al POS).
         private void UpdateIrButtonText()
         {
             if (IrMesaTextBlock == null) return;
+            if (string.IsNullOrEmpty(_selectedMesa))
+            {
+                IrMesaTextBlock.Text = "SIN MESAS";
+                return;
+            }
             bool libre = IsSelectedMesaLibre();
             IrMesaTextBlock.Text = $"{(libre ? "ABRIR" : "IR A LA")} {_selectedMesa.ToUpper()}";
             if (IrMesaIcon != null) IrMesaIcon.Glyph = libre ? "\uE710" : "\uE8A9";
@@ -213,27 +290,10 @@ namespace sabores_wanka.Views.PuntoDeVenta
             long t0 = MesasDiag.Stamp();
             var selected = sender as Button;
             if (selected == null) return;
-            var buttons = new[] { SalonPrincipalButton, TerrazaButton, BarraButton, ParaLlevarButton };
-            foreach (var btn in buttons)
-            {
-                bool isSelected = btn == selected;
-                btn.Background = isSelected
-                    ? new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x00, 0xA8, 0xE8))
-                    : new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x16, 0x1C, 0x28));
-                btn.BorderBrush = isSelected
-                    ? new SolidColorBrush(Colors.Transparent)
-                    : new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x23, 0x2C, 0x3F));
-                if (btn.Content is TextBlock tb)
-                {
-                    tb.Foreground = isSelected
-                        ? new SolidColorBrush(Colors.Black)
-                        : new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0xCB, 0xD5, 0xE1));
-                    tb.FontWeight = isSelected ? Microsoft.UI.Text.FontWeights.Bold : Microsoft.UI.Text.FontWeights.Normal;
-                }
-            }
             if (selected.Tag is string sala)
             {
                 _selectedSala = sala;
+                PintarSalonActivo();
                 AplicarFiltroSala(sala);
             }
             MesasDiag.Log($"SalonButton_Click sala='{_selectedSala}' {MesasDiag.Since(t0):0.00} ms");
@@ -325,14 +385,17 @@ namespace sabores_wanka.Views.PuntoDeVenta
             {
                 _mesaAEditar = mesa;
                 EditarNombreMesaTextBox.Text = mesa;
-                if (_mesaSalaMap.TryGetValue(mesa, out var sala))
+                var actual = _mesas.FirstOrDefault(m => m.Nombre == mesa);
+                if (actual != null)
                 {
+                    bool hallada = false;
                     foreach (ComboBoxItem opt in EditarSalaComboBox.Items)
                     {
-                        if (opt.Content?.ToString() == sala) { EditarSalaComboBox.SelectedItem = opt; break; }
+                        if (opt.Content?.ToString() == actual.Sala) { EditarSalaComboBox.SelectedItem = opt; hallada = true; break; }
                     }
+                    if (!hallada) EditarSalaComboBox.SelectedIndex = -1;
                 }
-                else EditarSalaComboBox.SelectedIndex = 0;
+                else EditarSalaComboBox.SelectedIndex = -1;
                 EditarMesaDialog.Visibility = Visibility.Visible;
             }
         }
@@ -388,24 +451,18 @@ namespace sabores_wanka.Views.PuntoDeVenta
             NuevaSalaDialog.Visibility = Visibility.Collapsed;
         }
 
-        private void CrearSalaButton_Click(object sender, RoutedEventArgs e)
+        private async void CrearSalaButton_Click(object sender, RoutedEventArgs e)
         {
             string nombre = NombreSalaTextBox.Text?.Trim() ?? "";
-            if (!string.IsNullOrWhiteSpace(nombre))
+            if (!string.IsNullOrWhiteSpace(nombre)
+                && !_salones.Any(s => string.Equals(s, nombre, StringComparison.OrdinalIgnoreCase)))
             {
-                var tb = new TextBlock { Text = $"{nombre} (0)", Foreground = new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0xCB, 0xD5, 0xE1)), FontSize = 11 };
-                var btn = new Button
-                {
-                    Content = tb,
-                    Background = new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x16, 0x1C, 0x28)),
-                    BorderBrush = new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x23, 0x2C, 0x3F)),
-                    BorderThickness = new Thickness(1),
-                    CornerRadius = new CornerRadius(12),
-                    Padding = new Thickness(14, 6, 14, 6),
-                    Tag = nombre
-                };
-                btn.Click += SalonButton_Click;
-                SalonesPanel.Children.Add(btn);
+                _salones.Add(nombre);
+                _selectedSala = nombre;
+                await PersistirPlanoAsync();
+                ReconstruirSalones();
+                PoblarCombosSalones();
+                AplicarFiltroSala(_selectedSala);
             }
             NombreSalaTextBox.Text = "";
             NuevaSalaDialog.Visibility = Visibility.Collapsed;
@@ -421,18 +478,24 @@ namespace sabores_wanka.Views.PuntoDeVenta
             NuevaMesaDialog.Visibility = Visibility.Collapsed;
         }
 
-        private void CrearMesaButton_Click(object sender, RoutedEventArgs e)
+        private async void CrearMesaButton_Click(object sender, RoutedEventArgs e)
         {
             string nombre = NombreMesaTextBox.Text?.Trim() ?? "";
             string sala = (SalaComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? _selectedSala;
             if (string.IsNullOrWhiteSpace(nombre)) return;
-            if (_mesaSalaMap.ContainsKey(nombre)) return; // ya existe
+            // Sin salones no hay donde ponerla: primero se crea la sala.
+            if (string.IsNullOrWhiteSpace(sala) || !_salones.Any(s => string.Equals(s, sala, StringComparison.OrdinalIgnoreCase))) return;
+            if (_mesas.Any(m => string.Equals(m.Nombre, nombre, StringComparison.OrdinalIgnoreCase))) return; // ya existe
 
-            _mesaSalaMap[nombre] = sala;
             var nueva = new MesaItem(nombre, sala, "2 Personas") { ConfigVisible = _configMode };
             _mesas.Add(nueva);
+            _selectedMesa = nombre;
+            await PersistirPlanoAsync();
+            ReconstruirSalones();
             // Aplicar filtro actual
             AplicarFiltroSala(_selectedSala);
+            ActualizarMarcaSeleccion();
+            UpdateIrButtonText();
             NombreMesaTextBox.Text = "";
             SalaComboBox.SelectedIndex = -1;
             NuevaMesaDialog.Visibility = Visibility.Collapsed;
@@ -443,15 +506,17 @@ namespace sabores_wanka.Views.PuntoDeVenta
             EditarMesaDialog.Visibility = Visibility.Collapsed;
         }
 
-        private void GuardarMesaButton_Click(object sender, RoutedEventArgs e)
+        private async void GuardarMesaButton_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(_mesaAEditar) || string.IsNullOrWhiteSpace(EditarNombreMesaTextBox.Text)) return;
             string nuevo = EditarNombreMesaTextBox.Text.Trim();
+            // Sin duplicar el nombre de otra mesa existente.
+            if (!string.Equals(nuevo, _mesaAEditar, StringComparison.OrdinalIgnoreCase)
+                && _mesas.Any(m => string.Equals(m.Nombre, nuevo, StringComparison.OrdinalIgnoreCase))) return;
             string? comboSala = (EditarSalaComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
             string nuevaSala;
             if (!string.IsNullOrEmpty(comboSala)) nuevaSala = comboSala!;
-            else if (_mesaSalaMap.TryGetValue(_mesaAEditar!, out var s)) nuevaSala = s;
-            else nuevaSala = _selectedSala;
+            else nuevaSala = _mesas.FirstOrDefault(m => m.Nombre == _mesaAEditar)?.Sala ?? _selectedSala;
             string antiguo = _mesaAEditar!;
             // Renombrar en el modelo: el x:Bind repinta nombre y sala sin tocar el arbol.
             var mesa = _mesas.FirstOrDefault(m => m.Nombre == antiguo);
@@ -460,15 +525,14 @@ namespace sabores_wanka.Views.PuntoDeVenta
                 mesa.Nombre = nuevo;
                 mesa.Sala = nuevaSala;
             }
-            // Actualizar mapa sala
-            _mesaSalaMap.Remove(antiguo);
-            _mesaSalaMap[nuevo] = nuevaSala;
             if (_selectedMesa == antiguo)
             {
                 _selectedMesa = nuevo;
                 UpdateIrButtonText();
                 ActualizarMarcaSeleccion();
             }
+            await PersistirPlanoAsync();
+            ReconstruirSalones();
             // Re-filtrar por sala actual
             AplicarFiltroSala(_selectedSala);
             EditarMesaDialog.Visibility = Visibility.Collapsed;
@@ -481,19 +545,20 @@ namespace sabores_wanka.Views.PuntoDeVenta
             _mesaAEliminar = null;
         }
 
-        private void ConfirmarEliminarButton_Click(object sender, RoutedEventArgs e)
+        private async void ConfirmarEliminarButton_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(_mesaAEliminar))
             {
-                // Sale del modelo y del mapa: el GridView la quita y fluye sin huecos.
+                // Sale del modelo: el GridView la quita y fluye sin huecos.
                 _mesas.RemoveAll(m => m.Nombre == _mesaAEliminar);
-                _mesaSalaMap.Remove(_mesaAEliminar!);
                 if (_selectedMesa == _mesaAEliminar)
                 {
-                    _selectedMesa = "Mesa 01";
+                    _selectedMesa = "";
                     UpdateIrButtonText();
                     ActualizarMarcaSeleccion();
                 }
+                await PersistirPlanoAsync();
+                ReconstruirSalones();
                 AplicarFiltroSala(_selectedSala);
             }
             EliminarMesaConfirmDialog.Visibility = Visibility.Collapsed;
@@ -545,8 +610,10 @@ namespace sabores_wanka.Views.PuntoDeVenta
             string.Equals(item.Estado, "LIBRE", StringComparison.OrdinalIgnoreCase);
 
         // ABRIR (mesa libre) -> abre el dialogo; IR A LA (ocupada) -> entra directo.
+        // Sin mesa elegida no hace nada (plano vacio recien creado).
         private void IrMesaButton_Click(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrEmpty(_selectedMesa)) return;
             if (IsSelectedMesaLibre()) { AbrirMesaDialog_Show(); return; }
             MesaSeleccionada?.Invoke(this, _selectedMesa);
         }

@@ -239,9 +239,8 @@ namespace sabores_wanka.Views.PuntoDeVenta
 
         private void InicializarOrdenesMock()
         {
-            // Carrito vacio al iniciar: cada mesa inicia sin productos para que el usuario los cargue.
-            foreach (var mesa in new[] { "Mesa 01", "Mesa 02", "Mesa 03", "Mesa 04", "Mesa 05", "Mesa 06", "Mesa 07", "Mesa 08", "Barra 01", "Barra 02" })
-                _mesasOrdenes[mesa] = new List<CartItem>();
+            // Sin mesas precargadas: cada mesa se registra sola al usarse.
+            _mesasOrdenes.Clear();
         }
 
         private List<CartItem> ObtenerOrden(string mesa)
@@ -998,12 +997,6 @@ namespace sabores_wanka.Views.PuntoDeVenta
         private void InicializarClientesMock()
         {
             _clientes.Clear();
-            _clientes.Add(new ClienteItem("286", "Cliente de Prueba"));
-            _clientes.Add(new ClienteItem("281", "Digna"));
-            _clientes.Add(new ClienteItem("267", "Tia Mercado"));
-            _clientes.Add(new ClienteItem("307", "tobi"));
-            _clientes.Add(new ClienteItem("451", "Vecina ferreteria"));
-            _clientes.Add(new ClienteItem("264", "Zoila"));
             _clientes.Add(new ClienteItem("0", "Cliente Ocasional"));
         }
 
@@ -1179,11 +1172,8 @@ namespace sabores_wanka.Views.PuntoDeVenta
 
         private void InicializarVendedoresMock()
         {
+            // Sin vendedores de muestra: se usa "Mostrador" hasta registrar personal.
             _vendedores.Clear();
-            _vendedores.Add(new VendedorItem("1", "erick canah..."));
-            _vendedores.Add(new VendedorItem("2", "Lady Diana"));
-            _vendedores.Add(new VendedorItem("3", "Carlos M."));
-            _vendedores.Add(new VendedorItem("4", "Ana R."));
         }
 
         private void PoblarVendedoresList(string filtro)
@@ -1191,6 +1181,8 @@ namespace sabores_wanka.Views.PuntoDeVenta
             VendedoresListPanel.Children.Clear();
             var q = string.IsNullOrWhiteSpace(filtro) ? _vendedores : _vendedores.Where(v => v.Nombre.Contains(filtro, StringComparison.OrdinalIgnoreCase)).ToList();
             foreach (var v in q) VendedoresListPanel.Children.Add(CrearFilaVendedor(v));
+            if (q.Count == 0)
+                VendedoresListPanel.Children.Add(new TextBlock { Text = "Sin personal registrado", Foreground = new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x5A, 0x6B, 0x7A)), FontSize = 12, Margin = new Thickness(16, 20, 0, 0) });
         }
 
         private Border CrearFilaVendedor(VendedorItem vendedor)
@@ -1241,36 +1233,69 @@ namespace sabores_wanka.Views.PuntoDeVenta
             _mesaToastStoryboard.Begin();
         }
 
-        // Arma los 12 platos (mismos datos del mock anterior) y los enlaza al GridView.
+        // Catalogo vacio al arrancar: solo entra lo del JSON local (sin demo).
         // La tarjeta visual vive en el XAML (copia del ejemplo Nachis); aqui solo datos.
         private void InicializarPlatos()
         {
             if (PlatoGrid == null) return;
             _platos.Clear();
-            SolidColorBrush PlatoBg() => new(ColorHelper.FromArgb(0xFF, 0x00, 0xB0, 0x74));
-            SolidColorBrush CaldoBg() => new(ColorHelper.FromArgb(0xFF, 0xE6, 0x7E, 0x00));
-            SolidColorBrush EntradaBg() => new(ColorHelper.FromArgb(0xFF, 0x32, 0x39, 0x4C));
-            SolidColorBrush BebidaBg() => new(ColorHelper.FromArgb(0xFF, 0x70, 0x38, 0xE8));
-            SolidColorBrush Blanco() => new(Colors.White);
-            SolidColorBrush GrisClaro() => new(ColorHelper.FromArgb(0xFF, 0xCB, 0xD5, 0xE1));
-            _platos.Add(new PlatoItem("Picante de Cuy", 22.00, "PLATO", PlatoBg(), Blanco(), "\uEB4B", 15, "porc."));
-            _platos.Add(new PlatoItem("Chicharrón Colorado", 18.00, "PLATO", PlatoBg(), Blanco(), "\uE7A5", 20, "porc."));
-            _platos.Add(new PlatoItem("Pachamanca 4 Sabores", 25.00, "PLATO", PlatoBg(), Blanco(), "\uE8B0", 18, "porc."));
-            _platos.Add(new PlatoItem("Caldo de Cordero", 17.00, "CALDO", CaldoBg(), Blanco(), "\uE896", 25, "porc."));
-            _platos.Add(new PlatoItem("Caldo de Gallina", 15.00, "CALDO", CaldoBg(), Blanco(), "\uE896", 30, "porc."));
-            _platos.Add(new PlatoItem("Mondongo Especial", 15.00, "CALDO", CaldoBg(), Blanco(), "\uE896", 12, "porc."));
-            _platos.Add(new PlatoItem("Cuy Chactado", 22.00, "PLATO", PlatoBg(), Blanco(), "\uEB4B", 10, "porc."));
-            _platos.Add(new PlatoItem("Tamal Pollo y Chancho", 7.00, "ENTRADA", EntradaBg(), GrisClaro(), "\uE7EF", 14, "porc."));
-            _platos.Add(new PlatoItem("Choclo con Queso", 5.00, "ENTRADA", EntradaBg(), GrisClaro(), "\uE7EF", 20, "porc."));
-            _platos.Add(new PlatoItem("Porción de Humitas", 8.00, "ENTRADA", EntradaBg(), GrisClaro(), "\uE7EF", 16, "porc."));
-            _platos.Add(new PlatoItem("Chicha Morada 1 LT", 10.00, "BEBIDA", BebidaBg(), Blanco(), "\uE8C3", 24, "jarras"));
-            _platos.Add(new PlatoItem("Chicha de Jora", 10.00, "BEBIDA", BebidaBg(), Blanco(), "\uE8C3", 15, "jarras"));
             PlatoGrid.ItemsSource = _platos;
+            ReconstruirPillsPos();
             ActualizarCatalogoSeleccion();
         }
 
-        // Al mostrarse, suma al Grid los platos creados en Productos (JSON local).
-        // Los 12 de la casa ya estan pintados; aqui solo se agregan los nuevos.
+        // Pills desde los badges reales del catalogo (TODOS + los que haya).
+        private void ReconstruirPillsPos()
+        {
+            if (CategoriaPillsPanel == null) return;
+            var insignias = _platos.Select(p => p.Categoria).Distinct().OrderBy(c => c).ToList();
+            CategoriaPillsPanel.Children.Clear();
+            CategoriaPillsPanel.Children.Add(PildoraPos("todos", "TODOS", true));
+            foreach (string insignia in insignias)
+            {
+                if (string.IsNullOrWhiteSpace(insignia)) continue;
+                CategoriaPillsPanel.Children.Add(PildoraPos(insignia, EtiquetaPillPos(insignia), false));
+            }
+            _categoriaPosActiva = "todos";
+        }
+
+        // Etiqueta plural de cada badge compacto del POS.
+        private static string EtiquetaPillPos(string insignia) => insignia switch
+        {
+            "CALDO" => "CALDOS",
+            "ENTRADA" => "ENTRADAS",
+            "BEBIDA" => "BEBIDAS",
+            _ => "PLATOS",
+        };
+
+        // Pildora con la misma pinta de las fijas anteriores.
+        private Button PildoraPos(string tag, string texto, bool activa)
+        {
+            var fondo = activa
+                ? new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x00, 0x84, 0xFF))
+                : new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x16, 0x1C, 0x28));
+            var tinta = activa
+                ? new SolidColorBrush(Colors.White)
+                : new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0xCB, 0xD5, 0xE1));
+            var b = new Button
+            {
+                Tag = tag,
+                Background = fondo,
+                Foreground = tinta,
+                BorderBrush = new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x23, 0x2C, 0x3F)),
+                CornerRadius = new CornerRadius(16),
+                Padding = new Thickness(16, 8, 16, 8),
+                FontSize = 11,
+                FontWeight = activa ? Microsoft.UI.Text.FontWeights.SemiBold : Microsoft.UI.Text.FontWeights.Normal,
+                BorderThickness = activa ? new Thickness(0) : new Thickness(1),
+                Content = texto,
+            };
+            b.Click += CategoriaPosPill_Click;
+            return b;
+        }
+
+        // Al mostrarse, suma al Grid los platos del JSON local (pausados y
+        // agotados no entran). El catalogo arranca vacio: sin demo.
         private async void PuntoDeVentaView_Loaded(object sender, RoutedEventArgs e)
         {
             try { await RestaurarVentasPendientesAsync(); }
@@ -1344,6 +1369,7 @@ namespace sabores_wanka.Views.PuntoDeVenta
                 agrego = true;
             }
             if (!agrego) return;
+            ReconstruirPillsPos();
             AplicarFiltroCatalogo();
             ActualizarCatalogoSeleccion();
         }

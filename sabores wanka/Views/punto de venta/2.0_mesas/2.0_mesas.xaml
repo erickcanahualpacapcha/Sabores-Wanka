@@ -37,7 +37,7 @@
                 </Border>
                 <StackPanel Grid.Column="1" Margin="12,0" VerticalAlignment="Center">
                     <TextBlock Text="Plano y Selección de Mesas" Foreground="White" FontSize="13" FontWeight="Bold"/>
-                    <TextBlock Text="Sede Huancayo • Salón Principal" Foreground="#64748b" FontSize="10"/>
+                    <TextBlock Text="Arma tus salones y mesas para empezar" Foreground="#64748b" FontSize="10"/>
                 </StackPanel>
                 <Button x:Name="AgregarSalaButton" Grid.Column="2" Background="#161c28" CornerRadius="10" Padding="12,6" BorderBrush="#334155" BorderThickness="1" VerticalAlignment="Center" Margin="0,0,8,0" Visibility="Collapsed" Click="AgregarSalaButton_Click">
                     <Button.RenderTransform>
@@ -53,13 +53,9 @@
                 </Button>
             </Grid>
 
-            <!-- Pills -->
+            <!-- Pills de salon (se arman desde el plano guardado, con conteo). -->
             <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Padding="16,12,16,8">
                 <StackPanel x:Name="SalonesPanel" Orientation="Horizontal" Spacing="8">
-                    <Button x:Name="SalonPrincipalButton" Click="SalonButton_Click" Tag="Salón Principal" Background="#00a8e8" CornerRadius="12" Padding="14,6" BorderThickness="0"><TextBlock Text="Salón Principal (12)" Foreground="Black" FontSize="11" FontWeight="Bold"/></Button>
-                    <Button x:Name="TerrazaButton" Click="SalonButton_Click" Tag="Terraza" Background="#161c28" BorderBrush="#232c3f" BorderThickness="1" CornerRadius="12" Padding="14,6"><TextBlock Text="Terraza (6)" Foreground="#cbd5e1" FontSize="11"/></Button>
-                    <Button x:Name="BarraButton" Click="SalonButton_Click" Tag="Barra" Background="#161c28" BorderBrush="#232c3f" BorderThickness="1" CornerRadius="12" Padding="14,6"><TextBlock Text="Barra (4)" Foreground="#cbd5e1" FontSize="11"/></Button>
-                    <Button x:Name="ParaLlevarButton" Click="SalonButton_Click" Tag="Para Llevar" Background="#161c28" BorderBrush="#232c3f" BorderThickness="1" CornerRadius="12" Padding="14,6"><TextBlock Text="Para Llevar" Foreground="#cbd5e1" FontSize="11"/></Button>
                 </StackPanel>
             </ScrollViewer>
 
@@ -248,7 +244,7 @@
                             <TextBlock Text="*" Foreground="#ef4444" FontSize="12"/>
                         </StackPanel>
                         <Border Background="#0f172a" CornerRadius="10" BorderBrush="#334155" BorderThickness="1" Padding="12">
-                            <TextBox x:Name="NombreSalaTextBox" Text="Terraza" Background="Transparent" BorderThickness="0" Foreground="White" FontSize="13" PlaceholderText="Ej: Terraza"/>
+                            <TextBox x:Name="NombreSalaTextBox" Text="" Background="Transparent" BorderThickness="0" Foreground="White" FontSize="13" PlaceholderText="Ej: Terraza"/>
                         </Border>
                     </StackPanel>
                     <Button x:Name="CrearSalaButton" Click="CrearSalaButton_Click" Background="#0f1e33" CornerRadius="10" Padding="12" HorizontalAlignment="Stretch" BorderBrush="#1e3a5f" BorderThickness="1" Margin="0,8,0,0">
@@ -273,7 +269,7 @@
                             <TextBlock Text="*" Foreground="#ef4444" FontSize="12"/>
                         </StackPanel>
                         <Border Background="#0f172a" CornerRadius="10" BorderBrush="#334155" BorderThickness="1" Padding="12">
-                            <TextBox x:Name="NombreMesaTextBox" Text="Mesa 09" Background="Transparent" BorderThickness="0" Foreground="White" FontSize="13" PlaceholderText="Ej: Mesa 09"/>
+                            <TextBox x:Name="NombreMesaTextBox" Text="" Background="Transparent" BorderThickness="0" Foreground="White" FontSize="13" PlaceholderText="Ej: Mesa 09"/>
                         </Border>
                     </StackPanel>
                     <StackPanel Spacing="6">
@@ -282,10 +278,6 @@
                             <TextBlock Text="*" Foreground="#ef4444" FontSize="12"/>
                         </StackPanel>
                         <ComboBox x:Name="SalaComboBox" PlaceholderText="Seleccionar sala" HorizontalAlignment="Stretch" Background="#0f172a" BorderBrush="#334155" Foreground="White">
-                            <ComboBoxItem Content="Salón Principal"/>
-                            <ComboBoxItem Content="Terraza"/>
-                            <ComboBoxItem Content="Barra"/>
-                            <ComboBoxItem Content="Para Llevar"/>
                         </ComboBox>
                     </StackPanel>
                     <Button x:Name="CrearMesaButton" Click="CrearMesaButton_Click" Background="#0f1e33" CornerRadius="10" Padding="12" HorizontalAlignment="Stretch" BorderBrush="#1e3a5f" BorderThickness="1" Margin="0,8,0,0">
@@ -319,10 +311,6 @@
                             <TextBlock Text="*" Foreground="#ef4444" FontSize="12"/>
                         </StackPanel>
                         <ComboBox x:Name="EditarSalaComboBox" PlaceholderText="Seleccionar sala" HorizontalAlignment="Stretch" Background="#0f172a" BorderBrush="#334155" Foreground="White">
-                            <ComboBoxItem Content="Salón Principal"/>
-                            <ComboBoxItem Content="Terraza"/>
-                            <ComboBoxItem Content="Barra"/>
-                            <ComboBoxItem Content="Para Llevar"/>
                         </ComboBox>
                     </StackPanel>
                     <Button x:Name="GuardarMesaButton" Click="GuardarMesaButton_Click" Background="#0f1e33" CornerRadius="10" Padding="12" HorizontalAlignment="Stretch" BorderBrush="#1e3a5f" BorderThickness="1" Margin="0,8,0,0">

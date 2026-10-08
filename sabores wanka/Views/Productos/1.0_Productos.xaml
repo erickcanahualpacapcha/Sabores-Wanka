@@ -77,7 +77,7 @@
                             <TextBlock Text="VALORIZACIÓN INSUMOS &amp; MENÚ" Foreground="#6b7280" FontSize="10" FontWeight="Bold"/>
                             <FontIcon Glyph="&#xE8C7;" FontSize="13" Foreground="#34d399" HorizontalAlignment="Right"/>
                         </StackPanel>
-                        <TextBlock Text="S/ 1,485.50" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                        <TextBlock x:Name="ValorizacionText" Text="S/ 0.00" Foreground="White" FontSize="20" FontWeight="Bold"/>
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <Ellipse Width="6" Height="6" Fill="#10b981" VerticalAlignment="Center"/>
                             <TextBlock Text="Sincronizado con Almacén Central" Foreground="#34d399" FontSize="10"/>
@@ -92,11 +92,11 @@
                         </StackPanel>
                         <Grid>
                             <TextBlock Text="Total Catálogo" Foreground="#9ca3af" FontSize="11" VerticalAlignment="Center"/>
-                            <TextBlock Text="184" Foreground="White" FontSize="15" FontWeight="Bold" HorizontalAlignment="Right"/>
+                            <TextBlock x:Name="TotalCatalogoText" Text="0" Foreground="White" FontSize="15" FontWeight="Bold" HorizontalAlignment="Right"/>
                         </Grid>
                         <StackPanel Orientation="Horizontal" Spacing="10">
-                            <StackPanel Orientation="Horizontal" Spacing="4"><Ellipse Width="6" Height="6" Fill="#10b981" VerticalAlignment="Center"/><TextBlock Text="Activos en Carta: 162" Foreground="#34d399" FontSize="10"/></StackPanel>
-                            <StackPanel Orientation="Horizontal" Spacing="4"><Ellipse Width="6" Height="6" Fill="#f59e0b" VerticalAlignment="Center"/><TextBlock Text="Críticos: 22" Foreground="#fbbf24" FontSize="10"/></StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4"><Ellipse Width="6" Height="6" Fill="#10b981" VerticalAlignment="Center"/><TextBlock x:Name="ActivosText" Text="Activos en Carta: 0" Foreground="#34d399" FontSize="10"/></StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4"><Ellipse Width="6" Height="6" Fill="#f59e0b" VerticalAlignment="Center"/><TextBlock x:Name="CriticosText" Text="Críticos: 0" Foreground="#fbbf24" FontSize="10"/></StackPanel>
                         </StackPanel>
                     </StackPanel>
                 </Border>
@@ -106,8 +106,8 @@
                             <TextBlock Text="DISTRIBUCIÓN DE COCINA" Foreground="#6b7280" FontSize="10" FontWeight="Bold"/>
                             <FontIcon Glyph="&#xE8B7;" FontSize="13" Foreground="#a78bfa" HorizontalAlignment="Right"/>
                         </StackPanel>
-                        <TextBlock Text="12 Categorías" Foreground="#fbbf24" FontSize="20" FontWeight="Bold"/>
-                        <TextBlock Text="4 Estaciones operativas (Cocina, Bar, Parrilla, Frío)" Foreground="#9ca3af" FontSize="10"/>
+                        <TextBlock x:Name="CategoriasKpiText" Text="0 Categorías" Foreground="#fbbf24" FontSize="20" FontWeight="Bold"/>
+                        <TextBlock x:Name="EstacionesKpiText" Text="Sin estaciones" Foreground="#9ca3af" FontSize="10"/>
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="3" Background="#2a1518" BorderBrush="#e11d4866" BorderThickness="1" CornerRadius="12" Padding="14">
@@ -116,8 +116,8 @@
                             <FontIcon Glyph="&#xE7BA;" FontSize="13" Foreground="#fb7185"/>
                             <TextBlock Text="INGREDIENTES CRÍTICOS" Foreground="#fda4af" FontSize="10" FontWeight="Bold"/>
                         </StackPanel>
-                        <TextBlock Text="14 Insumos" Foreground="#fb7185" FontSize="20" FontWeight="Bold"/>
-                        <TextBlock Text="Requieren reposición inmediata para turno tarde" Foreground="#fda4af" FontSize="10" Opacity="0.8"/>
+                        <TextBlock x:Name="InsumosCriticosText" Text="0 Insumos" Foreground="#fb7185" FontSize="20" FontWeight="Bold"/>
+                        <TextBlock x:Name="InsumosSubText" Text="Stock al día" Foreground="#fda4af" FontSize="10" Opacity="0.8"/>
                     </StackPanel>
                 </Border>
             </Grid>
@@ -163,17 +163,6 @@
             <!-- Pills de categoría -->
             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" VerticalAlignment="Center">
                 <StackPanel x:Name="PillsPanel" Orientation="Horizontal" Spacing="6">
-                    <Button Tag="todos" Click="CategoriaPill_Click" Background="#0078d4" CornerRadius="14" Padding="14,6" BorderThickness="0"><TextBlock Text="Todos los Platos (184)" Foreground="White" FontSize="11" FontWeight="SemiBold"/></Button>
-                    <Button Tag="Entradas" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Entradas" Foreground="#9ca3af" FontSize="11"/></Button>
-                    <Button Tag="Platos de Fondo" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Platos de Fondo" Foreground="#9ca3af" FontSize="11"/></Button>
-                    <Button Tag="Ceviches" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Ceviches &amp; Pescados" Foreground="#9ca3af" FontSize="11"/></Button>
-                    <Button Tag="Carnes" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Carnes &amp; Parrillas" Foreground="#9ca3af" FontSize="11"/></Button>
-                    <Button Tag="Pastas" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Pastas Artesanales" Foreground="#9ca3af" FontSize="11"/></Button>
-                    <Button Tag="Bebidas" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Bebidas &amp; Cócteles" Foreground="#9ca3af" FontSize="11"/></Button>
-                    <Button Tag="Cervezas" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Cervezas &amp; Vinos" Foreground="#9ca3af" FontSize="11"/></Button>
-                    <Button Tag="Postres" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Postres Caseros" Foreground="#9ca3af" FontSize="11"/></Button>
-                    <Button Tag="Guarniciones" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Guarniciones" Foreground="#9ca3af" FontSize="11"/></Button>
-                    <Button Tag="Menú Ejecutivo" Click="CategoriaPill_Click" Background="#232731" BorderBrush="#2e3442" BorderThickness="1" CornerRadius="14" Padding="14,6"><TextBlock Text="Menú Ejecutivo" Foreground="#9ca3af" FontSize="11"/></Button>
                 </StackPanel>
             </ScrollViewer>
         </StackPanel>
@@ -442,7 +431,7 @@
                 </Grid>
             </Border>
 
-            <TextBlock Text="Catálogo de muestra — sin backend todavía" Foreground="#475569" FontSize="10" HorizontalAlignment="Center" Margin="0,8,0,8"/>
+            <TextBlock Text="Catálogo local" Foreground="#475569" FontSize="10" HorizontalAlignment="Center" Margin="0,8,0,8"/>
             </StackPanel>
         </ScrollViewer>
 
@@ -452,7 +441,7 @@
             <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <TextBlock Text="Mostrando" Foreground="#9ca3af" FontSize="11"/>
                 <TextBlock x:Name="MostrandoProductosText" Text="8" Foreground="White" FontSize="11" FontWeight="Bold"/>
-                <TextBlock Text="de 184 platos y productos" Foreground="#9ca3af" FontSize="11"/>
+                <TextBlock x:Name="TotalFooterText" Text="de 0 platos y productos" Foreground="#9ca3af" FontSize="11"/>
                 <Button Click="RefrescarButton_Click" Background="Transparent" BorderThickness="0" Padding="6" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Actualizar datos">
                     <FontIcon Glyph="&#xE72C;" FontSize="12" Foreground="#9ca3af"/>
                 </Button>

@@ -55,6 +55,12 @@ Ruta real del codigo: `C:\Users\Erick\Desktop\sabores wanka\sabores wanka\`
   (`ordenes_activas.json`) guarda mesa actual + órdenes con items en cada
   cambio del carrito; al abrir se restauran, las mesas quedan OCUPADA y se
   vuelve a la mesa atendida. Sin nada que guardar se borra el archivo.
+- Plano de mesas persistido (2026-10-08): MesasStore (mesas.json con
+  salones + mesas). Sin demo: arranca vacio y se arma con Agregar sala /
+  Agregar mesa; pills y combos de sala salen del plano guardado.
+- Catalogo sin demo (2026-10-08): fuera los 12 de la casa, clientes y
+  mozos mock y los KPIs/pills fijos. POS y Productos pintan solo del JSON
+  (pills y KPIs dinamicos; en cero muestran 0 y listas vacias).
 - Ventas cerradas: `VentasStore` (`ventas.json`, serie B001-#######). Cada
   confirmación de cierre = 1 boleta (total o parcial). Historial/Ingresos y
   sus KPIs se pintan desde ese JSON (solo PAGADO suma).
