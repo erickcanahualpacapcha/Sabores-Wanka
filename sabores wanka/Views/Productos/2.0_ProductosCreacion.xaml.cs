@@ -95,6 +95,11 @@ namespace sabores_wanka.Views.Productos
         }
 
         // Lapiz: gestor de categorias (renombrar + eliminar personalizadas).
+        // WinUI solo permite un ContentDialog a la vez: para los dialogos
+        // anidados se oculta el gestor y se reabre al terminar.
+        private ContentDialog? _gestorDialogo;
+        private StackPanel? _gestorLista;
+
         private async void GestionarCategoriasButton_Click(object sender, RoutedEventArgs e)
         {
             var lista = new StackPanel { Spacing = 6 };
@@ -106,8 +111,32 @@ namespace sabores_wanka.Views.Productos
                 CloseButtonText = "Cerrar",
                 XamlRoot = this.XamlRoot
             };
-            await dialogo.ShowAsync();
+            _gestorDialogo = dialogo;
+            _gestorLista = lista;
+            try { await dialogo.ShowAsync(); }
+            finally
+            {
+                if (_gestorDialogo == dialogo) _gestorDialogo = null;
+                if (_gestorLista == lista) _gestorLista = null;
+            }
             await RecargarCategoriasAsync();
+        }
+
+        // Oculta el gestor, ejecuta el dialogo anidado y lo reabre con la
+        // lista fresca (asi nunca hay dos ContentDialog a la vez).
+        private async System.Threading.Tasks.Task ConGestorOcultoAsync(Func<System.Threading.Tasks.Task<bool>> accion)
+        {
+            var gestor = _gestorDialogo;
+            var lista = _gestorLista;
+            if (gestor != null) gestor.Hide();
+            try { await accion(); }
+            catch { }
+            if (lista != null) await RefrescarGestorCategoriasAsync(lista);
+            if (gestor != null && Equals(_gestorDialogo, gestor))
+            {
+                try { await gestor.ShowAsync(); }
+                catch { }
+            }
         }
 
         // Filas del gestor: base con candado, personalizadas con lapiz + papelera.
@@ -138,11 +167,11 @@ namespace sabores_wanka.Views.Productos
                     var renombrar = new Button { Tag = nombre, Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0x00, 0x00, 0x00, 0x00)), BorderThickness = new Thickness(0), Padding = new Thickness(8, 4, 8, 4), MinWidth = 0, MinHeight = 0 };
                     renombrar.Content = new FontIcon { Glyph = "\uE70F", FontSize = 11, Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0xC0, 0xC7, 0xD4)) };
                     Microsoft.UI.Xaml.Controls.ToolTipService.SetToolTip(renombrar, $"Renombrar «{nombre}»");
-                    renombrar.Click += async (_, _) => { if (await RenombrarCategoriaAsync(nombre)) await RefrescarGestorCategoriasAsync(lista); };
+                    renombrar.Click += async (_, _) => await ConGestorOcultoAsync(() => RenombrarCategoriaAsync(nombre));
                     var borrar = new Button { Tag = nombre, Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0x00, 0x00, 0x00, 0x00)), BorderThickness = new Thickness(0), Padding = new Thickness(8, 4, 8, 4), MinWidth = 0, MinHeight = 0 };
                     borrar.Content = new FontIcon { Glyph = "\uE74D", FontSize = 11, Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0xF8, 0x71, 0x71)) };
                     Microsoft.UI.Xaml.Controls.ToolTipService.SetToolTip(borrar, $"Eliminar «{nombre}»");
-                    borrar.Click += async (_, _) => { if (await EliminarCategoriaAsync(nombre)) await RefrescarGestorCategoriasAsync(lista); };
+                    borrar.Click += async (_, _) => await ConGestorOcultoAsync(() => EliminarCategoriaAsync(nombre));
                     acciones.Children.Add(renombrar);
                     acciones.Children.Add(borrar);
                     fila.Children.Add(acciones);
