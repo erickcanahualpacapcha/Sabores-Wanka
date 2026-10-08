@@ -115,17 +115,27 @@ namespace sabores_wanka.Services
                 try
                 {
                     if (e.Graphics == null) return;
-                    using var normal = FuenteMono(8, false);
-                    using var negrita = FuenteMono(8, true);
+                    var g = e.Graphics;
+                    // Ancho REAL imprimible del driver (varia por papel/driver);
+                    // todo se ajusta a esto para que nada se corte a la derecha.
+                    float x0 = e.MarginBounds.Left;
+                    float anchoUtil = e.MarginBounds.Width;
+                    var fmt = System.Drawing.StringFormat.GenericTypographic();
+                    // Cuerpo: el tamano mas grande que quepa en 40 columnas.
+                    using var normal = ElegirFuente(g, fmt, anchoUtil, false);
+                    using var negrita = MismaFuente(normal, true);
                     using var titulo = FuenteMono(14, true);
                     using var total = FuenteMono(11, true);
-                    float y = 5;
-                    if (logo != null)
+                    int capTitulo = Capacidad(g, titulo, fmt, anchoUtil);
+                    int capTotal = Capacidad(g, total, fmt, anchoUtil);
+                    float y = e.MarginBounds.Top;
+                    if (logo != null && logoAncho > 0 && logoAlto > 0)
                     {
-                        float x = (280 - logoAncho) / 2;
-                        if (x < 5) x = 5;
-                        e.Graphics.DrawImage(logo, x, y, logoAncho, logoAlto);
-                        y += logoAlto + 8;
+                        float dibAncho = Math.Min(logoAncho, anchoUtil);
+                        float dibAlto = logoAlto * (dibAncho / logoAncho);
+                        float x = x0 + (anchoUtil - dibAncho) / 2;
+                        g.DrawImage(logo, x, y, dibAncho, dibAlto);
+                        y += dibAlto + 8;
                     }
                     foreach (var linea in lineas ?? new List<LineaTicket>())
                     {
@@ -136,18 +146,26 @@ namespace sabores_wanka.Services
                             EstiloTicket.Negrita => negrita,
                             _ => normal,
                         };
-                        string recorte = (linea.Texto ?? "").Replace("\r", "");
-                        if (recorte.Length > AnchoTicket) recorte = recorte.Substring(0, AnchoTicket);
-                        e.Graphics.DrawString(recorte, fuente, System.Drawing.Brushes.Black, 5, y);
-                        y += fuente.GetHeight(e.Graphics) + 1;
+                        string texto = (linea.Texto ?? "").Replace("\r", "");
+                        // Titulos se cortan a la derecha; el TOTAL se corta a
+                        // la izquierda para no perder nunca el monto.
+                        if (linea.Estilo == EstiloTicket.Total && texto.Length > capTotal)
+                            texto = texto.Substring(texto.Length - capTotal);
+                        else
+                        {
+                            int tope = linea.Estilo == EstiloTicket.Titulo ? capTitulo : AnchoTicket;
+                            if (texto.Length > tope) texto = texto.Substring(0, tope);
+                        }
+                        g.DrawString(texto, fuente, System.Drawing.Brushes.Black, x0, y, fmt);
+                        y += fuente.GetHeight(g) + 1;
                     }
                     if (qr != null)
                     {
-                        float qx = (280 - QrLado) / 2;
-                        if (qx < 5) qx = 5;
-                        e.Graphics.FillRectangle(System.Drawing.Brushes.White, qx - 4, y, QrLado + 8, QrLado + 8);
-                        e.Graphics.DrawImage(qr, qx, y + 4, QrLado, QrLado);
-                        y += QrLado + 12;
+                        float lado = Math.Min(QrLado, anchoUtil);
+                        float qx = x0 + (anchoUtil - lado) / 2;
+                        g.FillRectangle(System.Drawing.Brushes.White, qx - 4, y, lado + 8, lado + 8);
+                        g.DrawImage(qr, qx, y + 4, lado, lado);
+                        y += lado + 12;
                     }
                     e.HasMorePages = false;
                 }
@@ -181,6 +199,35 @@ namespace sabores_wanka.Services
             var estilo = negrita ? System.Drawing.FontStyle.Bold : System.Drawing.FontStyle.Regular;
             try { return new System.Drawing.Font("Courier New", tamano, estilo); }
             catch { return new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace, tamano, estilo); }
+        }
+
+        // Elige el cuerpo mas grande que quepa en 40 columnas del papel real.
+        private static System.Drawing.Font ElegirFuente(System.Drawing.Graphics g, System.Drawing.StringFormat fmt, float anchoUtil, bool negrita)
+        {
+            foreach (float tam in new[] { 8f, 7.5f, 7f, 6.5f, 6f })
+            {
+                var f = FuenteMono(tam, negrita);
+                if (g.MeasureString(new string('M', AnchoTicket), f, int.MaxValue, fmt).Width <= anchoUtil)
+                    return f;
+                f.Dispose();
+            }
+            return FuenteMono(6f, negrita);
+        }
+
+        // Misma medida que la elegida pero en negrita (mismo ancho fijo).
+        private static System.Drawing.Font MismaFuente(System.Drawing.Font baseFuente, bool negrita) =>
+            FuenteMono(baseFuente.Size, negrita);
+
+        // Cuantos caracteres de esa fuente entran en el papel real.
+        private static int Capacidad(System.Drawing.Graphics g, System.Drawing.Font fuente, System.Drawing.StringFormat fmt, float anchoUtil)
+        {
+            try
+            {
+                float una = g.MeasureString("M", fuente, int.MaxValue, fmt).Width;
+                if (una <= 0) return 10;
+                return Math.Max(10, (int)(anchoUtil / una));
+            }
+            catch { return 10; }
         }
 
         // Logo a blanco y negro puro (igual que el QR): la termica apaga
