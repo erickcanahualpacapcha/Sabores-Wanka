@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.UI.Xaml;
@@ -101,7 +102,7 @@ namespace sabores_wanka.Views.Productos
             var dialogo = new ContentDialog
             {
                 Title = "Editar categorías",
-                Content = new ScrollViewer { Content = lista, MaxHeight = 380, VerticalScrollBarVisibility = ScrollViewerVisibility.Auto },
+                Content = new ScrollViewer { Content = lista, MaxHeight = 380, VerticalScrollBarVisibility = ScrollBarVisibility.Auto },
                 CloseButtonText = "Cerrar",
                 XamlRoot = this.XamlRoot
             };
