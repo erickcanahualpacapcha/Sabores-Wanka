@@ -78,8 +78,19 @@ namespace sabores_wanka.Views.PuntoDeVenta
         public bool ConfigVisible
         {
             get => _configVisible;
-            set { _configVisible = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConfigVisible))); }
+            set
+            {
+                _configVisible = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConfigVisible)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BorrarVisible)));
+            }
         }
+
+        // Fija = mesa base (no se borra ni renombra); se marca al cargar.
+        public bool Fija { get; set; }
+
+        // La papelera solo se ve en modo config y si no es fija.
+        public Visibility BorrarVisible => ConfigVisible && !Fija ? Visibility.Visible : Visibility.Collapsed;
 
         public SolidColorBrush EstadoPillFondo { get; private set; } = LibrePillFondo;
         public SolidColorBrush EstadoColor { get; private set; } = LibreLetra;
@@ -182,6 +193,7 @@ namespace sabores_wanka.Views.PuntoDeVenta
                     _mesas.Add(new MesaItem(m.Nombre.Trim(), m.Sala ?? "", string.IsNullOrWhiteSpace(m.Capacidad) ? "2 Personas" : m.Capacidad)
                     {
                         ConfigVisible = _configMode,
+                        Fija = m.Fija,
                     });
                 }
                 if (!string.IsNullOrEmpty(_selectedSala) && !_salones.Contains(_selectedSala))
@@ -203,7 +215,7 @@ namespace sabores_wanka.Views.PuntoDeVenta
             {
                 await Services.MesasStore.GuardarAsync(
                     new System.Collections.Generic.List<string>(_salones),
-                    _mesas.Select(m => new Services.MesaDato { Nombre = m.Nombre, Sala = m.Sala, Capacidad = m.CapacidadTexto }).ToList());
+                    _mesas.Select(m => new Services.MesaDato { Nombre = m.Nombre, Sala = m.Sala, Capacidad = m.CapacidadTexto, Fija = m.Fija }).ToList());
             }
             catch { }
         }
@@ -385,7 +397,10 @@ namespace sabores_wanka.Views.PuntoDeVenta
             {
                 _mesaAEditar = mesa;
                 EditarNombreMesaTextBox.Text = mesa;
-                var actual = _mesas.FirstOrDefault(m => m.Nombre == mesa);
+                // Las fijas no se renombran (nombre bloqueado, sala/capacidad si).
+                var fijada = _mesas.FirstOrDefault(m => m.Nombre == mesa);
+                EditarNombreMesaTextBox.IsEnabled = fijada == null || !fijada.Fija;
+                var actual = fijada;
                 if (actual != null)
                 {
                     bool hallada = false;
@@ -405,6 +420,9 @@ namespace sabores_wanka.Views.PuntoDeVenta
             string? mesa = null;
             if (sender is Button btn && btn.DataContext is MesaItem item) mesa = item.Nombre;
             else if (sender is Button b2 && b2.Tag is string t) mesa = t;
+            // Las fijas no muestran papelera; esto es defensa extra.
+            if (!string.IsNullOrEmpty(mesa)
+                && _mesas.Any(m => m.Nombre == mesa && m.Fija)) return;
             if (!string.IsNullOrEmpty(mesa))
             {
                 _mesaAEliminar = mesa;
@@ -510,6 +528,9 @@ namespace sabores_wanka.Views.PuntoDeVenta
         {
             if (string.IsNullOrWhiteSpace(_mesaAEditar) || string.IsNullOrWhiteSpace(EditarNombreMesaTextBox.Text)) return;
             string nuevo = EditarNombreMesaTextBox.Text.Trim();
+            var enEdicion = _mesas.FirstOrDefault(m => m.Nombre == _mesaAEditar);
+            // Defensa: la fija nunca cambia de nombre (el campo va bloqueado).
+            if (enEdicion != null && enEdicion.Fija) nuevo = _mesaAEditar;
             // Sin duplicar el nombre de otra mesa existente.
             if (!string.Equals(nuevo, _mesaAEditar, StringComparison.OrdinalIgnoreCase)
                 && _mesas.Any(m => string.Equals(m.Nombre, nuevo, StringComparison.OrdinalIgnoreCase))) return;
@@ -549,6 +570,13 @@ namespace sabores_wanka.Views.PuntoDeVenta
         {
             if (!string.IsNullOrEmpty(_mesaAEliminar))
             {
+                // Defensa: la fija nunca sale (no muestra papelera).
+                if (_mesas.Any(m => m.Nombre == _mesaAEliminar && m.Fija))
+                {
+                    EliminarMesaConfirmDialog.Visibility = Visibility.Collapsed;
+                    _mesaAEliminar = null;
+                    return;
+                }
                 // Sale del modelo: el GridView la quita y fluye sin huecos.
                 _mesas.RemoveAll(m => m.Nombre == _mesaAEliminar);
                 if (_selectedMesa == _mesaAEliminar)

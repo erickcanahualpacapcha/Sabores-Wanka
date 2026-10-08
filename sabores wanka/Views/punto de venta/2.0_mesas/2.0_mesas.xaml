@@ -189,7 +189,7 @@
                                                     <Button Click="EditarMesaIcon_Click" Background="Transparent" BorderThickness="0" Padding="4">
                                                         <FontIcon Glyph="&#xE70F;" FontSize="12" Foreground="#94a3af"/>
                                                     </Button>
-                                                    <Button Click="EliminarMesaIcon_Click" Background="Transparent" BorderThickness="0" Padding="4">
+                                                    <Button Click="EliminarMesaIcon_Click" Background="Transparent" BorderThickness="0" Padding="4" Visibility="{x:Bind BorrarVisible, Mode=OneWay}">
                                                         <FontIcon Glyph="&#xE74D;" FontSize="12" Foreground="#f43f5e"/>
                                                     </Button>
                                                 </StackPanel>

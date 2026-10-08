@@ -14,10 +14,12 @@ namespace sabores_wanka.Services
         public string Nombre { get; set; } = "";
         public string Sala { get; set; } = "";
         public string Capacidad { get; set; } = "2 Personas";
+        // Fija = mesa base del sistema (no se puede eliminar ni renombrar).
+        public bool Fija { get; set; }
     }
 
-    // Plano completo: salones + mesas. Sin semilla demo: arranca vacio y el
-    // usuario crea sus salas/mesas con Agregar sala / Agregar mesa.
+    // Plano completo: salones + mesas. Semilla minima: Salon Principal con
+    // sus 5 mesas fijas; el resto lo crea el usuario (Agregar sala/mesa).
     public sealed class PlanoDato
     {
         public List<string> Salones { get; set; } = new();
@@ -37,31 +39,47 @@ namespace sabores_wanka.Services
             return Path.Combine(dir, "mesas.json");
         }
 
-        // Lee el plano; si no existe lo crea vacio (sistema nuevo, sin demo).
+        // Lee el plano; si no existe o esta sin mesas, siembra el Salon
+        // Principal con sus 5 mesas fijas (base no eliminable del sistema).
         public static async Task<PlanoDato> CargarAsync()
         {
             await _candado.WaitAsync();
             try
             {
                 string ruta = RutaArchivo();
-                if (!File.Exists(ruta))
+                PlanoDato? plano = null;
+                if (File.Exists(ruta))
                 {
-                    var vacio = new PlanoDato();
-                    await File.WriteAllTextAsync(ruta, JsonSerializer.Serialize(vacio, _json));
-                    return vacio;
+                    try { plano = JsonSerializer.Deserialize<PlanoDato>(await File.ReadAllTextAsync(ruta), _json); }
+                    catch (JsonException)
+                    {
+                        try { File.Move(ruta, ruta + ".bak", true); } catch { }
+                    }
                 }
-                try
+                plano ??= new PlanoDato();
+                if (plano.Mesas.Count == 0)
                 {
-                    return JsonSerializer.Deserialize<PlanoDato>(await File.ReadAllTextAsync(ruta), _json) ?? new PlanoDato();
+                    plano = Semilla();
+                    await File.WriteAllTextAsync(ruta, JsonSerializer.Serialize(plano, _json));
                 }
-                catch (JsonException)
-                {
-                    try { File.Move(ruta, ruta + ".bak", true); } catch { }
-                    return new PlanoDato();
-                }
+                return plano;
             }
             finally { _candado.Release(); }
         }
+
+        // Salon Principal + Mesa 01..05 fijas (no se pueden eliminar).
+        private static PlanoDato Semilla() => new()
+        {
+            Salones = new List<string> { "Salón Principal" },
+            Mesas = new List<MesaDato>
+            {
+                new() { Nombre = "Mesa 01", Sala = "Salón Principal", Capacidad = "2 Personas", Fija = true },
+                new() { Nombre = "Mesa 02", Sala = "Salón Principal", Capacidad = "4 Personas", Fija = true },
+                new() { Nombre = "Mesa 03", Sala = "Salón Principal", Capacidad = "6 Personas", Fija = true },
+                new() { Nombre = "Mesa 04", Sala = "Salón Principal", Capacidad = "4 Personas", Fija = true },
+                new() { Nombre = "Mesa 05", Sala = "Salón Principal", Capacidad = "2 Personas", Fija = true },
+            },
+        };
 
         // Guarda salones + mesas tras cada alta/baja/cambio.
         public static async Task GuardarAsync(List<string> salones, List<MesaDato> mesas)
