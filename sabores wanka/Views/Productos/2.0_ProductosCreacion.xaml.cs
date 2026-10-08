@@ -42,17 +42,34 @@ namespace sabores_wanka.Views.Productos
         // Llena el combo con base + personalizadas (sin duplicar las del XAML).
         private async System.Threading.Tasks.Task CargarCategoriasAsync()
         {
+            await RecargarCategoriasAsync();
+            if (!string.IsNullOrWhiteSpace(_categoriaPendiente))
+                SeleccionarCategoria(_categoriaPendiente);
+        }
+
+        // Reconstruye las personalizadas del combo (tras gestionar); conserva
+        // la elegida si sigue existiendo, si no vuelve a la primera.
+        private async System.Threading.Tasks.Task RecargarCategoriasAsync()
+        {
             try
             {
                 if (CategoriaComboBox == null) return;
+                string? elegida = (CategoriaComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
+                var quitar = CategoriaComboBox.Items.OfType<ComboBoxItem>()
+                    .Where(i => !CategoriasStore.EsBase(i.Content?.ToString())).ToList();
+                foreach (var q in quitar) CategoriaComboBox.Items.Remove(q);
                 foreach (string c in await CategoriasStore.ListarAsync())
                 {
                     bool existe = CategoriaComboBox.Items.OfType<ComboBoxItem>()
                         .Any(i => string.Equals(i.Content?.ToString(), c, StringComparison.OrdinalIgnoreCase));
                     if (!existe) CategoriaComboBox.Items.Add(new ComboBoxItem { Content = c });
                 }
-                if (!string.IsNullOrWhiteSpace(_categoriaPendiente))
-                    SeleccionarCategoria(_categoriaPendiente);
+                if (!string.IsNullOrWhiteSpace(elegida))
+                {
+                    var misma = CategoriaComboBox.Items.OfType<ComboBoxItem>()
+                        .FirstOrDefault(i => string.Equals(i.Content?.ToString(), elegida, StringComparison.OrdinalIgnoreCase));
+                    CategoriaComboBox.SelectedItem = misma ?? CategoriaComboBox.Items.FirstOrDefault();
+                }
             }
             catch { }
         }
@@ -76,19 +93,108 @@ namespace sabores_wanka.Views.Productos
             CategoriaComboBox.SelectedItem = nuevo;
         }
 
-        // Papelera: elimina la categoria SELECCIONADA (solo personalizadas).
-        // El clic derecho dentro del desplegable no sirve en WinUI (el popup
-        // se cierra antes de mostrar el menu), por eso es un boton directo.
-        private async void EliminarCategoriaButton_Click(object sender, RoutedEventArgs e)
+        // Lapiz: gestor de categorias (renombrar + eliminar personalizadas).
+        private async void GestionarCategoriasButton_Click(object sender, RoutedEventArgs e)
         {
-            string? nombre = (CategoriaComboBox?.SelectedItem as ComboBoxItem)?.Content?.ToString();
-            if (string.IsNullOrWhiteSpace(nombre)) return;
-            nombre = nombre.Trim();
-            if (CategoriasStore.EsBase(nombre))
+            var lista = new StackPanel { Spacing = 6 };
+            await RefrescarGestorCategoriasAsync(lista);
+            var dialogo = new ContentDialog
             {
-                await MostrarDialogoAsync("No se puede eliminar", $"«{nombre}» es categoría base del sistema.", "Entendido");
-                return;
+                Title = "Editar categorías",
+                Content = new ScrollViewer { Content = lista, MaxHeight = 380, VerticalScrollBarVisibility = ScrollViewerVisibility.Auto },
+                CloseButtonText = "Cerrar",
+                XamlRoot = this.XamlRoot
+            };
+            await dialogo.ShowAsync();
+            await RecargarCategoriasAsync();
+        }
+
+        // Filas del gestor: base con candado, personalizadas con lapiz + papelera.
+        private async System.Threading.Tasks.Task RefrescarGestorCategoriasAsync(StackPanel lista)
+        {
+            lista.Children.Clear();
+            List<string> todas;
+            try { todas = await CategoriasStore.ListarAsync(); }
+            catch { return; }
+            foreach (string nombre in todas)
+            {
+                bool esBase = CategoriasStore.EsBase(nombre);
+                var fila = new Grid { ColumnSpacing = 8 };
+                fila.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                fila.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                fila.Children.Add(new TextBlock { Text = nombre, Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF)), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, TextWrapping = TextWrapping.Wrap });
+                if (esBase)
+                {
+                    var candado = new FontIcon { Glyph = "\uE72E", FontSize = 11, Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x9C, 0xA3, 0xAF)), VerticalAlignment = VerticalAlignment.Center };
+                    Grid.SetColumn(candado, 1);
+                    fila.Children.Add(candado);
+                    Microsoft.UI.Xaml.Controls.ToolTipService.SetToolTip(fila, "Categoría base del sistema");
+                }
+                else
+                {
+                    var acciones = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4, VerticalAlignment = VerticalAlignment.Center };
+                    Grid.SetColumn(acciones, 1);
+                    var renombrar = new Button { Tag = nombre, Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0x00, 0x00, 0x00, 0x00)), BorderThickness = new Thickness(0), Padding = new Thickness(8, 4, 8, 4), MinWidth = 0, MinHeight = 0 };
+                    renombrar.Content = new FontIcon { Glyph = "\uE70F", FontSize = 11, Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0xC0, 0xC7, 0xD4)) };
+                    Microsoft.UI.Xaml.Controls.ToolTipService.SetToolTip(renombrar, $"Renombrar «{nombre}»");
+                    renombrar.Click += async (_, _) => { if (await RenombrarCategoriaAsync(nombre)) await RefrescarGestorCategoriasAsync(lista); };
+                    var borrar = new Button { Tag = nombre, Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0x00, 0x00, 0x00, 0x00)), BorderThickness = new Thickness(0), Padding = new Thickness(8, 4, 8, 4), MinWidth = 0, MinHeight = 0 };
+                    borrar.Content = new FontIcon { Glyph = "\uE74D", FontSize = 11, Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0xF8, 0x71, 0x71)) };
+                    Microsoft.UI.Xaml.Controls.ToolTipService.SetToolTip(borrar, $"Eliminar «{nombre}»");
+                    borrar.Click += async (_, _) => { if (await EliminarCategoriaAsync(nombre)) await RefrescarGestorCategoriasAsync(lista); };
+                    acciones.Children.Add(renombrar);
+                    acciones.Children.Add(borrar);
+                    fila.Children.Add(acciones);
+                }
+                lista.Children.Add(fila);
             }
+        }
+
+        // Renombrar con dialogo; mueve tambien los productos que la usaban.
+        private async System.Threading.Tasks.Task<bool> RenombrarCategoriaAsync(string anterior)
+        {
+            var campo = new TextBox
+            {
+                Text = anterior,
+                MaxLength = 40,
+                Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x19, 0x1C, 0x22)),
+                BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x40, 0x47, 0x52)),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(8),
+                Padding = new Thickness(12, 8, 12, 8),
+            };
+            var dialogo = new ContentDialog
+            {
+                Title = $"Renombrar «{anterior}»",
+                Content = campo,
+                PrimaryButtonText = "Guardar",
+                CloseButtonText = "Cancelar",
+                XamlRoot = this.XamlRoot
+            };
+            if (await dialogo.ShowAsync() != ContentDialogResult.Primary) return false;
+            string nuevo = (campo.Text ?? "").Trim();
+            if (nuevo.Length == 0)
+            {
+                await MostrarDialogoAsync("Falta el nombre", "Escribe el nuevo nombre.", "Entendido");
+                return false;
+            }
+            try
+            {
+                int movidos = await CategoriasStore.RenombrarAsync(anterior, nuevo);
+                if (movidos > 0)
+                    await MostrarDialogoAsync("Categoría actualizada", $"«{nuevo}» aplicada a {movidos} producto(s).", "Entendido");
+                return true;
+            }
+            catch (InvalidOperationException ex)
+            {
+                await MostrarDialogoAsync("No se pudo renombrar", ex.Message, "Entendido");
+                return false;
+            }
+        }
+
+        // Eliminar con confirmacion (bloquea si esta en uso); true si salio.
+        private async System.Threading.Tasks.Task<bool> EliminarCategoriaAsync(string nombre)
+        {
             var confirmar = new ContentDialog
             {
                 Title = $"Eliminar «{nombre}»",
@@ -97,27 +203,16 @@ namespace sabores_wanka.Views.Productos
                 CloseButtonText = "Cancelar",
                 XamlRoot = this.XamlRoot
             };
-            if (await confirmar.ShowAsync() != ContentDialogResult.Primary) return;
+            if (await confirmar.ShowAsync() != ContentDialogResult.Primary) return false;
             try
             {
                 await CategoriasStore.EliminarAsync(nombre);
+                return true;
             }
             catch (InvalidOperationException ex)
             {
                 await MostrarDialogoAsync("No se pudo eliminar", ex.Message, "Entendido");
-                return;
-            }
-            if (CategoriaComboBox != null)
-            {
-                var quitar = CategoriaComboBox.Items.OfType<ComboBoxItem>()
-                    .FirstOrDefault(i => string.Equals(i.Content?.ToString(), nombre, StringComparison.OrdinalIgnoreCase));
-                if (quitar != null)
-                {
-                    bool eraElegida = Equals(CategoriaComboBox.SelectedItem, quitar);
-                    CategoriaComboBox.Items.Remove(quitar);
-                    if (eraElegida && CategoriaComboBox.Items.Count > 0)
-                        CategoriaComboBox.SelectedIndex = 0;
-                }
+                return false;
             }
         }
 

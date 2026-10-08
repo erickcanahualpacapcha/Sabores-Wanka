@@ -96,8 +96,8 @@
                                     <Grid>
                                         <TextBlock Text="Categoría Culinaria" Foreground="#c0c7d4" FontSize="12" VerticalAlignment="Center"/>
                                         <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
-                                            <Button Click="EliminarCategoriaButton_Click" Background="Transparent" BorderThickness="1" BorderBrush="#5a2a2a" CornerRadius="6" Padding="8,3" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Eliminar la categoría seleccionada (solo creadas por ti)">
-                                                <FontIcon Glyph="&#xE74D;" FontSize="10" Foreground="#f87171"/>
+                                            <Button Click="GestionarCategoriasButton_Click" Background="Transparent" BorderThickness="1" BorderBrush="#404752" CornerRadius="6" Padding="8,3" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Editar categorías">
+                                                <FontIcon Glyph="&#xE70F;" FontSize="10" Foreground="#c0c7d4"/>
                                             </Button>
                                             <Button Click="AgregarCategoriaButton_Click" Background="#0078d4" BorderThickness="0" CornerRadius="6" Padding="8,3" MinWidth="0" MinHeight="0" ToolTipService.ToolTip="Crear categoría">
                                                 <StackPanel Orientation="Horizontal" Spacing="4">

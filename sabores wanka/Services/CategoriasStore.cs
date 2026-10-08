@@ -67,8 +67,42 @@ namespace sabores_wanka.Services
             finally { _candado.Release(); }
         }
 
-        // Elimina una personalizada (las base lanzan). Si un producto la usa,
-        // se bloquea para no dejar platos sin categoria valida.
+        // Renombra una personalizada y actualiza los productos que la usan.
+        // Las base lanzan; el nuevo nombre no debe existir ya.
+        public static async Task<int> RenombrarAsync(string anterior, string nuevo)
+        {
+            string viejo = (anterior ?? "").Trim();
+            string limpio = (nuevo ?? "").Trim();
+            if (limpio.Length == 0) throw new InvalidOperationException("Escribe el nuevo nombre.");
+            if (limpio.Length > 40) throw new InvalidOperationException("Máximo 40 caracteres.");
+            if (EsBase(viejo))
+                throw new InvalidOperationException($"«{viejo}» es categoría base del sistema y no se puede renombrar.");
+            if (string.Equals(viejo, limpio, StringComparison.OrdinalIgnoreCase)) return 0;
+            await _candado.WaitAsync();
+            try
+            {
+                var propias = await LeerPropiasSinCandadoAsync();
+                if (!propias.Any(x => string.Equals(x, viejo, StringComparison.OrdinalIgnoreCase)))
+                    throw new InvalidOperationException($"La categoría «{viejo}» ya no existe.");
+                if (Base.Any(x => string.Equals(x, limpio, StringComparison.OrdinalIgnoreCase))
+                    || propias.Any(x => string.Equals(x, limpio, StringComparison.OrdinalIgnoreCase)))
+                    throw new InvalidOperationException($"La categoría «{limpio}» ya existe.");
+                propias.RemoveAll(x => string.Equals(x, viejo, StringComparison.OrdinalIgnoreCase));
+                propias.Add(limpio);
+                await File.WriteAllTextAsync(RutaArchivo(), JsonSerializer.Serialize(propias, _json));
+            }
+            finally { _candado.Release(); }
+            // Mueve los productos a la nueva (fuera del candado, otro semaforo).
+            int movidos = 0;
+            foreach (var p in await PlatosStore.ListarAsync())
+            {
+                if (!string.Equals((p.Categoria ?? "").Trim(), viejo, StringComparison.OrdinalIgnoreCase)) continue;
+                p.Categoria = limpio;
+                try { await PlatosStore.ActualizarAsync(p); movidos++; }
+                catch { }
+            }
+            return movidos;
+        }
         public static async Task EliminarAsync(string nombre)
         {
             string limpio = (nombre ?? "").Trim();
