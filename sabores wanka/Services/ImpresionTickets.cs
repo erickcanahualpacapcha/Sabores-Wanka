@@ -120,7 +120,7 @@ namespace sabores_wanka.Services
                     // todo se ajusta a esto para que nada se corte a la derecha.
                     float x0 = e.MarginBounds.Left;
                     float anchoUtil = e.MarginBounds.Width;
-                    var fmt = System.Drawing.StringFormat.GenericTypographic();
+                    var fmt = System.Drawing.StringFormat.GenericTypographic;
                     // Cuerpo: el tamano mas grande que quepa en 40 columnas.
                     using var normal = ElegirFuente(g, fmt, anchoUtil, false);
                     using var negrita = MismaFuente(normal, true);
