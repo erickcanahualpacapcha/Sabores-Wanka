@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -19,6 +20,9 @@ namespace sabores_wanka.Views.Productos
         // PLU en edición (null = alta nueva). El PLU no se cambia al editar.
         private string? _pluEnEdicion;
 
+        // Categoría del plato en edición (se aplica al cargar las listas).
+        private string? _categoriaPendiente;
+
         // Foto: pendiente (elegida, aún no copiada) y actual (ya guardada).
         private string? _fotoPendiente;
         private string _fotoActual = "";
@@ -32,6 +36,44 @@ namespace sabores_wanka.Views.Productos
             this.Loaded += (_, _) => ActualizarMargen();
             PrecioTextBox.TextChanged += (_, _) => ActualizarMargen();
             CostoTextBox.TextChanged += (_, _) => ActualizarMargen();
+            _ = CargarCategoriasAsync();
+        }
+
+        // Llena el combo con base + personalizadas (sin duplicar las del XAML).
+        private async System.Threading.Tasks.Task CargarCategoriasAsync()
+        {
+            try
+            {
+                if (CategoriaComboBox == null) return;
+                foreach (string c in await CategoriasStore.ListarAsync())
+                {
+                    bool existe = CategoriaComboBox.Items.OfType<ComboBoxItem>()
+                        .Any(i => string.Equals(i.Content?.ToString(), c, StringComparison.OrdinalIgnoreCase));
+                    if (!existe) CategoriaComboBox.Items.Add(new ComboBoxItem { Content = c });
+                }
+                if (!string.IsNullOrWhiteSpace(_categoriaPendiente))
+                    SeleccionarCategoria(_categoriaPendiente);
+            }
+            catch { }
+        }
+
+        // Selecciona la categoría; si no está en el combo la agrega (vale para
+        // las creadas en otro equipo o datos viejos: existen en el JSON).
+        private void SeleccionarCategoria(string? categoria)
+        {
+            if (CategoriaComboBox == null || string.IsNullOrWhiteSpace(categoria)) return;
+            string nombre = categoria.Trim();
+            foreach (var item in CategoriaComboBox.Items)
+            {
+                if (item is ComboBoxItem ci && string.Equals(ci.Content?.ToString(), nombre, StringComparison.OrdinalIgnoreCase))
+                {
+                    CategoriaComboBox.SelectedItem = item;
+                    return;
+                }
+            }
+            var nuevo = new ComboBoxItem { Content = nombre };
+            CategoriaComboBox.Items.Add(nuevo);
+            CategoriaComboBox.SelectedItem = nuevo;
         }
 
         // Modo edición: precarga el formulario y cambia los textos de acción.
@@ -56,14 +98,8 @@ namespace sabores_wanka.Views.Productos
             PrecioTextBox.Text = plato.Precio.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
             CostoTextBox.Text = plato.Costo.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
             PorcionesTextBox.Text = plato.Porciones.ToString();
-            foreach (var item in CategoriaComboBox.Items)
-            {
-                if (item is ComboBoxItem ci && string.Equals(ci.Content?.ToString(), plato.Categoria, StringComparison.OrdinalIgnoreCase))
-                {
-                    CategoriaComboBox.SelectedItem = item;
-                    break;
-                }
-            }
+            _categoriaPendiente = plato.Categoria;
+            SeleccionarCategoria(_categoriaPendiente);
             SeleccionarEstacion(string.IsNullOrWhiteSpace(plato.EstacionTag) ? "caliente" : plato.EstacionTag);
             if (RutaActualText != null) RutaActualText.Text = "Editar Producto";
             if (AccionPrincipalText != null) AccionPrincipalText.Text = "Guardar cambios";
@@ -191,6 +227,47 @@ namespace sabores_wanka.Views.Productos
                 FotoPreview.Visibility = Visibility.Visible;
                 FotoVacia.Visibility = Visibility.Collapsed;
             }
+        }
+
+        // Boton + Nueva: mini dialogo para crear la categoria sin salir del
+        // formulario; al agregarla queda seleccionada en el combo.
+        private async void AgregarCategoriaButton_Click(object sender, RoutedEventArgs e)
+        {
+            var campo = new TextBox
+            {
+                PlaceholderText = "Ej. Pollos a la Brasa",
+                MaxLength = 40,
+                Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x19, 0x1C, 0x22)),
+                BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x40, 0x47, 0x52)),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(8),
+                Padding = new Thickness(12, 8, 12, 8),
+            };
+            var dialogo = new ContentDialog
+            {
+                Title = "Nueva categoría",
+                Content = campo,
+                PrimaryButtonText = "Agregar",
+                CloseButtonText = "Cancelar",
+                XamlRoot = this.XamlRoot
+            };
+            if (await dialogo.ShowAsync() != ContentDialogResult.Primary) return;
+            string nombre = (campo.Text ?? "").Trim();
+            if (nombre.Length == 0)
+            {
+                await MostrarDialogoAsync("Falta el nombre", "Escribe el nombre de la categoría.", "Entendido");
+                return;
+            }
+            try
+            {
+                await CategoriasStore.AgregarAsync(nombre);
+            }
+            catch (InvalidOperationException ex)
+            {
+                await MostrarDialogoAsync("No se pudo agregar", ex.Message, "Entendido");
+                return;
+            }
+            SeleccionarCategoria(nombre);
         }
 
         // Guardar: valida y crea (alta) o actualiza (edición por el mismo PLU).
